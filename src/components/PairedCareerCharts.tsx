@@ -180,7 +180,7 @@ export default function PairedCareerCharts({
             y={top}
             width={windowEndX - windowStartX}
             height={bottom - top}
-            fill="#e5f1eb"
+            fill="var(--selected)"
           />
           {ticks.map((n) => (
             <g key={n}>
@@ -189,7 +189,7 @@ export default function PairedCareerCharts({
                 x2={right}
                 y1={y(n)}
                 y2={y(n)}
-                stroke={n === 0 ? "#a1aeb4" : "#dfe7e6"}
+                stroke={n === 0 ? "var(--control-line)" : "var(--line)"}
                 strokeDasharray={n === 0 ? "4 3" : undefined}
               />
               <text x={left - 7} y={y(n) + 4} textAnchor="end">
@@ -202,7 +202,7 @@ export default function PairedCareerCharts({
             x2={x(focusIndex)}
             y1={top}
             y2={bottom}
-            stroke="#768887"
+            stroke="var(--control-line)"
             strokeDasharray="2 3"
           />
           {series.map((line, j) => (
@@ -228,7 +228,7 @@ export default function PairedCareerCharts({
                     cx={x(i)}
                     cy={y(n)}
                     r={i === focusIndex ? 4.3 : 2.5}
-                    fill={j ? "white" : PLAYER_COLORS[j]}
+                    fill={j ? "var(--panel)" : PLAYER_COLORS[j]}
                     strokeWidth="1.8"
                   />
                 ),

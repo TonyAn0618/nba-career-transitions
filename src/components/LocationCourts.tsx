@@ -30,7 +30,7 @@ const px = (x: number) => PAD + (x + 25) * SCALE;
 const py = (y: number) => PAD + y * SCALE;
 function CourtLines({ full }: { full: boolean }) {
   return (
-    <g fill="none" stroke="#8090a2" strokeWidth=".8" pointerEvents="none">
+    <g fill="none" stroke="#90a3b3" strokeWidth=".8" pointerEvents="none">
       <rect
         x={px(-25)}
         y={py(0)}
@@ -436,7 +436,7 @@ export default function LocationCourts({
                       y={PAD}
                       width={250}
                       height={(full ? 94 : 47) * SCALE}
-                      fill="#f7f9fc"
+                      fill="var(--page)"
                     />
                     {mode !== "points" &&
                       v.cells.map((c) => {
@@ -453,15 +453,15 @@ export default function LocationCourts({
                             height={Math.min(5, (full ? 94 : 47) - c.y) * SCALE}
                             fill={
                               mode === "accuracy" && c.attempts < minShots
-                                ? "#dce2e9"
-                                : "#2869bd"
+                                ? "#47525e"
+                                : "var(--player-blue)"
                             }
                             fillOpacity={
                               mode === "accuracy" && c.attempts < minShots
                                 ? 1
                                 : alpha
                             }
-                            stroke="white"
+                            stroke="var(--page)"
                             strokeWidth=".5"
                           />
                         );
@@ -477,9 +477,11 @@ export default function LocationCourts({
                           y={py(y)}
                           width={25}
                           height={Math.min(5, (full ? 94 : 47) - y) * SCALE}
-                          fill={activeCell === id ? "#152b48" : "transparent"}
+                          fill={
+                            activeCell === id ? "var(--ink)" : "transparent"
+                          }
                           fillOpacity={activeCell === id ? 0.12 : 0}
-                          stroke={activeCell === id ? "#152b48" : "none"}
+                          stroke={activeCell === id ? "var(--ink)" : "none"}
                           strokeWidth="1.5"
                           role="button"
                           tabIndex={(activeCell ?? "4:1") === id ? 0 : -1}
@@ -537,7 +539,7 @@ export default function LocationCourts({
                             cx={px(s[0])}
                             cy={py(s[1])}
                             r={s[2] ? 1.5 : 1.35}
-                            fill={s[2] ? color(i) : "#fff"}
+                            fill={s[2] ? color(i) : "var(--page)"}
                             stroke={color(i)}
                             strokeWidth={s[2] ? 0.25 : 0.65}
                             opacity={
@@ -546,8 +548,8 @@ export default function LocationCourts({
                               (activeCell && cellId(s) !== activeCell)
                                 ? 0.12
                                 : s[2]
-                                  ? 0.65
-                                  : 0.45
+                                  ? 0.82
+                                  : 0.72
                             }
                             onMouseEnter={() => {
                               setHoverCell(cellId(s));

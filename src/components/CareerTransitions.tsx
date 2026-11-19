@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ArrowDownRight,
   ArrowUpRight,
-  Globe2,
   ListFilter,
   Activity,
 } from "lucide-react";
@@ -277,14 +276,22 @@ export default function CareerTransitions({
       <header className="ct-nav">
         <div>
           <a
-            className="brand"
+            className="ct-home"
             href={"?lang=" + language}
             aria-label="Shot Atlas"
           >
-            <img src="./ball.svg" alt="" />
-            <span>
-              SHOT<span className="brand-light">ATLAS</span>
-            </span>
+            <svg
+              viewBox="0 0 32 32"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              aria-hidden="true"
+            >
+              <g transform="rotate(-24 16 16)">
+                <circle cx="16" cy="16" r="13" />
+                <path d="M3 16h26M16 3v26M7 6.6c9 4.8 9 14 0 18.8M25 6.6c-9 4.8-9 14 0 18.8" />
+              </g>
+            </svg>
           </a>
           <span className="ct-section-title">
             {t("Career transitions", "生涯转型")}
@@ -294,7 +301,6 @@ export default function CareerTransitions({
             onClick={() => setLanguage(language === "zh" ? "en" : "zh")}
             aria-label={t("Switch to Chinese", "Switch to English")}
           >
-            <Globe2 size={15} />
             {language === "zh" ? "EN" : "中文"}
           </button>
         </div>
