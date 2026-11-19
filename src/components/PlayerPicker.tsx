@@ -22,12 +22,14 @@ const normalize = (text: string) =>
     .toLowerCase();
 export default function PlayerPicker({
   players,
+  prioritizePopular = true,
   value,
   onChange,
   label,
   t,
 }: {
-  players: Player[];
+  players: (Player & { description?: string })[];
+  prioritizePopular?: boolean;
   value: string;
   onChange: (id: string) => void;
   label: string;
@@ -44,12 +46,14 @@ export default function PlayerPicker({
     ? players
         .filter((p) => normalize(p.name).includes(normalize(query)))
         .slice(0, 30)
-    : [
-        ...players
-          .filter((p) => popular.includes(p.id))
-          .sort((a, b) => popular.indexOf(a.id) - popular.indexOf(b.id)),
-        ...players.filter((p) => !popular.includes(p.id)).slice(0, 8),
-      ];
+    : !prioritizePopular
+      ? players
+      : [
+          ...players
+            .filter((p) => popular.includes(p.id))
+            .sort((a, b) => popular.indexOf(a.id) - popular.indexOf(b.id)),
+          ...players.filter((p) => !popular.includes(p.id)).slice(0, 8),
+        ];
   useEffect(() => {
     if (open) input.current?.focus();
     const outside = (event: MouseEvent) => {
@@ -154,9 +158,7 @@ export default function PlayerPicker({
               >
                 <span>
                   {p.name}
-                  <small>
-                    {p.first - 1}–{p.last}
-                  </small>
+                  <small>{p.description ?? `${p.first - 1}–${p.last}`}</small>
                 </span>
                 {p.id === value && <Check size={16} />}
               </button>

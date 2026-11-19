@@ -1,11 +1,6 @@
 import { ArrowRight, Check } from "lucide-react";
 import { percent, seasonLabel, shortName } from "../lib/analysis";
-import {
-  SHIFT_RULE,
-  type CareerShift,
-  type detectCareerShifts,
-} from "../lib/career-shifts";
-import { MIN_MATCH_FGA } from "../lib/transition-matches";
+import type { CareerShift, detectCareerShifts } from "../lib/career-shifts";
 import type { SeasonRow, Translate } from "../lib/types";
 
 export type ShiftActions = {
@@ -70,7 +65,6 @@ export default function CareerShifts({
   onShift: ShiftActions["onShift"];
   t: Translate;
 }) {
-  const { maxSeasons, extraSeasonCost, minScore, limit } = SHIFT_RULE;
   return (
     <section className="ct-panel shift-panel">
       <div className="shift-intro">
@@ -80,12 +74,6 @@ export default function CareerShifts({
             `${shortName(a.name)} 的生涯出手变化`,
           )}
         </h2>
-        <span>
-          {t(
-            `${result.examined} eligible intervals compared`,
-            `已比较 ${result.examined} 个合格区间`,
-          )}
-        </span>
       </div>
       {result.shifts.length ? (
         <div className="shift-options">
@@ -143,27 +131,6 @@ export default function CareerShifts({
               )}
         </p>
       )}
-      <details className="shift-method">
-        <summary>{t("Why these seasons?", "为什么选这些年份？")}</summary>
-        <p>
-          {t(
-            `We scan every stretch of 2–${maxSeasons} consecutive seasons in this player’s recorded career. Every season must have a complete five-zone split, an age, positive playing time and at least ${MIN_MATCH_FGA} attempts. Missing or ineligible seasons break a stretch.`,
-            `系统扫描这名球员有记录的整段生涯，比较所有连续 2–${maxSeasons} 季的区间。每季需有完整五区占比、年龄、有效上场时间和至少 ${MIN_MATCH_FGA} 次出手。缺季或样本不足会中断区间。`,
-          )}
-        </p>
-        <p>
-          {t(
-            "To measure how much the mix changed, normalize each season’s five shares to 100%, sum the absolute endpoint differences in percentage points, then divide by two. Moving 10 points from the rim to threes counts as a 10-point shift. Each card shows the zone with the largest absolute change.",
-            "把每季五区占比归一到 100%，将首尾两季各区占比差的绝对值相加，再除以二。从篮下转移 10 个百分点到三分，整体变化就记 10 个百分点。卡片列出变幅最大的分区及其首尾占比。",
-          )}
-        </p>
-        <p>
-          {t(
-            `Ranking starts with the five-zone shift and subtracts ${extraSeasonCost} points per season beyond two, favoring changes concentrated in fewer years. Keep scores of at least ${minScore}, taking up to ${limit} intervals in rank order with no shared seasons. Ties favor shorter, then earlier intervals. These thresholds are display choices. Twin matching runs separately on the selected endpoints.`,
-            `先计算五区变化幅度。区间超过两季时，每多一季扣 ${extraSeasonCost} 分，让集中发生的变化排在前面。保留得分达到 ${minScore} 的区间，按得分从高到低取最多 ${limit} 段，已入选的年份不再重复。平分时优先较短、较早的区间。这些门槛是本项目的筛选规则。点击后再用所选两季计算历史匹配。`,
-          )}
-        </p>
-      </details>
     </section>
   );
 }

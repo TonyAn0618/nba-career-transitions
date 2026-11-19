@@ -22,8 +22,7 @@ import useShotIndex from "../hooks/useShotIndex";
 import { pairedFollowup } from "../lib/paired-career";
 import { matchTransitions } from "../lib/transition-matches";
 import ComparisonTakeaway from "./ComparisonTakeaway";
-import { thirdSeasonReference } from "../lib/comparison-takeaways";
-import TransitionMatches from "./TransitionMatches";
+import TransitionMatches, { MatchComparisonTables } from "./TransitionMatches";
 import CareerShifts from "./CareerShifts";
 import {
   detectCareerShifts,
@@ -31,7 +30,6 @@ import {
   type CareerShift,
 } from "../lib/career-shifts";
 import PairedCareerCharts from "./PairedCareerCharts";
-import { SeasonComparisonTable } from "./SeasonComparisonTable";
 import "./paired-career.css";
 import PlayerPortrait from "./PlayerPortrait";
 import PlayerPicker from "./PlayerPicker";
@@ -111,7 +109,6 @@ export default function CareerTransitions({
       },
     [rows, strongest, requestedSelection],
   );
-  const [editingSeasons, setEditingSeasons] = useState(false);
   const pair = useMemo(
     () =>
       rows.filter(
@@ -185,8 +182,6 @@ export default function CareerTransitions({
       </p>
     );
   const [a, b] = pair;
-  const viewingStrongest =
-    a.id === strongest?.first.id && b.id === strongest?.last.id;
   const names = bandNames(t),
     changes = zoneChanges(a, b);
   const dominant = changes.reduce<number>(
@@ -204,12 +199,10 @@ export default function CareerTransitions({
   function pickPlayer(player: string) {
     setPeer(null);
     setSelection({ player });
-    setEditingSeasons(false);
     setZone(null);
   }
   function pickShift({ first, last }: CareerShift) {
     setPeer(null);
-    setEditingSeasons(false);
     setSelection({
       player: first.playerId,
       from: first.season,
@@ -306,30 +299,12 @@ export default function CareerTransitions({
         </div>
       </header>
       <main id="career-main" className="ct-main">
-        <div className="ct-casebar">
-          <span>{t("Explore an example", "从示例开始")}</span>
-          {TRANSITION_CASES.filter((sample) =>
-            players.some((p) => p.id === sample.player),
-          ).map((sample) => (
-            <button
-              key={sample.player}
-              aria-pressed={
-                selection.player === sample.player && viewingStrongest
-              }
-              onClick={() => pickPlayer(sample.player)}
-            >
-              {t(sample.en, sample.zh)}
-            </button>
-          ))}
-        </div>
         <div className="ct-identity">
           <div className="ct-player">
             <PlayerPortrait playerId={a.playerId} name={a.name} />
             <div>
               <h1 className="ct-sr">
-                {a.name}
-                {selectedMatch && " / " + selectedMatch.b.name} ·{" "}
-                {t("Career transitions", "生涯转型")}
+                {a.name} · {t("Career transitions", "生涯转型")}
               </h1>
               <PlayerPicker
                 players={players}
@@ -348,111 +323,8 @@ export default function CareerTransitions({
               </p>
             </div>
           </div>
-          {selectedMatch && (
-            <div className="pc-peer-identity">
-              <span className="pc-versus">vs</span>
-              <PlayerPortrait
-                playerId={selectedMatch.b.playerId}
-                name={selectedMatch.b.name}
-              />
-              <div>
-                <small>{t("Historical twin", "历史匹配球员")}</small>
-                <strong>{selectedMatch.b.name}</strong>
-                <p>
-                  {selectedMatch.b.position} ·{" "}
-                  {seasonLabel(selectedMatch.a.season)} →{" "}
-                  {seasonLabel(selectedMatch.b.season)} ·{" "}
-                  {(selectedMatch.b.teams ?? [selectedMatch.b.team]).join("/")}
-                </p>
-              </div>
-            </div>
-          )}
-          <div className="ct-interval">
-            <div className="ct-interval-heading">
-              <span>
-                {viewingStrongest
-                  ? t("Largest detected shift", "系统识别的最大变化")
-                  : t("Comparison window", "当前对比区间")}
-              </span>
-              <strong>
-                {seasonLabel(a.season)} → {seasonLabel(b.season)}
-              </strong>
-              <button
-                type="button"
-                aria-expanded={editingSeasons}
-                aria-controls="career-season-controls"
-                onClick={() => setEditingSeasons(!editingSeasons)}
-              >
-                {editingSeasons
-                  ? t("Hide season controls", "收起赛季选择")
-                  : t("Choose seasons", "手动选赛季")}
-              </button>
-            </div>
-            <div
-              className="ct-season-controls"
-              id="career-season-controls"
-              hidden={!editingSeasons}
-            >
-              {pair.map((r, i) => (
-                <label key={i}>
-                  <span>
-                    {i
-                      ? t("Later season", "较晚赛季")
-                      : t("Earlier season", "较早赛季")}
-                  </span>
-                  <select
-                    value={r.season}
-                    aria-label={
-                      i
-                        ? t("Later season", "较晚赛季")
-                        : t("Earlier season", "较早赛季")
-                    }
-                    onChange={(e) => {
-                      setPeer(null);
-                      setSelection({
-                        ...selection,
-                        [i ? "to" : "from"]: Number(e.target.value),
-                      });
-                    }}
-                  >
-                    {rows
-                      .filter((s) =>
-                        i ? s.season > a.season : s.season < b.season,
-                      )
-                      .map((s) => (
-                        <option key={s.id} value={s.season}>
-                          {seasonLabel(s.season)} · {s.team}
-                          {s.age != null
-                            ? " · " + t("age " + s.age, s.age + " 岁")
-                            : ""}
-                        </option>
-                      ))}
-                  </select>
-                </label>
-              ))}
-            </div>
-          </div>
         </div>
-        {selectedMatch && (
-          <ComparisonTakeaway
-            pairs={[
-              [a, b],
-              [selectedMatch.a, selectedMatch.b],
-            ]}
-            changes={[changes, zoneChanges(selectedMatch.a, selectedMatch.b)]}
-            band={band}
-            followup={followup}
-            reference={thirdSeasonReference(
-              ranking.matches,
-              careers,
-              b.season,
-              band,
-              changes[band]!,
-            )}
-            t={t}
-          />
-        )}
-        <div className="ct-grid">
+        <div className={selectedMatch ? "ct-grid pc-visuals" : "ct-grid"}>
           <CareerShifts
             result={detected}
             a={a}
@@ -464,49 +336,61 @@ export default function CareerTransitions({
           />
           <TransitionMatches
             key={a.id + "/" + b.id}
-            a={a}
-            b={b}
             ranking={ranking}
             selected={selectedMatch}
             onSelect={setPeer}
-            followup={followup}
-            band={band}
-            onBand={setZone}
             t={t}
-          >
-            {selectedMatch && (
-              <div className="ct-grid pc-visuals">
-                <PairedCareerCharts
-                  key={selectedMatch.b.id}
-                  rows={rows}
-                  peerRows={careers.get(selectedMatch.b.playerId)!}
-                  a={a}
-                  b={b}
-                  peerEnd={selectedMatch.b}
-                  shifts={detected.shifts}
-                  onShift={pickShift}
-                  band={band}
-                  zone={zone}
-                  onZone={setZone}
-                  onPick={pickColumn}
-                  t={t}
-                />
-                <LocationCourts
-                  selected={matrix}
-                  twinMatrix
-                  followup={followup}
-                  index={shotIndex}
-                  indexError={indexError}
-                  onRetryIndex={retryIndex}
-                  zone={zone}
-                  hoverZone={null}
-                  onClearZone={() => setZone(null)}
-                  focus={null}
-                  t={t}
-                />
-              </div>
-            )}
-          </TransitionMatches>
+          />
+          {selectedMatch && (
+            <>
+              <ComparisonTakeaway
+                pairs={[
+                  [a, b],
+                  [selectedMatch.a, selectedMatch.b],
+                ]}
+                band={band}
+                followup={followup}
+                t={t}
+              />
+              <PairedCareerCharts
+                key={selectedMatch.b.id}
+                rows={rows}
+                peerRows={careers.get(selectedMatch.b.playerId)!}
+                a={a}
+                b={b}
+                peerEnd={selectedMatch.b}
+                shifts={detected.shifts}
+                onShift={pickShift}
+                band={band}
+                zone={zone}
+                onZone={setZone}
+                onPick={pickColumn}
+                t={t}
+              />
+              <LocationCourts
+                selected={matrix}
+                twinMatrix
+                followup={followup}
+                index={shotIndex}
+                indexError={indexError}
+                onRetryIndex={retryIndex}
+                zone={zone}
+                hoverZone={null}
+                onClearZone={() => setZone(null)}
+                focus={null}
+                t={t}
+              />
+              <MatchComparisonTables
+                a={a}
+                b={b}
+                selected={selectedMatch}
+                followup={followup}
+                band={band}
+                onBand={setZone}
+                t={t}
+              />
+            </>
+          )}
           {!selectedMatch && (
             <>
               <DietHistory
@@ -621,25 +505,8 @@ export default function CareerTransitions({
               );
             })}
           </section>
-          {selectedMatch && (
-            <details className="ct-panel pc-source-data">
-              <summary>
-                {t(
-                  "Full season data for both players",
-                  "两人起止赛季的完整数据",
-                )}
-              </summary>
-              <SeasonComparisonTable data={data} selected={matrix} t={t} />
-            </details>
-          )}
         </div>
-        <footer className="ct-footer">
-          <span>
-            {t("NBA regular season", "NBA 常规赛")} · Basketball-Reference /
-            NBA.com · {seasonLabel(data.metadata.firstSeason)} —{" "}
-            {seasonLabel(data.metadata.lastSeason)}
-          </span>
-        </footer>
+        <footer className="ct-footer">26fall 6411D GOAT</footer>
       </main>
     </div>
   );
