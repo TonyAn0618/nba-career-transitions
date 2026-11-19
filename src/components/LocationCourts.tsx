@@ -28,6 +28,13 @@ const WIDTH = 270,
   SCALE = 5;
 const px = (x: number) => PAD + (x + 25) * SCALE;
 const py = (y: number) => PAD + y * SCALE;
+export interface CourtComparisonSlot {
+  row?: SeasonRow;
+  player: SeasonRow;
+  year: number;
+  label: string;
+  message?: string;
+}
 function CourtLines({ full }: { full: boolean }) {
   return (
     <g fill="none" stroke="#90a3b3" strokeWidth=".8" pointerEvents="none">
@@ -65,6 +72,8 @@ function CourtLines({ full }: { full: boolean }) {
 }
 export default function LocationCourts({
   selected,
+  comparisonSlots,
+  initialMode = "points",
   twinMatrix = false,
   followup,
   index,
@@ -77,6 +86,8 @@ export default function LocationCourts({
   t,
 }: {
   selected: SeasonRow[];
+  comparisonSlots?: CourtComparisonSlot[];
+  initialMode?: ShotMode;
   twinMatrix?: boolean;
   followup?: TwinFollowup;
   index: ShotIndex | null;
@@ -88,7 +99,7 @@ export default function LocationCourts({
   focus: number | null;
   t: Translate;
 }) {
-  const [mode, setMode] = useState<ShotMode>("points"),
+  const [mode, setMode] = useState<ShotMode>(initialMode),
     [full, setFull] = useState(false),
     [minShots, setMinShots] = useState(5),
     [hoverCell, setHoverCell] = useState<string | null>(null),
@@ -110,13 +121,25 @@ export default function LocationCourts({
   const tracked = phase > 0 ? followup?.[phase] : undefined;
   const slots = useMemo(
     () =>
-      tracked
-        ? [selected[2], selected[3], tracked[0].row, tracked[1].row]
-        : selected,
-    [selected, tracked],
+      comparisonSlots
+        ? comparisonSlots.map((slot) => slot.row)
+        : tracked
+          ? [selected[2], selected[3], tracked[0].row, tracked[1].row]
+          : selected,
+    [selected, tracked, comparisonSlots],
   );
-  const color = (slot: number) => PLAYER_COLORS[twinMatrix ? slot % 2 : slot];
+  const color = (slot: number) =>
+    PLAYER_COLORS[
+      comparisonSlots
+        ? comparisonSlots[slot].player.playerId === selected[0].playerId
+          ? 0
+          : 1
+        : twinMatrix
+          ? slot % 2
+          : slot
+    ];
   const label = (slot: number) => {
+    if (comparisonSlots) return comparisonSlots[slot].label;
     if (!twinMatrix) return PLAYER_LETTERS[slot];
     if (tracked && slot >= 2) return t(`${phase}y later`, `${phase} 年后`);
     return slot < 2 && !tracked ? t("Earlier", "较早季") : t("Later", "较晚季");
@@ -184,7 +207,10 @@ export default function LocationCourts({
           row,
           file,
           shots,
-          cells: shotCells(shots, full),
+          cells: shotCells(shots, full).map((cell) => ({
+            ...cell,
+            share: all.length ? cell.attempts / all.length : 0,
+          })),
           summary: shotSummary(shots),
           outside: shots.filter((s) => !inCourt(s, full)).length,
         };
@@ -232,7 +258,7 @@ export default function LocationCourts({
         </div>
       </div>
       <div className="court-toolbar">
-        {followup && (
+        {followup && !comparisonSlots && (
           <select
             className="pc-court-stage"
             value={phase}
@@ -287,9 +313,31 @@ export default function LocationCourts({
           {full ? t("Full court", "全场") : t("Half court", "半场")}
         </button>
       </div>
-      <div className={"courts-grid count-" + selected.length}>
+      <div className={"courts-grid count-" + slots.length}>
         {views.map((v, i) => {
           if (!v) {
+            if (comparisonSlots) {
+              const slot = comparisonSlots[i];
+              return (
+                <article
+                  className="court-player pc-missing-season"
+                  key={`${slot.player.playerId}:${slot.year}`}
+                >
+                  <div
+                    className="court-player-name"
+                    style={{ color: color(i) }}
+                  >
+                    <b>{slot.player.name}</b>
+                    <span>
+                      {slot.label} · {seasonLabel(slot.year)}
+                    </span>
+                  </div>
+                  <div className="court-empty">
+                    {slot.message ?? t("No season record", "无赛季记录")}
+                  </div>
+                </article>
+              );
+            }
             const record = tracked![i - 2],
               player = selected[i];
             return (
@@ -605,66 +653,74 @@ export default function LocationCourts({
           );
         })}
       </div>
-      <div className="court-readout" aria-live="polite">
-        {point && mode === "points" ? (
-          <span>
-            <b style={{ color: color(point.slot) }}>
-              {label(point.slot)}
-              {twinMatrix && " · " + shortName(slots[point.slot]?.name ?? "")}
-            </b>{" "}
-            · {point.shot[7]} ·{" "}
-            {point.shot[2] ? t("Made", "命中") : t("Missed", "未中")} ·{" "}
-            {point.shot[4]} ft · {point.shot[12]}
-          </span>
-        ) : activeCell ? (
-          <span>
-            {t(
-              "Same 5 × 5 ft region across all players",
-              "同一 5 × 5 英尺区域同步比较",
-            )}
-            {pinnedCell && (
-              <button
-                onClick={() => {
-                  setPinnedCell(null);
-                  setHoverCell(null);
-                }}
-              >
-                {t("Clear", "清除")}
-              </button>
-            )}
-          </span>
-        ) : (
-          <span>
-            {t(
-              "Hover a region to compare · click to hold",
-              "悬停同一区域比较 · 点击固定",
-            )}
-          </span>
-        )}
-      </div>
-      <div className="panel-foot">
-        <span>
-          {mode === "points"
-            ? t("● Made  ○ Missed", "● 命中  ○ 未中")
-            : mode === "frequency"
-              ? t("Cell / filtered recorded shots", "网格出手 / 筛选后坐标记录")
-              : t(
-                  `Makes / attempts · gray < ${minShots} shots`,
-                  `命中 / 出手 · 灰色 < ${minShots}次`,
+      {views.some((view) => view?.file) && (
+        <>
+          <div className="court-readout" aria-live="polite">
+            {point && mode === "points" ? (
+              <span>
+                <b style={{ color: color(point.slot) }}>
+                  {label(point.slot)}
+                  {twinMatrix &&
+                    " · " + shortName(slots[point.slot]?.name ?? "")}
+                </b>{" "}
+                · {point.shot[7]} ·{" "}
+                {point.shot[2] ? t("Made", "命中") : t("Missed", "未中")} ·{" "}
+                {point.shot[4]} ft · {point.shot[12]}
+              </span>
+            ) : activeCell ? (
+              <span>
+                {t(
+                  "Same 5 × 5 ft region across all players",
+                  "同一 5 × 5 英尺区域同步比较",
                 )}
-        </span>
-        {mode === "frequency" ? (
-          <b className="heat-legend">
-            0 <i /> {percent(maxShare)}
-          </b>
-        ) : mode === "accuracy" ? (
-          <b className="heat-legend">
-            0 <i /> 100%
-          </b>
-        ) : (
-          <span>NBA.com · 2003–25</span>
-        )}
-      </div>
+                {pinnedCell && (
+                  <button
+                    onClick={() => {
+                      setPinnedCell(null);
+                      setHoverCell(null);
+                    }}
+                  >
+                    {t("Clear", "清除")}
+                  </button>
+                )}
+              </span>
+            ) : (
+              <span>
+                {t(
+                  "Hover a region to compare · click to hold",
+                  "悬停同一区域比较 · 点击固定",
+                )}
+              </span>
+            )}
+          </div>
+          <div className="panel-foot">
+            <span>
+              {mode === "points"
+                ? t("● Made  ○ Missed", "● 命中  ○ 未中")
+                : mode === "frequency"
+                  ? t(
+                      "Cell / all recorded shots",
+                      "网格出手 / 当季全部坐标记录",
+                    )
+                  : t(
+                      `Makes / attempts · gray < ${minShots} shots`,
+                      `命中 / 出手 · 灰色 < ${minShots}次`,
+                    )}
+            </span>
+            {mode === "frequency" ? (
+              <b className="heat-legend">
+                0 <i /> {percent(maxShare)}
+              </b>
+            ) : mode === "accuracy" ? (
+              <b className="heat-legend">
+                0 <i /> 100%
+              </b>
+            ) : (
+              <span>NBA.com · 2003–25</span>
+            )}
+          </div>
+        </>
+      )}
     </section>
   );
 }

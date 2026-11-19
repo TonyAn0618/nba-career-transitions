@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { RotateCcw } from "lucide-react";
-import CareerTransitions from "./components/CareerTransitions";
+import CareerPathExplorer from "./components/CareerPathExplorer";
 import type { Dataset } from "./lib/types";
 
 const query = new URLSearchParams(window.location.search);
@@ -50,5 +50,5 @@ export default function App() {
         )}
       </div>
     );
-  return <CareerTransitions data={data} query={query} />;
+  return <CareerPathExplorer data={data} query={query} />;
 }
