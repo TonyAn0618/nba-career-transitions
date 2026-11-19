@@ -2,6 +2,12 @@
 
 从一名球员的整段生涯中找到出手分布变化最明显的区间，查看哪位历史球员在相同年龄段经历过相似变化，以及他随后三个赛季的得分效率和产量。默认案例是 Anthony Edwards，球员、区间和历史 twin 都可以切换，当前选择可以通过网址分享。
 
+## 在线查看
+
+[打开生涯转型网站](https://tonyan0618.github.io/nba-career-transitions/)。
+
+有写权限的组员可以向 `main` 提交 PR。PR 结束草稿状态、构建和测试通过且没有合并冲突后，GitHub 会自动合并，无需另行审批。其他贡献者的 PR 由组员审核。每次更新 `main` 都会触发部署；发布成功后刷新同一网址即可看到新版。[查看构建与发布进度](https://github.com/TonyAn0618/nba-career-transitions/actions/workflows/pages.yml)
+
 ## 本地运行
 
 首次安装需要 Node.js 22.12+、npm、Python 3.10+、curl 和网络。在仓库根目录执行以下命令。
