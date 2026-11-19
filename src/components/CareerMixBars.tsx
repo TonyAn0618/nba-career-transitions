@@ -60,12 +60,6 @@ export default function CareerMixBars({
     <section className="ct-panel pc-mix">
       <div className="ct-panel-head">
         <h2>{t("Career shot mix by age", "生涯出手分布 · 按年龄对齐")}</h2>
-        <span>
-          {t(
-            "Select a season to update both pies",
-            "点选赛季柱，同步切换两张饼图",
-          )}
-        </span>
       </div>
       <div className="pc-mix-tools">
         <div
@@ -87,14 +81,7 @@ export default function CareerMixBars({
             </button>
           ))}
         </div>
-        {zone === null ? (
-          <span className="pc-zoom-hint">
-            {t(
-              "Select a distance to magnify small shares.",
-              "点选距离，可放大小占比。",
-            )}
-          </span>
-        ) : (
+        {zone !== null && (
           <label className="pc-scale">
             {t("Shared scale", "两人共用纵轴")}{" "}
             <select value={range} onChange={(e) => setRange(e.target.value)}>
@@ -281,17 +268,14 @@ export default function CareerMixBars({
         })}
       </div>
       <div className="ct-panel-note pc-mix-note">
-        <span>
-          {zone === null
-            ? t(
-                "Each column totals 100%. Hatching marks missing data.",
-                "每根完整柱合计 100%。斜纹表示数据缺失。",
-              )
-            : t(
-                "Labels show actual shares. ↑ exceeds the selected scale. Hatching marks missing data.",
-                "数字为实际出手占比。↑ 表示高于纵轴上限，斜纹表示数据缺失。",
-              )}
-        </span>
+        {zone !== null && (
+          <span>
+            {t(
+              "Labels show actual shares. ↑ exceeds the selected scale. Hatching marks missing data.",
+              "数字为实际出手占比。↑ 表示高于纵轴上限，斜纹表示数据缺失。",
+            )}
+          </span>
+        )}
         {focus.rows[0] && (
           <button onClick={() => onPick(focus.rows[0]!)}>
             {t("Compare adjacent seasons", "比较相邻两季")}

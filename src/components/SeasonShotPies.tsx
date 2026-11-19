@@ -124,16 +124,15 @@ export default function SeasonShotPies({
     row && completeProfile(row) ? row : undefined,
   );
   return (
-    <div
-      className="pc-pies"
-      role="group"
+    <section
+      className="ct-panel pc-pies"
       aria-label={t(
         "Shot mix in the selected seasons",
         "所选赛季的双人出手构成",
       )}
     >
       <div className="pc-pies-heading">
-        <h3>{t("Selected season · shot mix", "所选赛季 · 五区出手构成")}</h3>
+        <h2>{t("Selected season · shot mix", "所选赛季 · 五区出手构成")}</h2>
         <div className="pc-phase-stepper">
           <button
             disabled={!previous}
@@ -219,6 +218,6 @@ export default function SeasonShotPies({
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   );
 }
