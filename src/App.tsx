@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { RotateCcw } from "lucide-react";
+import AgeAtlas from "./components/AgeAtlas";
 import CareerTransitions from "./components/CareerTransitions";
 import type { Dataset } from "./lib/types";
 
@@ -50,5 +51,7 @@ export default function App() {
         )}
       </div>
     );
-  return <CareerTransitions data={data} query={query} />;
+  if (query.get("view") === "interval" || query.has("from"))
+    return <CareerTransitions data={data} query={query} />;
+  return <AgeAtlas data={data} query={query} />;
 }

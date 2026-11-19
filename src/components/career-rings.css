@@ -1,0 +1,448 @@
+.career-rings {
+  --cr-base: #182327;
+  --cr-rule: #344447;
+  --cr-text: #f1f0e7;
+  --cr-muted: #a7b9b6;
+  --cr-highlight: #efbd74;
+  display: grid;
+  grid-template-columns: minmax(0, 0.87fr) minmax(0, 1.13fr);
+  color: var(--cr-text);
+  background: var(--cr-base);
+  border: 1px solid var(--cr-rule);
+  border-radius: 14px;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+}
+.career-rings .cr-overview,
+.career-rings .cr-details {
+  min-width: 0;
+  padding: clamp(16px, 2vw, 29px);
+}
+.career-rings .cr-overview {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--cr-rule);
+}
+.career-rings .cr-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.career-rings .cr-heading h2 {
+  color: var(--cr-text);
+  margin: 0;
+  font-family: inherit;
+  font-size: clamp(18px, 1.5vw, 23px);
+  font-weight: 650;
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+}
+.career-rings .cr-metric {
+  background: #111a1d;
+  border: 1px solid var(--cr-rule);
+  border-radius: 6px;
+  padding: 2px;
+  display: inline-flex;
+  gap: 1px;
+}
+.career-rings .cr-metric button {
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: var(--cr-muted);
+  padding: 5px 8px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.28;
+}
+.career-rings .cr-metric button[aria-pressed="true"] {
+  background: #344345;
+  color: var(--cr-text);
+}
+.career-rings button:focus-visible,
+.career-rings input:focus-visible {
+  outline-color: var(--cr-highlight);
+}
+.career-rings .cr-figure {
+  margin: auto 0 0;
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.career-rings .cr-figure svg {
+  width: 100%;
+  max-width: 410px;
+  height: auto;
+  display: block;
+  font-family: inherit;
+  overflow: visible;
+}
+.career-rings .cr-ring {
+  cursor: crosshair;
+}
+.career-rings .cr-selected-ring circle {
+  fill: none;
+  stroke: var(--cr-highlight);
+  stroke-width: 0.95;
+}
+.career-rings .cr-sector-label {
+  fill: #cbd8d2;
+  font-size: 9px;
+  font-weight: 550;
+}
+.career-rings .cr-sector-label line {
+  stroke: #849692;
+  stroke-width: 0.8;
+}
+.career-rings .cr-sector-active {
+  fill: var(--cr-highlight);
+}
+.career-rings .cr-hub-label,
+.career-rings .cr-hub-season {
+  fill: var(--cr-muted);
+  font-size: 7.5px;
+}
+.career-rings .cr-hub-label {
+  font-size: 7px;
+  letter-spacing: 0.1em;
+}
+.career-rings .cr-hub-age {
+  fill: var(--cr-text);
+  font-size: 29px;
+  font-weight: 650;
+  letter-spacing: -0.055em;
+}
+.career-rings figcaption,
+.career-rings .cr-note {
+  font-size: 12px;
+  color: var(--cr-muted);
+  line-height: 1.5;
+}
+.career-rings figcaption {
+  text-align: center;
+  margin: 4px 0 8px;
+}
+.career-rings .cr-legend {
+  margin-bottom: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  column-gap: 5px;
+  row-gap: 4px;
+  color: #b7c7c3;
+  font-size: 11px;
+}
+.career-rings .cr-legend > i {
+  width: clamp(42px, 5.2vw, 75px);
+  height: 6px;
+  border-radius: 2px;
+}
+.career-rings .cr-unavailable {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+}
+.career-rings .cr-unavailable i {
+  height: 10px;
+  width: 12px;
+  background: repeating-linear-gradient(130deg, #243136 0 2px, #84928e 2px 3px);
+}
+.career-rings .cr-season {
+  color: var(--cr-highlight);
+  font-size: 14px;
+  font-weight: 600;
+}
+.career-rings .cr-stats {
+  table-layout: fixed;
+  border-collapse: collapse;
+  width: 100%;
+  color: var(--cr-text);
+  margin-top: 18px;
+  text-align: left;
+}
+.career-rings .cr-stats th,
+.career-rings .cr-stats td {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--cr-rule);
+  padding: 7px 9px;
+  text-align: left;
+}
+.career-rings .cr-stats th:first-child {
+  width: 31%;
+  padding-left: 0;
+}
+.career-rings .cr-stats tr > :last-child {
+  padding-right: 0;
+  text-align: right;
+  width: 14%;
+}
+.career-rings .cr-stats thead th {
+  padding-top: 0;
+  color: var(--cr-muted);
+  font-size: 11px;
+  font-weight: 550;
+  line-height: 1.35;
+}
+.career-rings .cr-stats tbody th button {
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  color: var(--cr-text);
+  font-size: 13px;
+  line-height: 1.3;
+}
+.career-rings .cr-stats tbody th button b {
+  font-weight: 600;
+}
+.career-rings .cr-stats tbody th button:hover b {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.career-rings .cr-stats tbody th small {
+  color: var(--cr-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+.career-rings .cr-value-cell,
+.career-rings .cr-count {
+  font-size: 14px;
+  font-weight: 550;
+}
+.career-rings .cr-value-cell span {
+  display: block;
+  margin-bottom: 4px;
+}
+.career-rings .cr-track,
+.career-rings .cr-track i {
+  display: block;
+  height: 3px;
+  border-radius: 1px;
+}
+.career-rings .cr-track {
+  background: #304145;
+  max-width: 116px;
+}
+.career-rings .cr-track i {
+  background: #81baa8;
+}
+.career-rings .cr-value-cell:nth-child(3) .cr-track i {
+  background: #becac6;
+}
+.career-rings .cr-count sup {
+  color: var(--cr-highlight);
+}
+.career-rings .cr-stats .cr-focused th,
+.career-rings .cr-stats .cr-focused td {
+  background: #233235;
+}
+.career-rings .cr-stats .cr-focused b {
+  color: var(--cr-highlight);
+}
+.career-rings .cr-note {
+  margin: 10px 0 0;
+}
+.career-rings .cr-scrubber {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  grid-column: 1/-1;
+  padding: 10px clamp(14px, 2vw, 29px);
+  border-top: 1px solid var(--cr-rule);
+}
+.career-rings .cr-scrubber button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #45565a;
+  border-radius: 50%;
+  color: var(--cr-text);
+  background: transparent;
+  flex-shrink: 0;
+}
+.career-rings .cr-scrubber button:hover:enabled {
+  color: var(--cr-highlight);
+  border-color: var(--cr-highlight);
+}
+.career-rings .cr-end-age {
+  color: var(--cr-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.career-rings .cr-scrubber input {
+  accent-color: var(--cr-highlight);
+  min-width: 0;
+  flex: 1;
+  height: 25px;
+  cursor: pointer;
+  margin: 0;
+}
+.career-rings .cr-scrubber input[type="range"] {
+  appearance: none;
+  background: transparent;
+}
+.career-rings .cr-scrubber input::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 4px;
+  background: #536568;
+}
+.career-rings .cr-scrubber input::-moz-range-track {
+  height: 3px;
+  border-radius: 4px;
+  background: #536568;
+}
+.career-rings .cr-scrubber input::-webkit-slider-thumb {
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--cr-base);
+  border-radius: 50%;
+  margin-top: -6px;
+  background: var(--cr-highlight);
+  box-shadow: 0 0 0 1px var(--cr-highlight);
+}
+.career-rings .cr-scrubber input::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--cr-base);
+  border-radius: 50%;
+  background: var(--cr-highlight);
+  box-shadow: 0 0 0 1px var(--cr-highlight);
+}
+@media (max-width: 760px) {
+  .career-rings {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .career-rings .cr-overview {
+    border-right: 0;
+  }
+  .career-rings .cr-details {
+    border-top: 1px solid var(--cr-rule);
+    grid-row: 3;
+  }
+  .career-rings .cr-figure svg {
+    max-width: 330px;
+  }
+  .career-rings .cr-scrubber {
+    grid-row: 2;
+    gap: 8px;
+  }
+}
+@media (max-width: 400px) {
+  .career-rings .cr-overview,
+  .career-rings .cr-details {
+    padding: 14px;
+  }
+  .career-rings .cr-stats th,
+  .career-rings .cr-stats td {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .career-rings .cr-stats th:first-child {
+    width: 32%;
+  }
+}
+
+.career-rings .cr-comparison {
+  border-top: 1px solid var(--cr-rule);
+  margin-top: 14px;
+  padding-top: 12px;
+}
+.career-rings .cr-comparison-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+}
+.career-rings .cr-comparison-head h3 {
+  margin: 0;
+  color: var(--cr-text);
+  line-height: 1.3;
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.career-rings .cr-comparison-head label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--cr-muted);
+  font-size: 11px;
+}
+.career-rings .cr-comparison-head select {
+  font: inherit;
+  color: var(--cr-text);
+  background: #172024;
+  border: 1px solid #44565a;
+  border-radius: 5px;
+  padding: 4px 6px;
+  max-width: 100%;
+}
+.career-rings .cr-delta-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 8px 0 0;
+}
+.career-rings .cr-delta-table th,
+.career-rings .cr-delta-table td {
+  text-align: right;
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+  padding: 4px 0 4px 6px;
+  font-weight: 550;
+}
+.career-rings .cr-delta-table thead th {
+  color: var(--cr-muted);
+  font-size: 11px;
+  border-bottom: 1px solid var(--cr-rule);
+  font-weight: 500;
+}
+.career-rings .cr-delta-table tr > :first-child {
+  width: 37%;
+  text-align: left;
+  padding-left: 0;
+}
+.career-rings .cr-delta-table thead b,
+.career-rings .cr-delta-table thead small {
+  display: block;
+}
+.career-rings .cr-delta-table thead b {
+  font-size: 13px;
+  color: var(--cr-text);
+}
+.career-rings .cr-delta-table thead small {
+  font-size: 10px;
+  color: var(--cr-muted);
+}
+.career-rings .cr-delta-table tbody th {
+  font-size: 12px;
+  color: var(--cr-muted);
+}
+.career-rings .cr-delta-table tbody td:last-child {
+  color: var(--cr-highlight);
+}
+.career-rings .cr-small-sample,
+.career-rings .cr-comparison-empty {
+  margin: 7px 0 0;
+  color: var(--cr-muted);
+  font-size: 12px;
+}

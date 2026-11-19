@@ -2,7 +2,7 @@
 
 The shot charts use **4,450,789 recorded NBA regular-season field-goal attempts**, covering **2003–04 through 2024–25**, **2,265 NBA player IDs** and **10,872 player-seasons**. These are observed shot coordinates and outcomes, not random points, estimates from distance bands, or generated examples. This is a fixed historical snapshot; it contains no 2025–26 or 2026–27 results.
 
-The season-level analysis dataset remains separate: it covers 1996–97 through 2024–25 and more historical players. A player can therefore have season statistics without a shot-location file. Missing coordinate data must remain visibly unavailable.
+The season-level analysis dataset remains separate: it covers 1996–97 through 2025–26 and more historical players. A player can therefore have season statistics without a shot-location file. Missing coordinate data must remain visibly unavailable.
 
 ## Source and provenance
 

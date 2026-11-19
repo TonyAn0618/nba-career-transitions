@@ -23,6 +23,7 @@ const normalize = (text: string) =>
 export default function PlayerPicker({
   players,
   prioritizePopular = true,
+  triggerText,
   value,
   onChange,
   label,
@@ -30,6 +31,7 @@ export default function PlayerPicker({
 }: {
   players: (Player & { description?: string })[];
   prioritizePopular?: boolean;
+  triggerText?: string;
   value: string;
   onChange: (id: string) => void;
   label: string;
@@ -88,7 +90,9 @@ export default function PlayerPicker({
           setActive(0);
         }}
       >
-        <span>{player?.name ?? t("Choose a player", "选择球员")}</span>
+        <span>
+          {triggerText ?? player?.name ?? t("Choose a player", "选择球员")}
+        </span>
         <ChevronDown size={17} />
       </button>
       {open && (

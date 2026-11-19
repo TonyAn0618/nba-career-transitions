@@ -1058,12 +1058,12 @@
     {
       "file": "public/data/nba.json",
       "projection": "player_id_name_and_season_fga",
-      "sha256": "6d329c7d9a143f2ef5d705b5da744a5261b96ae908bfe78dabbb4d5b8bd3f850"
+      "sha256": "9d91cade3d6aa888939ec3b88dcf58c98009c2438a53b55974dfcf5b3352bc61"
     },
     {
       "file": "src/lib/player-photos.json",
       "projection": "player_nba_id_map",
-      "sha256": "2b159d0006ab46c82c9971ff6177f64cb155322debb8a6a20de1203660b48f0f"
+      "sha256": "1c3715217708a0cc48d3daf64407cdbf27f5def7eddf9fea63e10a660fe77485"
     }
   ],
   "index": {

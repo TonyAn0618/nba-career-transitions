@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-04T06:07:10.582Z",
+  "generatedAt": "2026-11-19T16:03:07.094Z",
   "identitySource": {
     "repository": "swar/nba_api",
     "commit": "ec190700dab27498b3f75ecac8f932e3a3ee1606",
@@ -15,15 +15,96 @@
   },
   "datasetSourceCommit": "3981e43c07e963db539c527beb8a7b4b99ec8716",
   "coverage": {
-    "players": 2756,
-    "matched": 2663,
+    "players": 2859,
+    "matched": 2762,
     "ambiguous": 40,
-    "unmatched": 53,
-    "bundled": 22,
+    "unmatched": 57,
+    "bundled": 27,
     "knownPlaceholderPhotos": 2,
-    "bundledBytes": 363143
+    "bundledBytes": 445548
   },
   "images": [
+    {
+      "playerId": "edwaran01",
+      "nbaId": 1630162,
+      "name": "Anthony Edwards",
+      "file": "public/players/edwaran01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/1630162.png",
+      "bytes": 16291,
+      "sha256": "583f8675794ea93af37fabf18bfe8ee9fc192a2454dac3905ee89c810c293066"
+    },
+    {
+      "playerId": "lopezbr01",
+      "nbaId": 201572,
+      "name": "Brook Lopez",
+      "file": "public/players/lopezbr01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201572.png",
+      "bytes": 15188,
+      "sha256": "54dad699867ec5a77a412c5f66f4e3e33becbadbfa0a37e7392127c29b3b2693"
+    },
+    {
+      "playerId": "derozde01",
+      "nbaId": 201942,
+      "name": "DeMar DeRozan",
+      "file": "public/players/derozde01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201942.png",
+      "bytes": 16488,
+      "sha256": "b241ce772539c1bc6ffdd781b8200b22ce42d643f281558dc2d46fe92d9154f8"
+    },
+    {
+      "playerId": "westbru01",
+      "nbaId": 201566,
+      "name": "Russell Westbrook",
+      "file": "public/players/westbru01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201566.png",
+      "bytes": 16726,
+      "sha256": "59557b3cc237818c10ad00fba31077732e8744fdec337694836e15e3558bb619"
+    },
+    {
+      "playerId": "howardw01",
+      "nbaId": 2730,
+      "name": "Dwight Howard",
+      "file": "public/players/howardw01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2730.png",
+      "bytes": 17712,
+      "sha256": "84a43ba84f25849bb88592eeb44056d3777c33d1ef689b2f9784ab7d4a1d0175"
+    },
+    {
+      "playerId": "allenra02",
+      "nbaId": 951,
+      "name": "Ray Allen",
+      "file": "public/players/allenra02.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/951.png",
+      "bytes": 16917,
+      "sha256": "a1a63df12462dbd3f4c0d8175fe04939b055755d74d0cfc30629f2a4a61a9571"
+    },
+    {
+      "playerId": "antetgi01",
+      "nbaId": 203507,
+      "name": "Giannis Antetokounmpo",
+      "file": "public/players/antetgi01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203507.png",
+      "bytes": 14566,
+      "sha256": "f4901360d50189e521d7cf7c579296790de08422c5e36bb761643485285495ea"
+    },
+    {
+      "playerId": "barbole01",
+      "nbaId": 2571,
+      "name": "Leandro Barbosa",
+      "file": "public/players/barbole01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2571.png",
+      "bytes": 16522,
+      "sha256": "7d521d12438329e4479147d0d9d630a1abd3aa6b4560ef47a974490de51de8e3"
+    },
+    {
+      "playerId": "bryanko01",
+      "nbaId": 977,
+      "name": "Kobe Bryant",
+      "file": "public/players/bryanko01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/977.png",
+      "bytes": 15401,
+      "sha256": "443d92c40a1394f4ab56039f0902b0d2b5fbdd804d5878d48fdc2dc4659a1a56"
+    },
     {
       "playerId": "curryst01",
       "nbaId": 201939,
@@ -32,6 +113,42 @@
       "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201939.png",
       "bytes": 14651,
       "sha256": "d629352dfe499782f3f0d62dd36b521b37c968931bcfbe6c16862b22dcc58b92"
+    },
+    {
+      "playerId": "davisan02",
+      "nbaId": 203076,
+      "name": "Anthony Davis",
+      "file": "public/players/davisan02.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203076.png",
+      "bytes": 15734,
+      "sha256": "47ef1eab28120af2624c8ba62c331366dcfae3e08b5c1299e68e91579859f5d7"
+    },
+    {
+      "playerId": "doncilu01",
+      "nbaId": 1629029,
+      "name": "Luka Dončić",
+      "file": "public/players/doncilu01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/1629029.png",
+      "bytes": 15494,
+      "sha256": "41c9d52dd88450bc8d41e8c1b3c6b22720078e25b368a2cc93108fb7cbbcb5f8"
+    },
+    {
+      "playerId": "duranke01",
+      "nbaId": 201142,
+      "name": "Kevin Durant",
+      "file": "public/players/duranke01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201142.png",
+      "bytes": 16535,
+      "sha256": "1c5888a817f0e512b9af44bbd60a50fb534c30f76bd73a830866e8c4f74a852e"
+    },
+    {
+      "playerId": "grantje01",
+      "nbaId": 203924,
+      "name": "Jerami Grant",
+      "file": "public/players/grantje01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203924.png",
+      "bytes": 17408,
+      "sha256": "e443dffc4b4733c095cfe99c1f45e276915b763d13c0238a9adb32fbdcb560a1"
     },
     {
       "playerId": "jamesle01",
@@ -52,60 +169,6 @@
       "sha256": "284f63686291b791c48d2a4204ec9e760b80204e5c157028bf3b751bdaee60ac"
     },
     {
-      "playerId": "antetgi01",
-      "nbaId": 203507,
-      "name": "Giannis Antetokounmpo",
-      "file": "public/players/antetgi01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203507.png",
-      "bytes": 14566,
-      "sha256": "f4901360d50189e521d7cf7c579296790de08422c5e36bb761643485285495ea"
-    },
-    {
-      "playerId": "doncilu01",
-      "nbaId": 1629029,
-      "name": "Luka Dončić",
-      "file": "public/players/doncilu01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/1629029.png",
-      "bytes": 15494,
-      "sha256": "41c9d52dd88450bc8d41e8c1b3c6b22720078e25b368a2cc93108fb7cbbcb5f8"
-    },
-    {
-      "playerId": "tatumja01",
-      "nbaId": 1628369,
-      "name": "Jayson Tatum",
-      "file": "public/players/tatumja01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/1628369.png",
-      "bytes": 16190,
-      "sha256": "b4075e3e7c2908e99af15dffca2902eeae965ca322f62529dbd4d8935c268096"
-    },
-    {
-      "playerId": "duranke01",
-      "nbaId": 201142,
-      "name": "Kevin Durant",
-      "file": "public/players/duranke01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201142.png",
-      "bytes": 16535,
-      "sha256": "1c5888a817f0e512b9af44bbd60a50fb534c30f76bd73a830866e8c4f74a852e"
-    },
-    {
-      "playerId": "bryanko01",
-      "nbaId": 977,
-      "name": "Kobe Bryant",
-      "file": "public/players/bryanko01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/977.png",
-      "bytes": 15401,
-      "sha256": "443d92c40a1394f4ab56039f0902b0d2b5fbdd804d5878d48fdc2dc4659a1a56"
-    },
-    {
-      "playerId": "onealsh01",
-      "nbaId": 406,
-      "name": "Shaquille O'Neal",
-      "file": "public/players/onealsh01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/406.png",
-      "bytes": 17308,
-      "sha256": "9cf401dd099f4e16a2b39d6c9451071a5a81806bf3d613548cd1f7a53d9b642d"
-    },
-    {
       "playerId": "jordami01",
       "nbaId": 893,
       "name": "Michael Jordan",
@@ -113,42 +176,6 @@
       "url": "https://cdn.nba.com/headshots/nba/latest/260x190/893.png",
       "bytes": 18550,
       "sha256": "975a313ae83829a9f613b3a781f704e22d828107e8328b015646b1c192aaea31"
-    },
-    {
-      "playerId": "allenra02",
-      "nbaId": 951,
-      "name": "Ray Allen",
-      "file": "public/players/allenra02.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/951.png",
-      "bytes": 16917,
-      "sha256": "a1a63df12462dbd3f4c0d8175fe04939b055755d74d0cfc30629f2a4a61a9571"
-    },
-    {
-      "playerId": "thornma01",
-      "nbaId": 201977,
-      "name": "Marcus Thornton",
-      "file": "public/players/thornma01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201977.png",
-      "bytes": 18475,
-      "sha256": "1b8983f4086826a6e73aed582efc84d253baba299796a0e291cad30281f9c1c3"
-    },
-    {
-      "playerId": "milescj01",
-      "nbaId": 101139,
-      "name": "C.J. Miles",
-      "file": "public/players/milescj01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/101139.png",
-      "bytes": 15523,
-      "sha256": "6cae65c2ba925b7644c79bf3a346b59e0eb69a8ad01f5e8bfb8f917580a6e7b8"
-    },
-    {
-      "playerId": "barbole01",
-      "nbaId": 2571,
-      "name": "Leandro Barbosa",
-      "file": "public/players/barbole01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2571.png",
-      "bytes": 16522,
-      "sha256": "7d521d12438329e4479147d0d9d630a1abd3aa6b4560ef47a974490de51de8e3"
     },
     {
       "playerId": "kempsh01",
@@ -160,31 +187,22 @@
       "sha256": "e36904934acd2d2d9e31e4cbe85e7e96e9e62e87f5dcd9aa1105730ca7ca6305"
     },
     {
-      "playerId": "wadedw01",
-      "nbaId": 2548,
-      "name": "Dwyane Wade",
-      "file": "public/players/wadedw01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2548.png",
-      "bytes": 12980,
-      "sha256": "ddd86aeb5552681a6318b3e9c9e0d7850abc19b751c2452edb6a5da8f9532715"
+      "playerId": "milescj01",
+      "nbaId": 101139,
+      "name": "C.J. Miles",
+      "file": "public/players/milescj01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/101139.png",
+      "bytes": 15523,
+      "sha256": "6cae65c2ba925b7644c79bf3a346b59e0eb69a8ad01f5e8bfb8f917580a6e7b8"
     },
     {
-      "playerId": "stoudam01",
-      "nbaId": 2405,
-      "name": "Amar'e Stoudemire",
-      "file": "public/players/stoudam01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2405.png",
-      "bytes": 17576,
-      "sha256": "7d65a93c12431fb7ff63673ab092364346b3bf077c2ee713c165ff8b294748a4"
-    },
-    {
-      "playerId": "davisan02",
-      "nbaId": 203076,
-      "name": "Anthony Davis",
-      "file": "public/players/davisan02.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203076.png",
-      "bytes": 15734,
-      "sha256": "47ef1eab28120af2624c8ba62c331366dcfae3e08b5c1299e68e91579859f5d7"
+      "playerId": "onealsh01",
+      "nbaId": 406,
+      "name": "Shaquille O'Neal",
+      "file": "public/players/onealsh01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/406.png",
+      "bytes": 17308,
+      "sha256": "9cf401dd099f4e16a2b39d6c9451071a5a81806bf3d613548cd1f7a53d9b642d"
     },
     {
       "playerId": "randlju01",
@@ -205,6 +223,33 @@
       "sha256": "8446fd4c1e06dddeecda34deb8e71bf9e8f627ab41cb04984c2243e0e89ddad8"
     },
     {
+      "playerId": "stoudam01",
+      "nbaId": 2405,
+      "name": "Amar'e Stoudemire",
+      "file": "public/players/stoudam01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2405.png",
+      "bytes": 17576,
+      "sha256": "7d65a93c12431fb7ff63673ab092364346b3bf077c2ee713c165ff8b294748a4"
+    },
+    {
+      "playerId": "tatumja01",
+      "nbaId": 1628369,
+      "name": "Jayson Tatum",
+      "file": "public/players/tatumja01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/1628369.png",
+      "bytes": 16190,
+      "sha256": "b4075e3e7c2908e99af15dffca2902eeae965ca322f62529dbd4d8935c268096"
+    },
+    {
+      "playerId": "thornma01",
+      "nbaId": 201977,
+      "name": "Marcus Thornton",
+      "file": "public/players/thornma01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201977.png",
+      "bytes": 18475,
+      "sha256": "1b8983f4086826a6e73aed582efc84d253baba299796a0e291cad30281f9c1c3"
+    },
+    {
       "playerId": "valanjo01",
       "nbaId": 202685,
       "name": "Jonas Valančiūnas",
@@ -214,13 +259,13 @@
       "sha256": "34f7ca38f61209b91ef88f20f13b9124e268f62c447cdb13cbb6272dbcaff4aa"
     },
     {
-      "playerId": "grantje01",
-      "nbaId": 203924,
-      "name": "Jerami Grant",
-      "file": "public/players/grantje01.png",
-      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203924.png",
-      "bytes": 17408,
-      "sha256": "e443dffc4b4733c095cfe99c1f45e276915b763d13c0238a9adb32fbdcb560a1"
+      "playerId": "wadedw01",
+      "nbaId": 2548,
+      "name": "Dwyane Wade",
+      "file": "public/players/wadedw01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2548.png",
+      "bytes": 12980,
+      "sha256": "ddd86aeb5552681a6318b3e9c9e0d7850abc19b751c2452edb6a5da8f9532715"
     }
   ],
   "unavailable": [
@@ -228,6 +273,12 @@
     "richaja01"
   ],
   "unresolved": [
+    {
+      "playerId": "balad01",
+      "name": "Adama-Alpha Bal",
+      "reason": "unmatched",
+      "candidates": []
+    },
     {
       "playerId": "whitean01",
       "name": "Andrew White",
@@ -480,6 +531,12 @@
       "candidates": []
     },
     {
+      "playerId": "holmeda01",
+      "name": "DaRon Holmes",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
       "playerId": "johnsda08",
       "name": "David Johnson",
       "reason": "ambiguous",
@@ -544,6 +601,12 @@
           "name": "Eddie Johnson"
         }
       ]
+    },
+    {
+      "playerId": "demineg01",
+      "name": "Egor Dёmin",
+      "reason": "unmatched",
+      "candidates": []
     },
     {
       "playerId": "jetereu01",
@@ -1141,6 +1204,12 @@
           "name": "Walker Russell"
         }
       ]
+    },
+    {
+      "playerId": "claytwa01",
+      "name": "Walter Clayton",
+      "reason": "unmatched",
+      "candidates": []
     },
     {
       "playerId": "tillmxa01",

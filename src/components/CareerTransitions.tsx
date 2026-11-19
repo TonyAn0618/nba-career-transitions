@@ -152,6 +152,7 @@ export default function CareerTransitions({
   useEffect(() => {
     if (!selection) return;
     const params = new URLSearchParams({
+      view: "interval",
       player: selection.player,
       from: String(selection.from),
       to: String(selection.to),

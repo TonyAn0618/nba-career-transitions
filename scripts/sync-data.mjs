@@ -8,7 +8,7 @@ const base =
   commit +
   "/Data/";
 const firstSeason = 1997;
-const lastSeason = 2025;
+const lastSeason = 2026;
 const columns = ["0_3", "3_10", "10_16", "16_3p", "3p"];
 const expectedHashes = {
   "Player Shooting.csv":
@@ -99,6 +99,40 @@ for (const r of totals.rows.filter(inScope)) {
   teams.add(r.team);
   affiliations.set(key(r), teams);
 }
+// Preserve the aggregate rows above. Store team stints separately, keyed by
+// player, season and team. The source has no transaction dates or stint order.
+const tradedTotals = new Map(
+  totals.rows
+    .filter(
+      (r) =>
+        inScope(r) &&
+        affiliations.get(key(r))?.size > 1 &&
+        affiliations.get(key(r)).has(r.team),
+    )
+    .map((r) => [key(r) + ":" + r.team, r]),
+);
+const teamSplits = {};
+for (const r of shooting.rows.filter(inScope)) {
+  const id = key(r);
+  const total = tradedTotals.get(id + ":" + r.team);
+  if (!total) continue;
+  const fga = number(total.fga),
+    fta = number(total.fta),
+    pts = number(total.pts);
+  const denominator = fga !== null && fta !== null ? 2 * (fga + 0.44 * fta) : 0;
+  (teamSplits[id] ??= []).push({
+    team: r.team,
+    games: number(total.g),
+    fga,
+    ts: denominator > 0 && pts !== null ? pts / denominator : null,
+    shares: columns.map((zone) =>
+      number(r["percent_fga_from_x" + zone + "_range"]),
+    ),
+    fg: columns.map((zone) => number(r["fg_percent_from_x" + zone + "_range"])),
+  });
+}
+for (const stints of Object.values(teamSplits))
+  stints.sort((a, b) => a.team.localeCompare(b.team));
 const teamDirectory = teamTotals.rows
   .filter(
     (r) =>
@@ -263,6 +297,7 @@ await writeFile(
   "public/data/nba.json",
   JSON.stringify({ metadata, players, rows, league, teams: teamDirectory }),
 );
+await writeFile("public/data/team-splits.json", JSON.stringify(teamSplits));
 await writeFile(
   "data/source-manifest.json",
   JSON.stringify(metadata, null, 2) + "\n",

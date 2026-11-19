@@ -66,6 +66,7 @@ function CourtLines({ full }: { full: boolean }) {
 export default function LocationCourts({
   selected,
   twinMatrix = false,
+  initialMode = "points",
   followup,
   index,
   indexError,
@@ -78,6 +79,7 @@ export default function LocationCourts({
 }: {
   selected: SeasonRow[];
   twinMatrix?: boolean;
+  initialMode?: ShotMode;
   followup?: TwinFollowup;
   index: ShotIndex | null;
   indexError: boolean;
@@ -88,7 +90,7 @@ export default function LocationCourts({
   focus: number | null;
   t: Translate;
 }) {
-  const [mode, setMode] = useState<ShotMode>("points"),
+  const [mode, setMode] = useState<ShotMode>(initialMode),
     [full, setFull] = useState(false),
     [minShots, setMinShots] = useState(5),
     [hoverCell, setHoverCell] = useState<string | null>(null),
@@ -398,8 +400,12 @@ export default function LocationCourts({
                   )}
                   {t("No recorded locations", "无投篮位置记录")}
                   <small>
-                    {v.row.season < 2004
-                      ? "2003–04 → 2024–25"
+                    {v.row.season < index.metadata.firstSeason ||
+                    v.row.season > index.metadata.lastSeason
+                      ? t(
+                          "Coordinate coverage: 2003–04 to 2024–25",
+                          "坐标覆盖期为 2003–04 至 2024–25",
+                        )
                       : t("No verified player match", "无可验证的球员匹配")}
                   </small>
                 </div>

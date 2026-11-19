@@ -5,10 +5,10 @@
   "source": "Basketball-Reference statistics compiled by Sumitro Datta",
   "seasonType": "NBA regular season",
   "firstSeason": 1997,
-  "lastSeason": 2025,
-  "rowCount": 13987,
-  "playerCount": 2756,
-  "seasonCount": 29,
+  "lastSeason": 2026,
+  "rowCount": 14569,
+  "playerCount": 2859,
+  "seasonCount": 30,
   "sources": [
     {
       "file": "Player Shooting.csv",
@@ -730,7 +730,7 @@
         "issue": "incomplete_distance_distribution"
       }
     ],
-    "completeShares": 13929,
-    "reconciledLeagueSeasons": 29
+    "completeShares": 14511,
+    "reconciledLeagueSeasons": 30
   }
 }
