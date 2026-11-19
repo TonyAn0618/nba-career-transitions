@@ -1,0 +1,54 @@
+name: Merge checked team PRs
+
+on:
+  workflow_run:
+    workflows: ["Build and publish Shot Atlas"]
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  merge:
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      # Use only the GitHub API here. PR code runs in the read-only build job.
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            const {owner, repo} = context.repo;
+            if (!run.head_repository) return;
+            const {data: candidates} = await github.rest.pulls.list({
+              owner, repo, state: 'open', base: 'main',
+              head: run.head_repository.owner.login + ':' + run.head_branch,
+            });
+            const pr = candidates.find(p =>
+              !p.draft && p.user.type === 'User' &&
+              p.head.repo?.id === run.head_repository.id &&
+              p.head.sha === run.head_sha
+            );
+            if (!pr) return;
+
+            const {data: access} = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner, repo, username: pr.user.login,
+            });
+            if (!['admin', 'maintain', 'write'].includes(access.permission)) {
+              core.info('Leaving this PR for manual review.');
+              return;
+            }
+
+            const {data: result} = await github.rest.pulls.merge({
+              owner, repo, pull_number: pr.number, sha: pr.head.sha, merge_method: 'merge',
+            });
+            if (!result.merged) throw new Error(result.message);
+            core.info('Merged PR #' + pr.number + ' at ' + result.sha);
+
+            // A merge made with GITHUB_TOKEN does not trigger a push workflow.
+            await github.rest.actions.createWorkflowDispatch({
+              owner, repo, workflow_id: 'pages.yml', ref: 'main',
+            });
