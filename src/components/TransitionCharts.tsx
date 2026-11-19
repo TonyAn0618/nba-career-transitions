@@ -5,11 +5,11 @@ import { completeProfile } from "../lib/transitions";
 import type { SeasonRow, Translate } from "../lib/types";
 
 export const BAND_COLORS = [
-  "#1d4057",
-  "#377e8c",
-  "#79a9a7",
-  "#e8be88",
-  "#cd6634",
+  "#597292",
+  "#4e746c",
+  "#b5a8bd",
+  "#dcc7a2",
+  "#d99a80",
 ];
 export function bandNames(t: Translate) {
   return [
@@ -202,7 +202,7 @@ export function EfficiencyHistory({ rows, a, b, t }: ChartProps) {
               x2="514"
               y1={y(v)}
               y2={y(v)}
-              stroke={v === 0 ? "#879aa8" : "#e0e6eb"}
+              stroke={v === 0 ? "var(--control-line)" : "var(--line)"}
               strokeDasharray={v === 0 ? "4 3" : undefined}
             />
             <text x="33" y={y(v) + 4} textAnchor="end">
@@ -214,7 +214,7 @@ export function EfficiencyHistory({ rows, a, b, t }: ChartProps) {
         <path
           d={line}
           fill="none"
-          stroke="#385e70"
+          stroke="var(--accent)"
           strokeWidth="2.5"
           strokeLinejoin="round"
         />
@@ -229,7 +229,13 @@ export function EfficiencyHistory({ rows, a, b, t }: ChartProps) {
                   cx={x(r.season)}
                   cy={y(r.rts!)}
                   r={chosen ? 5 : 2.3}
-                  fill={r === b ? "#b95523" : r === a ? "#2869bd" : "#385e70"}
+                  fill={
+                    r === b
+                      ? "var(--player-orange)"
+                      : r === a
+                        ? "var(--player-blue)"
+                        : "var(--accent)"
+                  }
                   stroke={chosen ? "white" : "none"}
                   strokeWidth="1.5"
                 />

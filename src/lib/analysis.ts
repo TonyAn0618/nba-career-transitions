@@ -22,5 +22,10 @@ export const fga36 = (r: SeasonRow) =>
     ? (r.fga * 36) / r.minutes
     : null;
 
-export const PLAYER_COLORS = ["#2468bb", "#c05e27", "#087f77", "#8751b4"];
+export const PLAYER_COLORS = [
+  "var(--player-blue)",
+  "var(--player-orange)",
+  "#67d9bd",
+  "#d5aaff",
+];
 export const PLAYER_LETTERS = ["A", "B", "C", "D"];

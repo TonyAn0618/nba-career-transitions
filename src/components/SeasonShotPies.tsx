@@ -96,7 +96,7 @@ function ShotPie({
                 y={size >= 1 ? 60 : y}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fill={index < 2 ? "#fff" : "#182e38"}
+                fill={index < 2 ? "#fff" : "#101b23"}
               >
                 {percent(share)}
               </text>
