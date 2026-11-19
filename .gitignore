@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.DS_Store
+.env
+.env.*
+data/cache/
+public/data/*.json
+artifacts/
+*.log
+
+public/data/shots/

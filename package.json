@@ -1,0 +1,41 @@
+{
+  "name": "nba-career-transitions",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5181 --strictPort",
+    "data": "node scripts/sync-data.mjs",
+    "test": "node --experimental-strip-types --test tests/*.test.ts && python3 tests/shot-data.test.py",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5181 --strictPort",
+    "check:data": "node scripts/check-data.mjs",
+    "format": "prettier --write src scripts tests docs README.md index.html package.json tsconfig.json vite.config.ts",
+    "format:check": "prettier --check src scripts tests docs README.md index.html package.json tsconfig.json vite.config.ts",
+    "photos": "node --experimental-strip-types scripts/sync-photos.mjs",
+    "data:shots": "python3 scripts/sync-shots.py",
+    "check:shots": "python3 scripts/check-shots.py --require-cache",
+    "predev": "npm run prepare:data",
+    "prebuild": "npm run prepare:data",
+    "prepare:data": "node scripts/prepare-data.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "1.66.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "6.2.1",
+    "csv-parse": "^7.0.3",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
+  }
+}

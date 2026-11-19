@@ -1,0 +1,1254 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "69e63559bc17393312ad258c11f93d78be002079",
+  "source": "NBA.com shot records compiled by Dominic Samangy",
+  "sourceRepository": "https://github.com/DomSamangy/NBA_Shots_04_25",
+  "retrievedAt": "2026-11-04T07:14:23.383258+00:00",
+  "seasonType": "NBA regular season",
+  "firstSeason": 2004,
+  "lastSeason": 2025,
+  "totalShots": 4450789,
+  "playerCount": 2265,
+  "playerSeasonCount": 10872,
+  "seasonCount": 22,
+  "coordinateSystem": {
+    "units": "feet",
+    "hoop": [
+      0,
+      5.25
+    ],
+    "baselineY": 0,
+    "halfCourt": [
+      -25,
+      25,
+      0,
+      47
+    ],
+    "fullCourt": [
+      -25,
+      25,
+      0,
+      94
+    ],
+    "xDirection": "Source tutorial orientation: negative x is viewer-left, positive x is viewer-right; shooter-side labels reverse this.",
+    "correctedSourceSeasons": [
+      2020,
+      2021,
+      2022
+    ]
+  },
+  "coverageStatuses": {
+    "complete": 10439,
+    "unverified": 43,
+    "excess": 5,
+    "partial": 385
+  },
+  "unmatchedPlayerSeasons": 43,
+  "exactDuplicateRows": 202,
+  "outsideHalfCourt": 9393,
+  "sources": [
+    {
+      "season": 2004,
+      "file": "NBA_2004_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2004_Shots.csv.zip",
+      "bytes": 3348456,
+      "sha256": "f5d612aa4ef9de814ec7179f3ad60a949268625318a360a429d4e56848e641d5",
+      "csvFile": "NBA_2004_Shots.csv",
+      "csvBytes": 36877030,
+      "csvSha256": "e615c4a365888ad74cd667d352ae9465328720b6063756872c0f7b7e06e0e6c4",
+      "rows": 189803,
+      "players": 440,
+      "games": 1189,
+      "distinctGameIds": 1189,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 24.8,
+        "minY": 0.05,
+        "maxY": 90.85
+      },
+      "quality": {
+        "distanceVerified": 189803,
+        "cornerSideVerified": 9568,
+        "outsideHalfCourt": 339,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 15,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 434,
+          "unverified": 5,
+          "excess": 1
+        },
+        "missingAgainstMatchedSeasonFga": 0,
+        "identityMethods": {
+          "verified_nba_id": 431,
+          "unmatched": 5,
+          "unique_exact_name_and_season": 3,
+          "unique_unsuffixed_name_and_season": 1
+        }
+      }
+    },
+    {
+      "season": 2005,
+      "file": "NBA_2005_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2005_Shots.csv.zip",
+      "bytes": 3501344,
+      "sha256": "5965e7ac54049f1e216275c5b127c156f163f0fed2b0eb9ed59fa396e082460d",
+      "csvFile": "NBA_2005_Shots.csv",
+      "csvBytes": 38390686,
+      "csvSha256": "d7404f810360e3560a8f875096db9b22c6ff2ea82047bb6cb3e9919331ac10a5",
+      "rows": 197626,
+      "players": 463,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 24.8,
+        "minY": 0.05,
+        "maxY": 92.85
+      },
+      "quality": {
+        "distanceVerified": 197626,
+        "cornerSideVerified": 10848,
+        "outsideHalfCourt": 365,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 14,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 455,
+          "unverified": 6,
+          "excess": 1,
+          "partial": 1
+        },
+        "missingAgainstMatchedSeasonFga": 1,
+        "identityMethods": {
+          "verified_nba_id": 454,
+          "unmatched": 6,
+          "unique_exact_name_and_season": 3
+        }
+      }
+    },
+    {
+      "season": 2006,
+      "file": "NBA_2006_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2006_Shots.csv.zip",
+      "bytes": 3458443,
+      "sha256": "3d00525be09f15302166c29fb60137f44ea41bffb874b87a0b2be43533136fe9",
+      "csvFile": "NBA_2006_Shots.csv",
+      "csvBytes": 37917403,
+      "csvSha256": "58d4f7ff5d5cea58c28cfc2239b860d748b5d886dfb9a5312146e44966cdba66",
+      "rows": 194314,
+      "players": 455,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.05,
+        "maxY": 91.55
+      },
+      "quality": {
+        "distanceVerified": 194314,
+        "cornerSideVerified": 11077,
+        "outsideHalfCourt": 373,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 15,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 451,
+          "unverified": 3,
+          "partial": 1
+        },
+        "missingAgainstMatchedSeasonFga": 1,
+        "identityMethods": {
+          "verified_nba_id": 449,
+          "unique_exact_name_and_season": 3,
+          "unmatched": 3
+        }
+      }
+    },
+    {
+      "season": 2007,
+      "file": "NBA_2007_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2007_Shots.csv.zip",
+      "bytes": 3495389,
+      "sha256": "07bc190f986aec659e67b8096825c287ce13782644656db7dd79b73c460c4e2a",
+      "csvFile": "NBA_2007_Shots.csv",
+      "csvBytes": 38304685,
+      "csvSha256": "7e9effdc17fbec423d9ddce8355808db21a4c1f452379080c5854f46db6d5ff1",
+      "rows": 196072,
+      "players": 458,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 24.8,
+        "minY": 0.05,
+        "maxY": 92.85
+      },
+      "quality": {
+        "distanceVerified": 196072,
+        "cornerSideVerified": 11708,
+        "outsideHalfCourt": 379,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 18,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 454,
+          "unverified": 3,
+          "partial": 1
+        },
+        "missingAgainstMatchedSeasonFga": 1,
+        "identityMethods": {
+          "verified_nba_id": 448,
+          "unmatched": 3,
+          "unique_exact_name_and_season": 6,
+          "unique_unsuffixed_name_and_season": 1
+        }
+      }
+    },
+    {
+      "season": 2008,
+      "file": "NBA_2008_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2008_Shots.csv.zip",
+      "bytes": 3597210,
+      "sha256": "81d74bdc7092a75a6391e57eee4c1d6ad810f77443bd7a70a85b08512bf8d62d",
+      "csvFile": "NBA_2008_Shots.csv",
+      "csvBytes": 39193002,
+      "csvSha256": "e035bdc838e1d8f51db82b682bfd9dc25341c4e935a048f9b1d0b2a574416237",
+      "rows": 200501,
+      "players": 451,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 24.8,
+        "minY": 0.05,
+        "maxY": 92.15
+      },
+      "quality": {
+        "distanceVerified": 200501,
+        "cornerSideVerified": 12162,
+        "outsideHalfCourt": 472,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 11,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 448,
+          "unverified": 3
+        },
+        "missingAgainstMatchedSeasonFga": 0,
+        "identityMethods": {
+          "verified_nba_id": 444,
+          "unique_exact_name_and_season": 3,
+          "unique_unsuffixed_name_and_season": 1,
+          "unmatched": 3
+        }
+      }
+    },
+    {
+      "season": 2009,
+      "file": "NBA_2009_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2009_Shots.csv.zip",
+      "bytes": 3588763,
+      "sha256": "52896a776c49291f88a51166237703dede61f6513227144bfc0644cbfc32e929",
+      "csvFile": "NBA_2009_Shots.csv",
+      "csvBytes": 38985305,
+      "csvSha256": "254ad883cae9edfbb7dabeb46a745a47852003901061db930d520f28f5e9de15",
+      "rows": 199030,
+      "players": 445,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.35,
+        "maxY": 91.95
+      },
+      "quality": {
+        "distanceVerified": 199030,
+        "cornerSideVerified": 12691,
+        "outsideHalfCourt": 447,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 19,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 421,
+          "partial": 21,
+          "unverified": 3
+        },
+        "missingAgainstMatchedSeasonFga": 23,
+        "identityMethods": {
+          "verified_nba_id": 438,
+          "unique_exact_name_and_season": 3,
+          "unique_unsuffixed_name_and_season": 1,
+          "unmatched": 3
+        }
+      }
+    },
+    {
+      "season": 2010,
+      "file": "NBA_2010_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2010_Shots.csv.zip",
+      "bytes": 3634549,
+      "sha256": "25dbe44785979673477f24d34706da7ec3437b51171175df9e6f5ddd7c5c6232",
+      "csvFile": "NBA_2010_Shots.csv",
+      "csvBytes": 39457514,
+      "csvSha256": "8aae4c885974ccdaff46a44b697fd8c672cdb77047582599605f79f3e463c829",
+      "rows": 200966,
+      "players": 440,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 89.55
+      },
+      "quality": {
+        "distanceVerified": 200966,
+        "cornerSideVerified": 11896,
+        "outsideHalfCourt": 478,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 11,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 419,
+          "partial": 20,
+          "unverified": 1
+        },
+        "missingAgainstMatchedSeasonFga": 23,
+        "identityMethods": {
+          "verified_nba_id": 433,
+          "unique_exact_name_and_season": 5,
+          "unique_unsuffixed_name_and_season": 1,
+          "unmatched": 1
+        }
+      }
+    },
+    {
+      "season": 2011,
+      "file": "NBA_2011_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2011_Shots.csv.zip",
+      "bytes": 3825893,
+      "sha256": "e6017b3e0321395c7789722d1de96bc05ce0bc9adbfaee3132a37148b1b3bfa8",
+      "csvFile": "NBA_2011_Shots.csv",
+      "csvBytes": 39358695,
+      "csvSha256": "099d04ed96da73488a13c54029b56105f046fce9c6b8803535f76f0ea3e02838",
+      "rows": 199761,
+      "players": 449,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 93.65
+      },
+      "quality": {
+        "distanceVerified": 199761,
+        "cornerSideVerified": 12345,
+        "outsideHalfCourt": 470,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 0,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 423,
+          "partial": 25,
+          "unverified": 1
+        },
+        "missingAgainstMatchedSeasonFga": 29,
+        "identityMethods": {
+          "verified_nba_id": 441,
+          "unique_exact_name_and_season": 6,
+          "unique_unsuffixed_name_and_season": 1,
+          "unmatched": 1
+        }
+      }
+    },
+    {
+      "season": 2012,
+      "file": "NBA_2012_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2012_Shots.csv.zip",
+      "bytes": 3095708,
+      "sha256": "8d190a2480992f163c8381f47a6e565ad2ab305c3203c23ae0228967cfd18ac5",
+      "csvFile": "NBA_2012_Shots.csv",
+      "csvBytes": 31795733,
+      "csvSha256": "3201ff42d1b5beb4ec85e5f1c4ba216031f60448abc49cdc529bcb799e20c416",
+      "rows": 161205,
+      "players": 478,
+      "games": 990,
+      "distinctGameIds": 990,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 92.95
+      },
+      "quality": {
+        "distanceVerified": 161205,
+        "cornerSideVerified": 9789,
+        "outsideHalfCourt": 304,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 0,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 461,
+          "partial": 17
+        },
+        "missingAgainstMatchedSeasonFga": 20,
+        "identityMethods": {
+          "verified_nba_id": 466,
+          "unique_exact_name_and_season": 10,
+          "unique_unsuffixed_name_and_season": 2
+        }
+      }
+    },
+    {
+      "season": 2013,
+      "file": "NBA_2013_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2013_Shots.csv.zip",
+      "bytes": 3879282,
+      "sha256": "d3b04d409929bb704b1f452541c485e158128161e1895da6ec7ab7ce9fdd9400",
+      "csvFile": "NBA_2013_Shots.csv",
+      "csvBytes": 39829995,
+      "csvSha256": "82d99ecd4fe28de9382feb75953a85da192dd01bdc127789afd770236d61a303",
+      "rows": 201579,
+      "players": 467,
+      "games": 1229,
+      "distinctGameIds": 1229,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 90.05
+      },
+      "quality": {
+        "distanceVerified": 201579,
+        "cornerSideVerified": 13530,
+        "outsideHalfCourt": 420,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 0,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 438,
+          "partial": 26,
+          "unverified": 3
+        },
+        "missingAgainstMatchedSeasonFga": 30,
+        "identityMethods": {
+          "verified_nba_id": 453,
+          "unique_exact_name_and_season": 8,
+          "unique_unsuffixed_name_and_season": 3,
+          "unmatched": 3
+        }
+      }
+    },
+    {
+      "season": 2014,
+      "file": "NBA_2014_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2014_Shots.csv.zip",
+      "bytes": 3924603,
+      "sha256": "4a1913fb8a7612e5534178f56acdd145aefe6313d933734198c2ca20362a622b",
+      "csvFile": "NBA_2014_Shots.csv",
+      "csvBytes": 40444511,
+      "csvSha256": "f41d55974deaa4a766336b1fb4a185a3d47d5e17de9b06c106ab67cc8ff1c462",
+      "rows": 204126,
+      "players": 480,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 91.75
+      },
+      "quality": {
+        "distanceVerified": 204126,
+        "cornerSideVerified": 13516,
+        "outsideHalfCourt": 445,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 1,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 436,
+          "partial": 40,
+          "unverified": 4
+        },
+        "missingAgainstMatchedSeasonFga": 45,
+        "identityMethods": {
+          "verified_nba_id": 462,
+          "unique_exact_name_and_season": 10,
+          "unique_unsuffixed_name_and_season": 4,
+          "unmatched": 4
+        }
+      }
+    },
+    {
+      "season": 2015,
+      "file": "NBA_2015_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2015_Shots.csv.zip",
+      "bytes": 3952556,
+      "sha256": "73fab2570ff4c7bba446adde0c0447cb1e12cf6d7d333562c394d03f1bd8f123",
+      "csvFile": "NBA_2015_Shots.csv",
+      "csvBytes": 40756507,
+      "csvSha256": "474ff3115b58bc0e8689da260e9c9c44c3f84fa6c53efdabc763bc0457407a97",
+      "rows": 205550,
+      "players": 490,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 90.45
+      },
+      "quality": {
+        "distanceVerified": 205550,
+        "cornerSideVerified": 14361,
+        "outsideHalfCourt": 431,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 0,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 470,
+          "partial": 19,
+          "unverified": 1
+        },
+        "missingAgainstMatchedSeasonFga": 20,
+        "identityMethods": {
+          "verified_nba_id": 477,
+          "unique_exact_name_and_season": 8,
+          "unique_unsuffixed_name_and_season": 4,
+          "unmatched": 1
+        }
+      }
+    },
+    {
+      "season": 2016,
+      "file": "NBA_2016_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2016_Shots.csv.zip",
+      "bytes": 3974407,
+      "sha256": "1eb91af015295d0457115178ed58ebd0217e58c8b24e5e9bc917d511704bd04b",
+      "csvFile": "NBA_2016_Shots.csv",
+      "csvBytes": 41452087,
+      "csvSha256": "19bf716726607930cba0f044eef1c1213b6d51f1272f56ebf2aa4b7b9a769f62",
+      "rows": 207893,
+      "players": 475,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 90.85
+      },
+      "quality": {
+        "distanceVerified": 207893,
+        "cornerSideVerified": 15224,
+        "outsideHalfCourt": 440,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 0,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 379,
+          "partial": 96
+        },
+        "missingAgainstMatchedSeasonFga": 156,
+        "identityMethods": {
+          "verified_nba_id": 464,
+          "unique_exact_name_and_season": 9,
+          "unique_unsuffixed_name_and_season": 2
+        }
+      }
+    },
+    {
+      "season": 2017,
+      "file": "NBA_2017_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2017_Shots.csv.zip",
+      "bytes": 4039073,
+      "sha256": "d4e26d5d8a90a91ab5fdb32ac1fd3ea856f8316b813c38dc218518622cfbbb97",
+      "csvFile": "NBA_2017_Shots.csv",
+      "csvBytes": 42052559,
+      "csvSha256": "5c60b348a9f83f64ddf57513cfac71076b5d86055a9b08b179d98ee947bdbaa2",
+      "rows": 209929,
+      "players": 485,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 90.25
+      },
+      "quality": {
+        "distanceVerified": 209929,
+        "cornerSideVerified": 15671,
+        "outsideHalfCourt": 501,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 0,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "partial": 114,
+          "complete": 371
+        },
+        "missingAgainstMatchedSeasonFga": 186,
+        "identityMethods": {
+          "verified_nba_id": 475,
+          "unique_exact_name_and_season": 7,
+          "unique_unsuffixed_name_and_season": 3
+        }
+      }
+    },
+    {
+      "season": 2018,
+      "file": "NBA_2018_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2018_Shots.csv.zip",
+      "bytes": 4173226,
+      "sha256": "8bee1c4203585338c53ffd1b3c90eaa5fd7c99815d2b7b4fa10d43d8845cfbee",
+      "csvFile": "NBA_2018_Shots.csv",
+      "csvBytes": 42690294,
+      "csvSha256": "5cbc76ab9538c521eaaaba02c281be4aa19b3500fa9325fb646ab43702fd3066",
+      "rows": 211707,
+      "players": 537,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.95,
+        "maxY": 91.55
+      },
+      "quality": {
+        "distanceVerified": 211707,
+        "cornerSideVerified": 15609,
+        "outsideHalfCourt": 525,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 14,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 535,
+          "partial": 1,
+          "unverified": 1
+        },
+        "missingAgainstMatchedSeasonFga": 2,
+        "identityMethods": {
+          "verified_nba_id": 524,
+          "unique_exact_name_and_season": 6,
+          "unique_unsuffixed_name_and_season": 6,
+          "unmatched": 1
+        }
+      }
+    },
+    {
+      "season": 2019,
+      "file": "NBA_2019_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2019_Shots.csv.zip",
+      "bytes": 4330064,
+      "sha256": "c8c0d6a4c61c0a4a25d14637ff94bf7219f2a7b8fe1b2d6f0985b36cba091241",
+      "csvFile": "NBA_2019_Shots.csv",
+      "csvBytes": 44514889,
+      "csvSha256": "d53f8698054608a89e3b67247b158175c20ce812be9aab89f1d0db3d3eae4416",
+      "rows": 219458,
+      "players": 526,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 24.8,
+        "minY": 0.95,
+        "maxY": 90.45
+      },
+      "quality": {
+        "distanceVerified": 219458,
+        "cornerSideVerified": 17883,
+        "outsideHalfCourt": 470,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 15,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 523,
+          "unverified": 3
+        },
+        "missingAgainstMatchedSeasonFga": 0,
+        "identityMethods": {
+          "verified_nba_id": 514,
+          "unique_unsuffixed_name_and_season": 6,
+          "unique_exact_name_and_season": 3,
+          "unmatched": 3
+        }
+      }
+    },
+    {
+      "season": 2020,
+      "file": "NBA_2020_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2020_Shots.csv.zip",
+      "bytes": 3791662,
+      "sha256": "c2eb57da3741a3dccc9a15bbebe91bf62574d75f9be2e598f34d4f2f94eec74c",
+      "csvFile": "NBA_2020_Shots.csv",
+      "csvBytes": 39004884,
+      "csvSha256": "31099b68294ff2104582cd03f023f509aee38456fcbb9c6c201451e69b5a6897",
+      "rows": 188116,
+      "players": 527,
+      "games": 1059,
+      "distinctGameIds": 1059,
+      "coordinateTransform": {
+        "x": "-10 * LOC_X",
+        "y": "10 * (LOC_Y - 5.25)"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.05,
+        "maxY": 91.95
+      },
+      "quality": {
+        "distanceVerified": 188116,
+        "cornerSideVerified": 16247,
+        "outsideHalfCourt": 410,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 16,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 527
+        },
+        "missingAgainstMatchedSeasonFga": 0,
+        "identityMethods": {
+          "verified_nba_id": 515,
+          "unique_unsuffixed_name_and_season": 9,
+          "unique_exact_name_and_season": 3
+        }
+      }
+    },
+    {
+      "season": 2021,
+      "file": "NBA_2021_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2021_Shots.csv.zip",
+      "bytes": 3868913,
+      "sha256": "81af5636e8bfce34f3361d6c0cb886cb9b342a329d036963e2b98be15dc94a26",
+      "csvFile": "NBA_2021_Shots.csv",
+      "csvBytes": 39642696,
+      "csvSha256": "0a6408b424bd10f1a02e0c49d51d45463cd99bfd26e52bdf5b62cbddb0e350f5",
+      "rows": 190983,
+      "players": 539,
+      "games": 1080,
+      "distinctGameIds": 1076,
+      "coordinateTransform": {
+        "x": "-10 * LOC_X",
+        "y": "10 * (LOC_Y - 5.25)"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 24.9,
+        "minY": 0.35,
+        "maxY": 90.45
+      },
+      "quality": {
+        "distanceVerified": 190983,
+        "cornerSideVerified": 17633,
+        "outsideHalfCourt": 310,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 12,
+        "invalidRows": 0,
+        "reusedGameIds": [
+          {
+            "gameId": "0022000000",
+            "contexts": [
+              {
+                "date": "2020-12-22",
+                "home": "BKN",
+                "away": "GSW"
+              },
+              {
+                "date": "2020-12-22",
+                "home": "LAL",
+                "away": "LAC"
+              },
+              {
+                "date": "2020-12-23",
+                "home": "BOS",
+                "away": "MIL"
+              },
+              {
+                "date": "2020-12-23",
+                "home": "PHX",
+                "away": "DAL"
+              },
+              {
+                "date": "2020-12-25",
+                "home": "MIA",
+                "away": "NOP"
+              }
+            ]
+          }
+        ],
+        "coverageStatuses": {
+          "complete": 538,
+          "unverified": 1
+        },
+        "missingAgainstMatchedSeasonFga": 0,
+        "identityMethods": {
+          "verified_nba_id": 528,
+          "unique_unsuffixed_name_and_season": 5,
+          "unique_exact_name_and_season": 5,
+          "unmatched": 1
+        }
+      }
+    },
+    {
+      "season": 2022,
+      "file": "NBA_2022_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2022_Shots.csv.zip",
+      "bytes": 4401903,
+      "sha256": "644a6302b568f2bbf892d482db055505d1b83b7e5c44b28212359a5533b4ddef",
+      "csvFile": "NBA_2022_Shots.csv",
+      "csvBytes": 45128641,
+      "csvSha256": "315ae83b6d50b3e480ffc3f76da9f94905c4d0c01569935b4ab23d5e71f7bfce",
+      "rows": 216722,
+      "players": 596,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "-10 * LOC_X",
+        "y": "10 * (LOC_Y - 5.25)"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 93.05
+      },
+      "quality": {
+        "distanceVerified": 216722,
+        "cornerSideVerified": 21468,
+        "outsideHalfCourt": 446,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 4,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 595,
+          "unverified": 1
+        },
+        "missingAgainstMatchedSeasonFga": 0,
+        "identityMethods": {
+          "verified_nba_id": 580,
+          "unique_unsuffixed_name_and_season": 6,
+          "unique_exact_name_and_season": 9,
+          "unmatched": 1
+        }
+      }
+    },
+    {
+      "season": 2023,
+      "file": "NBA_2023_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2023_Shots.csv.zip",
+      "bytes": 3226231,
+      "sha256": "df09e7053755f20a03c15b70de40635bf7314c2182449e0a8404bca0042250b2",
+      "csvFile": "NBA_2023_Shots.csv",
+      "csvBytes": 44492552,
+      "csvSha256": "7d1361e595807373e4d91f1c544a9bc88c10a1395bc9394f02d1d04d16a8d2e6",
+      "rows": 217220,
+      "players": 537,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 24.9,
+        "minY": 0.05,
+        "maxY": 87.25
+      },
+      "quality": {
+        "distanceVerified": 217220,
+        "cornerSideVerified": 21003,
+        "outsideHalfCourt": 412,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 13,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 534,
+          "excess": 2,
+          "partial": 1
+        },
+        "missingAgainstMatchedSeasonFga": 1,
+        "identityMethods": {
+          "verified_nba_id": 525,
+          "unique_unsuffixed_name_and_season": 6,
+          "unique_exact_name_and_season": 6
+        }
+      }
+    },
+    {
+      "season": 2024,
+      "file": "NBA_2024_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2024_Shots.csv.zip",
+      "bytes": 3261409,
+      "sha256": "ab46f9488d8fe5d39e9bff9725f64ea9f4dbe2617cf8373d9e3954bb6bb5bba8",
+      "csvFile": "NBA_2024_Shots.csv",
+      "csvBytes": 44877217,
+      "csvSha256": "6e31b7d9b241d9d06a09fc90073d50b3f0f67f35226ac663b53111321d4e8b2a",
+      "rows": 218701,
+      "players": 568,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 89.45
+      },
+      "quality": {
+        "distanceVerified": 218701,
+        "cornerSideVerified": 22151,
+        "outsideHalfCourt": 435,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 14,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 563,
+          "partial": 2,
+          "unverified": 2,
+          "excess": 1
+        },
+        "missingAgainstMatchedSeasonFga": 2,
+        "identityMethods": {
+          "verified_nba_id": 551,
+          "unique_unsuffixed_name_and_season": 9,
+          "unique_exact_name_and_season": 6,
+          "unmatched": 2
+        }
+      }
+    },
+    {
+      "season": 2025,
+      "file": "NBA_2025_Shots.csv.zip",
+      "url": "https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/69e63559bc17393312ad258c11f93d78be002079/NBA_2025_Shots.csv.zip",
+      "bytes": 3272893,
+      "sha256": "7f04eac61284585b3fa681813841eb08f927f461602a93400df42442eee4ef40",
+      "csvFile": "NBA_2025_Shots.csv",
+      "csvBytes": 44086196,
+      "csvSha256": "8dd988d50820be5c22489e34ecee253aaf32cf6d8984dffcf75f11d172492be1",
+      "rows": 219527,
+      "players": 566,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "LOC_X",
+        "y": "LOC_Y"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.05,
+        "maxY": 89.45
+      },
+      "quality": {
+        "distanceVerified": 219527,
+        "cornerSideVerified": 23585,
+        "outsideHalfCourt": 521,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 10,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 564,
+          "unverified": 2
+        },
+        "missingAgainstMatchedSeasonFga": 0,
+        "identityMethods": {
+          "verified_nba_id": 552,
+          "unique_unsuffixed_name_and_season": 8,
+          "unique_exact_name_and_season": 4,
+          "unmatched": 2
+        }
+      }
+    }
+  ],
+  "inputDependencies": [
+    {
+      "file": "public/data/nba.json",
+      "projection": "player_id_name_and_season_fga",
+      "sha256": "6d329c7d9a143f2ef5d705b5da744a5261b96ae908bfe78dabbb4d5b8bd3f850"
+    },
+    {
+      "file": "src/lib/player-photos.json",
+      "projection": "player_nba_id_map",
+      "sha256": "2b159d0006ab46c82c9971ff6177f64cb155322debb8a6a20de1203660b48f0f"
+    }
+  ],
+  "index": {
+    "file": "public/data/shots/index.json",
+    "sha256": "ec7f7dbd0386d01936ccc068aef9db0dc1a12de3dbedf9307fe7fe6e6134c123",
+    "bytes": 5415873
+  },
+  "unmatched": [
+    {
+      "key": "120:2004",
+      "name": "Steven Smith"
+    },
+    {
+      "key": "221:2004",
+      "name": "Clar. Weatherspoon"
+    },
+    {
+      "key": "2098:2004",
+      "name": "Slava Medvedenko"
+    },
+    {
+      "key": "2436:2004",
+      "name": "Flip Murray"
+    },
+    {
+      "key": "2552:2004",
+      "name": "Michael Sweetney"
+    },
+    {
+      "key": "120:2005",
+      "name": "Steven Smith"
+    },
+    {
+      "key": "221:2005",
+      "name": "Clar. Weatherspoon"
+    },
+    {
+      "key": "2098:2005",
+      "name": "Slava Medvedenko"
+    },
+    {
+      "key": "2436:2005",
+      "name": "Flip Murray"
+    },
+    {
+      "key": "2552:2005",
+      "name": "Michael Sweetney"
+    },
+    {
+      "key": "2825:2005",
+      "name": "Ibrahim Kutluay"
+    },
+    {
+      "key": "2098:2006",
+      "name": "Slava Medvedenko"
+    },
+    {
+      "key": "2436:2006",
+      "name": "Flip Murray"
+    },
+    {
+      "key": "2552:2006",
+      "name": "Michael Sweetney"
+    },
+    {
+      "key": "2098:2007",
+      "name": "Slava Medvedenko"
+    },
+    {
+      "key": "2436:2007",
+      "name": "Flip Murray"
+    },
+    {
+      "key": "2552:2007",
+      "name": "Michael Sweetney"
+    },
+    {
+      "key": "2436:2008",
+      "name": "Flip Murray"
+    },
+    {
+      "key": "200766:2008",
+      "name": "Marcus Williams"
+    },
+    {
+      "key": "201173:2008",
+      "name": "Marcus Williams"
+    },
+    {
+      "key": "2436:2009",
+      "name": "Flip Murray"
+    },
+    {
+      "key": "200766:2009",
+      "name": "Marcus Williams"
+    },
+    {
+      "key": "201173:2009",
+      "name": "Marcus Williams"
+    },
+    {
+      "key": "2436:2010",
+      "name": "Flip Murray"
+    },
+    {
+      "key": "200817:2011",
+      "name": "Pooh Jeter"
+    },
+    {
+      "key": "202419:2013",
+      "name": "Chris Johnson"
+    },
+    {
+      "key": "203106:2013",
+      "name": "Jeffery Taylor"
+    },
+    {
+      "key": "203187:2013",
+      "name": "Chris Johnson"
+    },
+    {
+      "key": "203106:2014",
+      "name": "Jeffery Taylor"
+    },
+    {
+      "key": "203183:2014",
+      "name": "Tony Mitchell"
+    },
+    {
+      "key": "203502:2014",
+      "name": "Tony Mitchell"
+    },
+    {
+      "key": "203543:2014",
+      "name": "Vitor Faverani"
+    },
+    {
+      "key": "203106:2015",
+      "name": "Jeffery Taylor"
+    },
+    {
+      "key": "1626205:2018",
+      "name": "Vincent Hunter"
+    },
+    {
+      "key": "1628249:2019",
+      "name": "Mitchell Creek"
+    },
+    {
+      "key": "1629053:2019",
+      "name": "Vincent Edwards"
+    },
+    {
+      "key": "1629244:2019",
+      "name": "Cam Reynolds"
+    },
+    {
+      "key": "1629244:2021",
+      "name": "Cam Reynolds"
+    },
+    {
+      "key": "1630286:2022",
+      "name": "Trevon Scott"
+    },
+    {
+      "key": "1630562:2024",
+      "name": "Matt Hurt"
+    },
+    {
+      "key": "1631466:2024",
+      "name": "Nate Williams"
+    },
+    {
+      "key": "1631466:2025",
+      "name": "Nate Williams"
+    },
+    {
+      "key": "1641842:2025",
+      "name": "Ronald Holland II"
+    }
+  ],
+  "policy": {
+    "noSyntheticLocations": true,
+    "noDeduplication": "The source lacks event IDs; identical records are preserved and counted.",
+    "missingSeasonTotals": "Coverage compares recorded shots with independently compiled Basketball-Reference season FGA; differences remain visible.",
+    "noCurrentSeasonClaim": "This is a fixed historical snapshot through 2024-25, not a live NBA feed."
+  }
+}

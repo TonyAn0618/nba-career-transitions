@@ -1,0 +1,1159 @@
+{
+  "generatedAt": "2026-11-04T06:07:10.582Z",
+  "identitySource": {
+    "repository": "swar/nba_api",
+    "commit": "ec190700dab27498b3f75ecac8f932e3a3ee1606",
+    "url": "https://raw.githubusercontent.com/swar/nba_api/ec190700dab27498b3f75ecac8f932e3a3ee1606/src/nba_api/stats/library/data.py",
+    "sha256": "656d716226ad3a9a466698298a2c8f44d762a09e0d7b8faf62af0109fd959502",
+    "rows": 5198,
+    "documentation": "https://github.com/swar/nba_api/blob/ec190700dab27498b3f75ecac8f932e3a3ee1606/docs/nba_api/stats/static/players.md"
+  },
+  "photos": {
+    "provider": "NBA",
+    "urlTemplate": "https://cdn.nba.com/headshots/nba/latest/260x190/{nbaId}.png",
+    "note": "Latest available portrait; it does not depict the selected historical season."
+  },
+  "datasetSourceCommit": "3981e43c07e963db539c527beb8a7b4b99ec8716",
+  "coverage": {
+    "players": 2756,
+    "matched": 2663,
+    "ambiguous": 40,
+    "unmatched": 53,
+    "bundled": 22,
+    "knownPlaceholderPhotos": 2,
+    "bundledBytes": 363143
+  },
+  "images": [
+    {
+      "playerId": "curryst01",
+      "nbaId": 201939,
+      "name": "Stephen Curry",
+      "file": "public/players/curryst01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201939.png",
+      "bytes": 14651,
+      "sha256": "d629352dfe499782f3f0d62dd36b521b37c968931bcfbe6c16862b22dcc58b92"
+    },
+    {
+      "playerId": "jamesle01",
+      "nbaId": 2544,
+      "name": "LeBron James",
+      "file": "public/players/jamesle01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2544.png",
+      "bytes": 17383,
+      "sha256": "d7a4223ef4b8a716b10302841d44d6f0ad32f7ecd24770387f48a8a8af5ad510"
+    },
+    {
+      "playerId": "jokicni01",
+      "nbaId": 203999,
+      "name": "Nikola Jokić",
+      "file": "public/players/jokicni01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203999.png",
+      "bytes": 15514,
+      "sha256": "284f63686291b791c48d2a4204ec9e760b80204e5c157028bf3b751bdaee60ac"
+    },
+    {
+      "playerId": "antetgi01",
+      "nbaId": 203507,
+      "name": "Giannis Antetokounmpo",
+      "file": "public/players/antetgi01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203507.png",
+      "bytes": 14566,
+      "sha256": "f4901360d50189e521d7cf7c579296790de08422c5e36bb761643485285495ea"
+    },
+    {
+      "playerId": "doncilu01",
+      "nbaId": 1629029,
+      "name": "Luka Dončić",
+      "file": "public/players/doncilu01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/1629029.png",
+      "bytes": 15494,
+      "sha256": "41c9d52dd88450bc8d41e8c1b3c6b22720078e25b368a2cc93108fb7cbbcb5f8"
+    },
+    {
+      "playerId": "tatumja01",
+      "nbaId": 1628369,
+      "name": "Jayson Tatum",
+      "file": "public/players/tatumja01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/1628369.png",
+      "bytes": 16190,
+      "sha256": "b4075e3e7c2908e99af15dffca2902eeae965ca322f62529dbd4d8935c268096"
+    },
+    {
+      "playerId": "duranke01",
+      "nbaId": 201142,
+      "name": "Kevin Durant",
+      "file": "public/players/duranke01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201142.png",
+      "bytes": 16535,
+      "sha256": "1c5888a817f0e512b9af44bbd60a50fb534c30f76bd73a830866e8c4f74a852e"
+    },
+    {
+      "playerId": "bryanko01",
+      "nbaId": 977,
+      "name": "Kobe Bryant",
+      "file": "public/players/bryanko01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/977.png",
+      "bytes": 15401,
+      "sha256": "443d92c40a1394f4ab56039f0902b0d2b5fbdd804d5878d48fdc2dc4659a1a56"
+    },
+    {
+      "playerId": "onealsh01",
+      "nbaId": 406,
+      "name": "Shaquille O'Neal",
+      "file": "public/players/onealsh01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/406.png",
+      "bytes": 17308,
+      "sha256": "9cf401dd099f4e16a2b39d6c9451071a5a81806bf3d613548cd1f7a53d9b642d"
+    },
+    {
+      "playerId": "jordami01",
+      "nbaId": 893,
+      "name": "Michael Jordan",
+      "file": "public/players/jordami01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/893.png",
+      "bytes": 18550,
+      "sha256": "975a313ae83829a9f613b3a781f704e22d828107e8328b015646b1c192aaea31"
+    },
+    {
+      "playerId": "allenra02",
+      "nbaId": 951,
+      "name": "Ray Allen",
+      "file": "public/players/allenra02.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/951.png",
+      "bytes": 16917,
+      "sha256": "a1a63df12462dbd3f4c0d8175fe04939b055755d74d0cfc30629f2a4a61a9571"
+    },
+    {
+      "playerId": "thornma01",
+      "nbaId": 201977,
+      "name": "Marcus Thornton",
+      "file": "public/players/thornma01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/201977.png",
+      "bytes": 18475,
+      "sha256": "1b8983f4086826a6e73aed582efc84d253baba299796a0e291cad30281f9c1c3"
+    },
+    {
+      "playerId": "milescj01",
+      "nbaId": 101139,
+      "name": "C.J. Miles",
+      "file": "public/players/milescj01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/101139.png",
+      "bytes": 15523,
+      "sha256": "6cae65c2ba925b7644c79bf3a346b59e0eb69a8ad01f5e8bfb8f917580a6e7b8"
+    },
+    {
+      "playerId": "barbole01",
+      "nbaId": 2571,
+      "name": "Leandro Barbosa",
+      "file": "public/players/barbole01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2571.png",
+      "bytes": 16522,
+      "sha256": "7d521d12438329e4479147d0d9d630a1abd3aa6b4560ef47a974490de51de8e3"
+    },
+    {
+      "playerId": "kempsh01",
+      "nbaId": 431,
+      "name": "Shawn Kemp",
+      "file": "public/players/kempsh01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/431.png",
+      "bytes": 18494,
+      "sha256": "e36904934acd2d2d9e31e4cbe85e7e96e9e62e87f5dcd9aa1105730ca7ca6305"
+    },
+    {
+      "playerId": "wadedw01",
+      "nbaId": 2548,
+      "name": "Dwyane Wade",
+      "file": "public/players/wadedw01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2548.png",
+      "bytes": 12980,
+      "sha256": "ddd86aeb5552681a6318b3e9c9e0d7850abc19b751c2452edb6a5da8f9532715"
+    },
+    {
+      "playerId": "stoudam01",
+      "nbaId": 2405,
+      "name": "Amar'e Stoudemire",
+      "file": "public/players/stoudam01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/2405.png",
+      "bytes": 17576,
+      "sha256": "7d65a93c12431fb7ff63673ab092364346b3bf077c2ee713c165ff8b294748a4"
+    },
+    {
+      "playerId": "davisan02",
+      "nbaId": 203076,
+      "name": "Anthony Davis",
+      "file": "public/players/davisan02.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203076.png",
+      "bytes": 15734,
+      "sha256": "47ef1eab28120af2624c8ba62c331366dcfae3e08b5c1299e68e91579859f5d7"
+    },
+    {
+      "playerId": "randlju01",
+      "nbaId": 203944,
+      "name": "Julius Randle",
+      "file": "public/players/randlju01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203944.png",
+      "bytes": 17756,
+      "sha256": "e8172bb4cc76e01f41877aa5dcd859468cb5297f0360348bc6334d1e13bdf629"
+    },
+    {
+      "playerId": "siakapa01",
+      "nbaId": 1627783,
+      "name": "Pascal Siakam",
+      "file": "public/players/siakapa01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/1627783.png",
+      "bytes": 17413,
+      "sha256": "8446fd4c1e06dddeecda34deb8e71bf9e8f627ab41cb04984c2243e0e89ddad8"
+    },
+    {
+      "playerId": "valanjo01",
+      "nbaId": 202685,
+      "name": "Jonas Valančiūnas",
+      "file": "public/players/valanjo01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/202685.png",
+      "bytes": 16753,
+      "sha256": "34f7ca38f61209b91ef88f20f13b9124e268f62c447cdb13cbb6272dbcaff4aa"
+    },
+    {
+      "playerId": "grantje01",
+      "nbaId": 203924,
+      "name": "Jerami Grant",
+      "file": "public/players/grantje01.png",
+      "url": "https://cdn.nba.com/headshots/nba/latest/260x190/203924.png",
+      "bytes": 17408,
+      "sha256": "e443dffc4b4733c095cfe99c1f45e276915b763d13c0238a9adb32fbdcb560a1"
+    }
+  ],
+  "unavailable": [
+    "harrial01",
+    "richaja01"
+  ],
+  "unresolved": [
+    {
+      "playerId": "whitean01",
+      "name": "Andrew White",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "jonesbo02",
+      "name": "Bobby Jones",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 77193,
+          "name": "Bobby Jones"
+        },
+        {
+          "id": 200784,
+          "name": "Bobby Jones"
+        }
+      ]
+    },
+    {
+      "playerId": "portibo01",
+      "name": "Bobby Portis",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "bostobr01",
+      "name": "Brandon Boston Jr.",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "willibr01",
+      "name": "Brandon Williams",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 1585,
+          "name": "Brandon Williams"
+        },
+        {
+          "id": 1630314,
+          "name": "Brandon Williams"
+        }
+      ]
+    },
+    {
+      "playerId": "willibr03",
+      "name": "Brandon Williams",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 1585,
+          "name": "Brandon Williams"
+        },
+        {
+          "id": 1630314,
+          "name": "Brandon Williams"
+        }
+      ]
+    },
+    {
+      "playerId": "bowenbr02",
+      "name": "Brian Bowen",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "reynoca01",
+      "name": "Cameron Reynolds",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "hendece02",
+      "name": "Cedric Henderson",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 1538,
+          "name": "Cedric Henderson"
+        },
+        {
+          "id": 76990,
+          "name": "Cedric Henderson"
+        }
+      ]
+    },
+    {
+      "playerId": "jonesch01",
+      "name": "Charles Jones",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 279,
+          "name": "Charles Jones"
+        },
+        {
+          "id": 77178,
+          "name": "Charles Jones"
+        }
+      ]
+    },
+    {
+      "playerId": "jonesch03",
+      "name": "Charles Jones",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 279,
+          "name": "Charles Jones"
+        },
+        {
+          "id": 77178,
+          "name": "Charles Jones"
+        }
+      ]
+    },
+    {
+      "playerId": "smithch01",
+      "name": "Charles Smith",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 293,
+          "name": "Charles Smith"
+        },
+        {
+          "id": 1520,
+          "name": "Charles Smith"
+        },
+        {
+          "id": 78179,
+          "name": "Charles Smith"
+        }
+      ]
+    },
+    {
+      "playerId": "smithch04",
+      "name": "Charles Smith",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 293,
+          "name": "Charles Smith"
+        },
+        {
+          "id": 1520,
+          "name": "Charles Smith"
+        },
+        {
+          "id": 78179,
+          "name": "Charles Smith"
+        }
+      ]
+    },
+    {
+      "playerId": "johnsch03",
+      "name": "Chris Johnson",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 202419,
+          "name": "Chris Johnson"
+        },
+        {
+          "id": 203187,
+          "name": "Chris Johnson"
+        }
+      ]
+    },
+    {
+      "playerId": "johnsch04",
+      "name": "Chris Johnson",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 202419,
+          "name": "Chris Johnson"
+        },
+        {
+          "id": 203187,
+          "name": "Chris Johnson"
+        }
+      ]
+    },
+    {
+      "playerId": "smithch05",
+      "name": "Chris Smith",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 1814,
+          "name": "Chris Smith"
+        },
+        {
+          "id": 203147,
+          "name": "Chris Smith"
+        }
+      ]
+    },
+    {
+      "playerId": "wrighch01",
+      "name": "Chris Wright",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 202874,
+          "name": "Chris Wright"
+        },
+        {
+          "id": 203203,
+          "name": "Chris Wright"
+        }
+      ]
+    },
+    {
+      "playerId": "wrighch02",
+      "name": "Chris Wright",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 202874,
+          "name": "Chris Wright"
+        },
+        {
+          "id": 203203,
+          "name": "Chris Wright"
+        }
+      ]
+    },
+    {
+      "playerId": "weathcl01",
+      "name": "Clarence Weatherspoon",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "cuiyo01",
+      "name": "Cui Yongxi",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "schayda01",
+      "name": "Danny Schayes",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "johnsda08",
+      "name": "David Johnson",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 77139,
+          "name": "David Johnson"
+        },
+        {
+          "id": 1630525,
+          "name": "David Johnson"
+        }
+      ]
+    },
+    {
+      "playerId": "brownde01",
+      "name": "Dee Brown",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 244,
+          "name": "Dee Brown"
+        },
+        {
+          "id": 200793,
+          "name": "Dee Brown"
+        }
+      ]
+    },
+    {
+      "playerId": "brownde03",
+      "name": "Dee Brown",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 244,
+          "name": "Dee Brown"
+        },
+        {
+          "id": 200793,
+          "name": "Dee Brown"
+        }
+      ]
+    },
+    {
+      "playerId": "waltode01",
+      "name": "Derrick Walton",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "johnsed03",
+      "name": "Eddie Johnson",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 698,
+          "name": "Eddie Johnson"
+        },
+        {
+          "id": 77144,
+          "name": "Eddie Johnson"
+        }
+      ]
+    },
+    {
+      "playerId": "jetereu01",
+      "name": "Eugene Jeter",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "kingge03",
+      "name": "George King",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 77268,
+          "name": "George King"
+        },
+        {
+          "id": 1628994,
+          "name": "George King"
+        }
+      ]
+    },
+    {
+      "playerId": "hendege02",
+      "name": "Gerald Henderson",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 76993,
+          "name": "Gerald Henderson"
+        },
+        {
+          "id": 201945,
+          "name": "Gerald Henderson"
+        }
+      ]
+    },
+    {
+      "playerId": "jacksgg01",
+      "name": "GG Jackson II",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "ricegl01",
+      "name": "Glen Rice",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 779,
+          "name": "Glen Rice"
+        },
+        {
+          "id": 203318,
+          "name": "Glen Rice"
+        }
+      ]
+    },
+    {
+      "playerId": "ricegl02",
+      "name": "Glen Rice Jr.",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "smithgr02",
+      "name": "Greg Smith",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 78190,
+          "name": "Greg Smith"
+        },
+        {
+          "id": 202962,
+          "name": "Greg Smith"
+        }
+      ]
+    },
+    {
+      "playerId": "gilesha01",
+      "name": "Harry Giles",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "kutluib01",
+      "name": "Ibo Kutluay",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "austiis01",
+      "name": "Isaac Austin",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "fontais01",
+      "name": "Isaac Fontaine",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "willije02",
+      "name": "Jeenathan Williams",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "dowtije01",
+      "name": "Jeff Dowtin",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "samueje01",
+      "name": "Jermaine Samuels",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "butleji01",
+      "name": "Jimmy Butler",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "butlejo01",
+      "name": "John Butler",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "davisjo06",
+      "name": "Johnny Davis",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 76526,
+          "name": "Johnny Davis"
+        },
+        {
+          "id": 1631098,
+          "name": "Johnny Davis"
+        }
+      ]
+    },
+    {
+      "playerId": "obryajo01",
+      "name": "Johnny O'Bryant",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "johnske03",
+      "name": "Ken Johnson",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 2256,
+          "name": "Ken Johnson"
+        },
+        {
+          "id": 77154,
+          "name": "Ken Johnson"
+        }
+      ]
+    },
+    {
+      "playerId": "knoxke01",
+      "name": "Kevin Knox",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "garriki01",
+      "name": "Kiwane Lemorris Garris",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "johnsla02",
+      "name": "Larry Johnson",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 913,
+          "name": "Larry Johnson"
+        },
+        {
+          "id": 77156,
+          "name": "Larry Johnson"
+        }
+      ]
+    },
+    {
+      "playerId": "morrima03",
+      "name": "Marcus Morris",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "willima03",
+      "name": "Marcus Williams",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 200766,
+          "name": "Marcus Williams"
+        },
+        {
+          "id": 201173,
+          "name": "Marcus Williams"
+        }
+      ]
+    },
+    {
+      "playerId": "willima04",
+      "name": "Marcus Williams",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 200766,
+          "name": "Marcus Williams"
+        },
+        {
+          "id": 201173,
+          "name": "Marcus Williams"
+        }
+      ]
+    },
+    {
+      "playerId": "davisma02",
+      "name": "Mark Davis",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 707,
+          "name": "Mark Davis"
+        },
+        {
+          "id": 76528,
+          "name": "Mark Davis"
+        }
+      ]
+    },
+    {
+      "playerId": "jonesma03",
+      "name": "Mark Jones",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 2891,
+          "name": "Mark Jones"
+        },
+        {
+          "id": 90000,
+          "name": "Mark Jones"
+        }
+      ]
+    },
+    {
+      "playerId": "willima05",
+      "name": "Matt Williams",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "hurtma01",
+      "name": "Matthew Hurt",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "frazime01",
+      "name": "Melvin Frazier",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "frazimi01",
+      "name": "Michael Frazier",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "smithmi02",
+      "name": "Michael Smith",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 63,
+          "name": "Michael Smith"
+        },
+        {
+          "id": 78197,
+          "name": "Michael Smith"
+        }
+      ]
+    },
+    {
+      "playerId": "dunlemi02",
+      "name": "Mike Dunleavy",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 2399,
+          "name": "Mike Dunleavy"
+        },
+        {
+          "id": 76616,
+          "name": "Mike Dunleavy"
+        }
+      ]
+    },
+    {
+      "playerId": "jamesmi01",
+      "name": "Mike James",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 2229,
+          "name": "Mike James"
+        },
+        {
+          "id": 1628455,
+          "name": "Mike James"
+        }
+      ]
+    },
+    {
+      "playerId": "jamesmi02",
+      "name": "Mike James",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 2229,
+          "name": "Mike James"
+        },
+        {
+          "id": 1628455,
+          "name": "Mike James"
+        }
+      ]
+    },
+    {
+      "playerId": "sweetmi01",
+      "name": "Mike Sweetney",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "creekmi01",
+      "name": "Mitch Creek",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "hayesni01",
+      "name": "Nigel Hayes",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "richano01",
+      "name": "Norm Richardson",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "asikom01",
+      "name": "Ömer Aşık",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "ewingpa01",
+      "name": "Patrick Ewing",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 121,
+          "name": "Patrick Ewing"
+        },
+        {
+          "id": 201607,
+          "name": "Patrick Ewing"
+        }
+      ]
+    },
+    {
+      "playerId": "ewingpa02",
+      "name": "Patrick Ewing",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 121,
+          "name": "Patrick Ewing"
+        },
+        {
+          "id": 201607,
+          "name": "Patrick Ewing"
+        }
+      ]
+    },
+    {
+      "playerId": "jonespe01",
+      "name": "Perry Jones",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "bullore01",
+      "name": "Reggie Bullock",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "willire01",
+      "name": "Reggie Williams",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 199,
+          "name": "Reggie Williams"
+        },
+        {
+          "id": 202130,
+          "name": "Reggie Williams"
+        }
+      ]
+    },
+    {
+      "playerId": "willire02",
+      "name": "Reggie Williams",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 199,
+          "name": "Reggie Williams"
+        },
+        {
+          "id": 202130,
+          "name": "Reggie Williams"
+        }
+      ]
+    },
+    {
+      "playerId": "manniri01",
+      "name": "Rich Manning",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "nembhrj01",
+      "name": "RJ Nembhard Jr.",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "williro04",
+      "name": "Robert Williams",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "masonro01",
+      "name": "Roger Mason",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "hollaro01",
+      "name": "Ron Holland",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "murraro01",
+      "name": "Ronald Murray",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "medvest01",
+      "name": "Stanislav Medvedenko",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "smithst01",
+      "name": "Steve Smith",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "smithst03",
+      "name": "Steven Smith",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 120,
+          "name": "Steven Smith"
+        },
+        {
+          "id": 200848,
+          "name": "Steven Smith"
+        }
+      ]
+    },
+    {
+      "playerId": "pleisti01",
+      "name": "Tibor Pleiß",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "mitchto02",
+      "name": "Tony Mitchell",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 203183,
+          "name": "Tony Mitchell"
+        },
+        {
+          "id": 203502,
+          "name": "Tony Mitchell"
+        }
+      ]
+    },
+    {
+      "playerId": "mitchto03",
+      "name": "Tony Mitchell",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 203183,
+          "name": "Tony Mitchell"
+        },
+        {
+          "id": 203502,
+          "name": "Tony Mitchell"
+        }
+      ]
+    },
+    {
+      "playerId": "scotttr01",
+      "name": "Tre Scott",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "jemistr01",
+      "name": "Trey Jemison",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "edwarvi01",
+      "name": "Vince Edwards",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "huntevi01",
+      "name": "Vince Hunter",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "favervi01",
+      "name": "Vítor Luiz Faverani",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "baldwwa01",
+      "name": "Wade Baldwin",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "russewa02",
+      "name": "Walker Russell",
+      "reason": "ambiguous",
+      "candidates": [
+        {
+          "id": 78048,
+          "name": "Walker Russell"
+        },
+        {
+          "id": 201041,
+          "name": "Walker Russell"
+        }
+      ]
+    },
+    {
+      "playerId": "tillmxa01",
+      "name": "Xavier Tillman Sr.",
+      "reason": "unmatched",
+      "candidates": []
+    },
+    {
+      "playerId": "norveza01",
+      "name": "Zach Norvell",
+      "reason": "unmatched",
+      "candidates": []
+    }
+  ],
+  "failures": []
+}

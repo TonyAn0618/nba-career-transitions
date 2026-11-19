@@ -1,0 +1,736 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "3981e43c07e963db539c527beb8a7b4b99ec8716",
+  "retrievedAt": "2026-11-19T07:20:45.706Z",
+  "source": "Basketball-Reference statistics compiled by Sumitro Datta",
+  "seasonType": "NBA regular season",
+  "firstSeason": 1997,
+  "lastSeason": 2025,
+  "rowCount": 13987,
+  "playerCount": 2756,
+  "seasonCount": 29,
+  "sources": [
+    {
+      "file": "Player Shooting.csv",
+      "url": "https://raw.githubusercontent.com/sumitrodatta/bball-reference-datasets/3981e43c07e963db539c527beb8a7b4b99ec8716/Data/Player%20Shooting.csv",
+      "bytes": 2927798,
+      "sha256": "7cb9d90ddde154eda7ccadbc541e1119969959695fb5b29ca26fee67eb8f10a6"
+    },
+    {
+      "file": "Player Totals.csv",
+      "url": "https://raw.githubusercontent.com/sumitrodatta/bball-reference-datasets/3981e43c07e963db539c527beb8a7b4b99ec8716/Data/Player%20Totals.csv",
+      "bytes": 4544007,
+      "sha256": "2954bc4acb2651f6989304ab1a6d79f3ec710195b828c922510bc1250928b316"
+    },
+    {
+      "file": "Team Totals.csv",
+      "url": "https://raw.githubusercontent.com/sumitrodatta/bball-reference-datasets/3981e43c07e963db539c527beb8a7b4b99ec8716/Data/Team%20Totals.csv",
+      "bytes": 282614,
+      "sha256": "b4caeb0cb52cdb4d5d88f340f05f7738a1cf2f35efebdca9000fc7f34d91fe35"
+    }
+  ],
+  "quality": {
+    "ambiguousShooting": [],
+    "ambiguousTotals": [],
+    "unmatchedOrInvalid": [
+      {
+        "id": "cartede02:2025",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "spencca01:2025",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "achiupr01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "adebaba01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "allenja01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "baglema01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "barneha02:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "barnesc01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "bartowi01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "beysa01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "bogdabo01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "bouchch01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "brissos01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "brogdma01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "brownbr01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "brownja02:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "bryanth01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "burksal01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "butleji01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "caldwke01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "capelca01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "collijo01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "dellama01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "diallha01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "duartch01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "embiijo01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "eubandr01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "garlada01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "gordoaa01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "grantje01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "greenje02:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "griffbl01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "halibty01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "hamptrj01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "hardeja01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "hayesja02:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "herroty01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "houseda01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "huertke01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "huntede01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "ingrabr01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "iveyja01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "jacksis01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "jacksre01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "johnsja05:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "jokicni01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "joneshe01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "josepco01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "kornelu01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "lewiski01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "lillada01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "littlna01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "liveris01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "lylestr01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "marshna01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "martica02:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mathube01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "maxeyty01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mccolcj01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mccontj01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mcdanja01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "metuch01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "miltosh01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mitchda01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mitchdo01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mobleev01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "murrade01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "murrake02:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "nworajo01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "okongon01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "okorois01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "oladivi01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "poeltja01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "portemi01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "pritcpa01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "reddica01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "reedpa01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "rhodeja01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "sabondo01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "siakapa01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "smartma01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "smithja04:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "stevela01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "trentga02:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "turnemy01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "valanjo01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "watfotr01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "whitede01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "wisemja01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "youngtr01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "zelleco01:2023",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "abrinal01:2018",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "georgma01:2018",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "hernawi01:2018",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "jonesja04:2018",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "jordade01:2018",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "looneke01:2018",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "paulbr01:2018",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "sessira01:2018",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "thomptr01:2018",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "zelleco01:2018",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "acyqu01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "bakerro01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "baldwwa01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "biyombi01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "casspom01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "chrisra01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "cookqu01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "dekkesa01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "diallch01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "dinwisp01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "ellenhe01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "feliccr01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "geeal01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "hernawi01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "hillso01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "jeffeal01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "labissk01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "laproni01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "leeco01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "longsh01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mahinia01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mcadoja01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mcrobjo01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "nancela02:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "ndourma01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "netora01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "noahjo01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "plumlma02:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "satorto01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "scolalu01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "scottmi01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "sullija01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "vanvlfr01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "willitr02:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "wrighde01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "zubaciv01:2017",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "bennean01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "blackta01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "butlera01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "dinwisp01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "fryech01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "geeal01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "goodedr01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "hillida01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "jonesja02:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mcculch01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "simshe01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "udrihbe01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "wrighde01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "youngjo01:2016",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "mohamna01:2015",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "ajincal01:2014",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "canaais01:2014",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "freeljo01:2014",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "goodedr01:2014",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "randoan01:2014",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "witheje01:2014",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "battito01:2010",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "gadzuda01:2010",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "diopde01:2003",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "medvest01:2003",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "samakso01:2003",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "brunsri01:2002",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "buechju01:2001",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "wennibi01:2000",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "hendrma01:1999",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "vaughda02:1999",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "waltere01:1999",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "williaa01:1998",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "allenje01:1997",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "fulleto02:1997",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "schefst01:1997",
+        "issue": "incomplete_distance_distribution"
+      },
+      {
+        "id": "walkesa01:1997",
+        "issue": "incomplete_distance_distribution"
+      }
+    ],
+    "completeShares": 13929,
+    "reconciledLeagueSeasons": 29
+  }
+}
