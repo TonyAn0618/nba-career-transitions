@@ -446,3 +446,128 @@
   color: var(--cr-muted);
   font-size: 12px;
 }
+
+#career-rings {
+  scroll-margin-top: 12px;
+}
+.cr-layout-switch {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  margin: 14px 0 4px;
+  border-bottom: 1px solid var(--cr-rule);
+}
+.cr-layout-switch button {
+  min-height: 36px;
+  padding: 5px 11px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: var(--cr-muted);
+  font-size: 14px;
+  font-weight: 550;
+}
+.cr-layout-switch button:hover {
+  color: var(--cr-text);
+}
+.cr-layout-switch button[aria-pressed="true"] {
+  color: var(--cr-highlight);
+  border-color: var(--cr-highlight);
+}
+.cr-plots {
+  display: grid;
+  align-items: center;
+  margin: auto 0 0;
+}
+.cr-plot {
+  min-width: 0;
+}
+.cr-plot h3 {
+  margin: 0;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cr-text);
+}
+.cr-dual .cr-overview {
+  grid-column: 1/-1;
+  border-right: none;
+}
+.cr-dual .cr-plots {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 15px 0 10px;
+  align-items: stretch;
+}
+.cr-dual .cr-plot {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 4px 14px;
+}
+.cr-dual .cr-plot + .cr-plot {
+  border-left: 1px solid var(--cr-rule);
+}
+.cr-dual .cr-scrubber {
+  grid-row: 2;
+}
+.cr-dual .cr-details {
+  grid-row: 3;
+  grid-column: 1/-1;
+  border-top: 1px solid var(--cr-rule);
+}
+@media (min-width: 761px) {
+  .cr-dual .cr-details {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    column-gap: clamp(26px, 4vw, 55px);
+    align-items: start;
+  }
+  .cr-dual .cr-details > .cr-heading,
+  .cr-dual .cr-stats,
+  .cr-dual .cr-note {
+    grid-column: 1;
+  }
+  .cr-dual .cr-details > .cr-comparison,
+  .cr-dual .cr-details > .cr-comparison-empty {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    border-top: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+@media (max-width: 640px) {
+  .cr-dual .cr-plots {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .cr-dual .cr-plot {
+    padding: 0;
+  }
+  .cr-dual .cr-plot + .cr-plot {
+    border-left: 0;
+    border-top: 1px solid var(--cr-rule);
+    padding-top: 14px;
+  }
+  .cr-layout-switch button {
+    min-height: 40px;
+  }
+}
+
+/* Align both plot centers and captions when comparing two coordinate systems. */
+@media (min-width: 641px) {
+  .cr-dual .cr-plot > figure {
+    margin: 0;
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    grid-template-rows: auto auto;
+  }
+  .cr-dual .cr-plot > figure > svg {
+    height: clamp(265px, 30vw, 368px);
+    align-self: center;
+  }
+  .cr-dual .cr-plot > figure > figcaption {
+    min-height: 40px;
+  }
+}

@@ -1,12 +1,21 @@
-import { useId, useState } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { percent, seasonLabel } from "../lib/analysis";
 import type { SeasonRow, Translate } from "../lib/types";
 import "./career-rings.css";
 
-type Metric = "share" | "fg";
+import {
+  valueAt,
+  tealScale,
+  type Metric,
+  type RingLayout,
+} from "../lib/ring-encoding";
+import SeasonDial from "./SeasonDial";
+import ConcentricRings from "./ConcentricRings";
 
 type Props = {
+  layout: RingLayout;
+  onLayout: (value: RingLayout) => void;
   metric: Metric;
   onMetric: (value: Metric) => void;
   compareYear?: number;
@@ -20,68 +29,6 @@ type Props = {
 };
 
 type DatedSeason = SeasonRow & { age: number };
-const innerRadius = 35;
-const outerRadius = 102;
-const tealScale = [
-  [45, 75, 75],
-  [61, 128, 124],
-  [99, 175, 161],
-  [157, 210, 186],
-  [225, 237, 202],
-];
-
-function colorAt(value: number) {
-  const position = Math.max(0, Math.min(1, value)) * (tealScale.length - 1);
-  const stop = Math.min(Math.floor(position), tealScale.length - 2);
-  const rgb = tealScale[stop].map((channel, i) =>
-    Math.round(
-      channel + (tealScale[stop + 1][i] - channel) * (position - stop),
-    ),
-  );
-  return `rgb(${rgb.join(",")})`;
-}
-
-function valueAt(row: SeasonRow | undefined, metric: Metric, zone: number) {
-  if (!row || row.fga === 0) return null;
-  if (metric === "fg" && row.shares[zone] === 0) return null;
-  const value = (metric === "share" ? row.shares : row.fg)[zone];
-  return value != null && value >= 0 && value <= 1 ? value : null;
-}
-
-function polar(radius: number, angle: number) {
-  const radians = (angle * Math.PI) / 180;
-  return [radius * Math.cos(radians), radius * Math.sin(radians)];
-}
-
-function ringSector(inside: number, outside: number, sector: number) {
-  const mid = -90 + sector * 72;
-  const a = mid - 35.5,
-    b = mid + 35.5;
-  return [
-    "M",
-    ...polar(inside, a),
-    "L",
-    ...polar(outside, a),
-    "A",
-    outside,
-    outside,
-    0,
-    0,
-    1,
-    ...polar(outside, b),
-    "L",
-    ...polar(inside, b),
-    "A",
-    inside,
-    inside,
-    0,
-    0,
-    0,
-    ...polar(inside, a),
-    "Z",
-  ].join(" ");
-}
-
 function estimatedAttempts(row: SeasonRow, index: number) {
   const share = row.shares[index];
   if (row.fga === 0) return 0;
@@ -257,6 +204,8 @@ function ValueCell({ value }: { value: number | null }) {
 }
 
 export default function CareerRings({
+  layout,
+  onLayout,
   rows,
   selected,
   onSelect,
@@ -268,7 +217,6 @@ export default function CareerRings({
   onCompareYear,
   t,
 }: Props) {
-  const id = useId().replace(/:/g, "");
   const known = rows
     .filter((row): row is DatedSeason => Number.isInteger(row.age))
     .sort((a, b) => a.age - b.age || a.season - b.season);
@@ -278,7 +226,6 @@ export default function CareerRings({
   const ages = known.length
     ? Array.from({ length: last - first + 1 }, (_, i) => first + i)
     : [];
-  const width = (outerRadius - innerRadius) / Math.max(1, ages.length);
   const names = [
     t("At the rim", "篮下"),
     t("Short two", "近距离两分"),
@@ -309,9 +256,9 @@ export default function CareerRings({
   const activeAge = selected.age;
   const counts = names.map((_, i) => estimatedAttempts(selected, i));
   const lowVolume = counts.some((n) => n != null && n < 25);
-  function selectAge(age: number, skipGaps = false) {
+  function selectAge(age: number) {
     let row = byAge.get(age);
-    if (!row && skipGaps) {
+    if (!row) {
       row =
         age > (activeAge ?? first)
           ? known.find((r) => r.age >= age)
@@ -322,14 +269,20 @@ export default function CareerRings({
     }
     if (row && row.id !== selected.id) onSelect(row);
   }
+  const layouts = [
+    ["rings", t("Concentric rings", "同心年轮")],
+    ["dial", t("Season dial", "圆周放大")],
+    ["both", t("Compare both", "双图对照")],
+  ] as const;
   return (
     <section
-      className="career-rings"
+      id="career-rings"
+      className={layout === "both" ? "career-rings cr-dual" : "career-rings"}
       aria-label={t("Career shot profile by age", "各年龄的生涯投篮分布")}
     >
       <div className="cr-overview">
         <div className="cr-heading">
-          <h2>{t("Career rings", "生涯年轮")}</h2>
+          <h2>{t("Career shot profile", "生涯投篮图")}</h2>
           <div
             className="cr-metric"
             role="group"
@@ -351,126 +304,55 @@ export default function CareerRings({
             </button>
           </div>
         </div>
-        <figure className="cr-figure">
-          <svg
-            viewBox="-150 -125 300 240"
-            role="img"
-            aria-labelledby={id + "-ring-title " + id + "-ring-desc"}
-          >
-            <title id={id + "-ring-title"}>
-              {selected.name + " · " + t("Career rings", "生涯年轮")}
-            </title>
-            <desc id={id + "-ring-desc"}>
-              {t(
-                "Each outward ring advances one year of age. The five sectors are shooting distances. Color measures ",
-                "由内向外每一圈增加一岁，五个扇区代表出手距离。颜色表示",
-              ) +
-                metricLabel +
-                "."}
-            </desc>
-            <defs>
-              <pattern
-                id={id + "-missing"}
-                width="4"
-                height="4"
-                patternUnits="userSpaceOnUse"
-                patternTransform="rotate(40)"
-              >
-                <rect width="4" height="4" fill="#243136" />
-                <path d="M 0 0 V 4" stroke="#6d797a" strokeWidth="1.4" />
-              </pattern>
-            </defs>
-            {ages.map((age, ageIndex) => {
-              const row = byAge.get(age);
-              const inside = innerRadius + ageIndex * width;
-              const pad = Math.min(0.55, width * 0.1);
-              return (
-                <g
-                  key={age}
-                  data-age={age}
-                  onPointerMove={(e) => {
-                    if (e.pointerType === "mouse") selectAge(age);
-                  }}
-                  onClick={() => selectAge(age)}
-                  className={row ? "cr-ring" : undefined}
-                >
-                  {names.map((name, k) => {
-                    const value = valueAt(row, metric, k);
-                    return (
-                      <path
-                        key={k}
-                        d={ringSector(inside + pad, inside + width - pad, k)}
-                        fill={
-                          value == null ? `url(#${id}-missing)` : colorAt(value)
-                        }
-                        opacity={zone == null || zone === k ? 1 : 0.47}
-                      >
-                        <title>
-                          {t(`Age ${age}`, `${age} 岁`) +
-                            " · " +
-                            name +
-                            " · " +
-                            (value == null
-                              ? t("No data", "无数据")
-                              : percent(value))}
-                        </title>
-                      </path>
-                    );
-                  })}
-                </g>
-              );
-            })}
-            {activeAge != null && byAge.has(activeAge) && (
-              <g pointerEvents="none" className="cr-selected-ring">
-                <circle r={innerRadius + (activeAge - first) * width + 0.2} />
-                <circle
-                  r={innerRadius + (activeAge - first + 1) * width - 0.2}
-                />
-              </g>
-            )}
-            {ringLabels.map((label, i) => {
-              const angle = -90 + i * 72;
-              const [x, y] = polar(111, angle);
-              const [x1, y1] = polar(104, angle);
-              const [x2, y2] = polar(108, angle);
-              return (
-                <g
-                  key={i}
-                  className={
-                    "cr-sector-label" + (zone === i ? " cr-sector-active" : "")
-                  }
-                >
-                  <line x1={x1} y1={y1} x2={x2} y2={y2} />
-                  <text
-                    x={x}
-                    y={y}
-                    dy={i === 0 ? -1 : 4}
-                    textAnchor={i === 0 ? "middle" : i < 3 ? "start" : "end"}
-                  >
-                    {label}
-                  </text>
-                </g>
-              );
-            })}
-            <g className="cr-hub" textAnchor="middle">
-              <text y="-12" className="cr-hub-label">
-                {t("AGE", "年龄")}
-              </text>
-              <text y="13" className="cr-hub-age">
-                {activeAge ?? "—"}
-              </text>
-              <text y="25" className="cr-hub-season">
-                {season}
-              </text>
-            </g>
-          </svg>
-          <figcaption>
-            {t(
-              "Each ring is one year older. Hover or tap to select an age.",
-              "由内向外，年龄递增。移动鼠标或轻触年轮可切换年龄。",
-            )}
-          </figcaption>
-        </figure>
+        <div
+          className="cr-layout-switch"
+          role="group"
+          aria-label={t("Age chart layout", "年龄图布局")}
+        >
+          {layouts.map(([value, label]) => (
+            <button
+              type="button"
+              key={value}
+              aria-pressed={layout === value}
+              onClick={() => onLayout(value)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="cr-plots">
+          {layout !== "dial" && (
+            <div className="cr-plot">
+              {layout === "both" && <h3>{layouts[0][1]}</h3>}
+              <ConcentricRings
+                ages={ages}
+                byAge={byAge}
+                selected={selected}
+                metric={metric}
+                zone={zone}
+                ringLabels={ringLabels}
+                names={names}
+                t={t}
+                onSelect={onSelect}
+              />
+            </div>
+          )}
+          {layout !== "rings" && (
+            <div className="cr-plot">
+              {layout === "both" && <h3>{layouts[1][1]}</h3>}
+              <SeasonDial
+                ages={ages}
+                byAge={byAge}
+                selected={selected}
+                metric={metric}
+                zone={zone}
+                names={names}
+                t={t}
+                onSelect={onSelect}
+              />
+            </div>
+          )}
+        </div>
         <div className="cr-legend" aria-label={metricLabel + " 0–100%"}>
           <span>{metricLabel}</span>
           <span>0%</span>
@@ -584,7 +466,7 @@ export default function CareerRings({
             step="1"
             value={activeAge ?? first}
             disabled={known.length < 2}
-            onChange={(e) => selectAge(Number(e.target.value), true)}
+            onChange={(e) => selectAge(Number(e.target.value))}
           />
           <span className="cr-end-age">{t(`Age ${last}`, `${last} 岁`)}</span>
           <button

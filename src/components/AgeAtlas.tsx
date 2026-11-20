@@ -16,6 +16,7 @@ import { percent, pp, seasonLabel } from "../lib/analysis";
 import PlayerPicker from "./PlayerPicker";
 import PlayerPortrait from "./PlayerPortrait";
 import CareerRings from "./CareerRings";
+import type { RingLayout } from "../lib/ring-encoding";
 import AgePeers from "./AgePeers";
 import AgeContext from "./AgeContext";
 import CareerTrajectory from "./CareerTrajectory";
@@ -163,6 +164,10 @@ export default function AgeAtlas({
   const [metric, setMetric] = useState<"share" | "fg">(
     query.get("metric") === "fg" ? "fg" : "share",
   );
+  const [layout, setLayout] = useState<RingLayout>(() => {
+    const value = query.get("layout");
+    return value === "dial" || value === "both" ? value : "rings";
+  });
   const [requestedCompare, setCompareYear] = useState<number | undefined>(() =>
     query.has("compare") ? Number(query.get("compare")) : undefined,
   );
@@ -196,6 +201,7 @@ export default function AgeAtlas({
     });
     if (peer) params.set("peer", peer);
     if (zone != null) params.set("band", String(zone));
+    if (layout !== "rings") params.set("layout", layout);
     if (metric === "fg") params.set("metric", "fg");
     if (requestedCompare != null && compareYear === requestedCompare)
       params.set("compare", String(compareYear));
@@ -203,7 +209,12 @@ export default function AgeAtlas({
     window.history.replaceState(
       null,
       "",
-      window.location.pathname + "?" + params,
+      window.location.pathname +
+        "?" +
+        params +
+        (tab === "career" && window.location.hash === "#career-rings"
+          ? "#career-rings"
+          : ""),
     );
     document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
     document.title =
@@ -221,6 +232,7 @@ export default function AgeAtlas({
     peer,
     zone,
     metric,
+    layout,
     tab,
     compareYear,
     requestedCompare,
@@ -231,6 +243,13 @@ export default function AgeAtlas({
     return () => clearTimeout(timer);
   }, [copied]);
 
+  useEffect(() => {
+    if (window.location.hash === "#career-rings") {
+      document
+        .getElementById("career-rings")
+        ?.scrollIntoView({ block: "start" });
+    }
+  }, []);
   function selectPlayer(id: string) {
     if (id === player) return;
     setPlayer(id);
@@ -441,6 +460,8 @@ export default function AgeAtlas({
           {tab === "career" && (
             <>
               <CareerRings
+                layout={layout}
+                onLayout={setLayout}
                 compareYear={compareYear}
                 onCompareYear={setCompareYear}
                 metric={metric}
