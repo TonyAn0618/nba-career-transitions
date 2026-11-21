@@ -68,18 +68,11 @@
   font: inherit;
   cursor: pointer;
 }
-.ap-match-meta,
 .ap-legend,
 .ap-readout {
   display: flex;
   flex-wrap: wrap;
   gap: 5px 14px;
-}
-.ap-match-meta {
-  margin-top: 8px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--ap-muted);
 }
 .ap-section table {
   width: 100%;
@@ -134,13 +127,6 @@
   background: var(--ap-peer);
   border-radius: 50%;
 }
-.ap-pool {
-  display: block;
-  margin-top: 10px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--ap-muted);
-}
 .ap-section h3 {
   font-size: 18px;
   font-weight: 640;
@@ -194,7 +180,7 @@
 .ap-y-axis,
 .ap-plot {
   position: relative;
-  height: 138px;
+  height: clamp(160px, 19vw, 220px);
 }
 .ap-y-axis span {
   position: absolute;
@@ -398,10 +384,6 @@
   .ap-section table {
     font-size: 12px;
   }
-  .ap-plot,
-  .ap-y-axis {
-    height: 115px;
-  }
   .ap-zones th:first-child {
     width: 24%;
   }
@@ -434,4 +416,87 @@
 }
 .ap-backtest th {
   line-height: 1.45;
+}
+.ap-score {
+  margin-top: 22px;
+  display: grid;
+  gap: 2px;
+}
+.ap-score span {
+  font-size: 14px;
+}
+.ap-score strong {
+  color: var(--ap-peer);
+  font-size: clamp(50px, 5.5vw, 76px);
+  line-height: 1;
+  letter-spacing: -0.055em;
+  font-weight: 620;
+}
+.ap-score small {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--ap-muted);
+}
+.ap-profile-head,
+.ap-metric-switch {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.ap-profile-head {
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.ap-metric-switch {
+  padding: 2px;
+  border: 1px solid var(--ap-line);
+  border-radius: 5px;
+}
+.ap-metric-switch button {
+  color: var(--ap-muted);
+  cursor: pointer;
+  border: 0;
+  border-radius: 3px;
+  padding: 6px 9px;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+}
+.ap-metric-switch [aria-pressed="true"] {
+  background: #364541;
+  color: var(--ap-ink);
+}
+.ap-follow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: clamp(20px, 3.6vw, 48px);
+  align-items: start;
+  border-top: 1px solid var(--ap-line);
+  margin-top: 26px;
+  padding-block: 24px;
+}
+.ap-follow .ap-scout {
+  margin: 0;
+}
+.ap-change + .ap-scenario {
+  margin-top: 12px;
+}
+.ap-scenario strong {
+  color: var(--ap-ink);
+}
+@container (max-width: 660px) {
+  .ap-follow {
+    grid-template-columns: 1fr;
+  }
+  .ap-score {
+    margin-top: 16px;
+  }
+}
+
+.ap-score p {
+  color: var(--ap-ink);
+  line-height: 1.5;
+  margin-top: 6px;
+  font-size: 13px;
 }

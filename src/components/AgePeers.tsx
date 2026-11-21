@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fga36, percent, seasonLabel } from "../lib/analysis";
 import {
   COHORT_SIZE,
@@ -8,9 +8,11 @@ import {
   rankAgePeers,
   type AgePeer,
 } from "../lib/age-peers";
+import { valueAt, hasSmallZoneSample, type Metric } from "../lib/ring-encoding";
 import { zoneChanges } from "../lib/transitions";
 import type { SeasonRow, Translate } from "../lib/types";
 import backtest from "../lib/age-peer-backtest.json";
+import ZonePairBars from "./ZonePairBars";
 import "./age-peers.css";
 
 interface Props {
@@ -194,24 +196,92 @@ function baselineVolume(row: SeasonRow) {
   ];
 }
 
-function MixDetails({
+function largestProfileGap(anchor: SeasonRow, peer: SeasonRow, t: Translate) {
+  const changes = zoneChanges(anchor, peer);
+  let largest = 0;
+  let zone = 0;
+  changes.forEach((delta, i) => {
+    if (delta != null && Math.abs(delta) > Math.abs(largest)) {
+      largest = delta;
+      zone = i;
+    }
+  });
+  if (Math.abs(largest) < 0.05)
+    return t(
+      "The five shot shares match to 0.1 pp.",
+      "五区出手占比相同（精确至 0.1 个百分点）。",
+    );
+  const leader = largest > 0 ? peer : anchor;
+  const gap = Math.abs(largest).toFixed(1);
+  const label = zoneLabels(t)[zone];
+  return t(
+    `Largest gap · ${leader.name} takes ${gap} pp more of his shots from ${label}.`,
+    `最大差异在${label}，${leader.name} 的出手占比高 ${gap} 个百分点。`,
+  );
+}
+
+function PeerProfile({
   anchor,
+  peer,
+  t,
+}: {
+  anchor: SeasonRow;
+  peer: SeasonRow;
+  t: Translate;
+}) {
+  const [metric, setMetric] = useState<Metric>("share");
+  const series = [anchor, peer].map((row, i) => ({
+    label: [row.name, seasonLabel(row.season), row.team].join(" · "),
+    color: i ? "var(--ap-peer)" : "var(--ap-player)",
+    values: row.shares.map((_, z) => valueAt(row, metric, z)),
+    lowSample:
+      metric === "fg"
+        ? row.shares.map((_, z) => hasSmallZoneSample(row, z))
+        : undefined,
+  }));
+  return (
+    <section className="ap-profile" aria-labelledby="ap-profile-title">
+      <div className="ap-profile-head">
+        <h3 id="ap-profile-title">
+          {t(`Shooting at age ${anchor.age}`, `${anchor.age} 岁的投篮分布`)}
+        </h3>
+        <div
+          className="ap-metric-switch"
+          role="group"
+          aria-label={t("Shooting metric", "投篮指标")}
+        >
+          {(["share", "fg"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              aria-pressed={metric === m}
+              onClick={() => setMetric(m)}
+            >
+              {m === "share" ? t("Shot share", "出手占比") : t("FG%", "命中率")}
+            </button>
+          ))}
+        </div>
+      </div>
+      <ZonePairBars zones={zoneLabels(t)} series={series} t={t} />
+    </section>
+  );
+}
+
+function MixDetails({
   baseline,
   current,
   step,
   t,
 }: {
-  anchor: SeasonRow;
   baseline: SeasonRow;
   current: SeasonRow | null;
   step: number;
   t: Translate;
 }) {
   const zones = zoneLabels(t);
-  const start = step ? baseline : anchor;
   const fmtFg = (r: SeasonRow | null, i: number) => {
-    if (!r || r.shares[i] == null || r.fg[i] == null) return "—";
-    const thin = (r.fga ?? 0) * r.shares[i] < 25;
+    if (!r || valueAt(r, "fg", i) == null) return "—";
+    const thin = hasSmallZoneSample(r, i);
     return (
       <span className={thin ? "ap-thin" : ""}>
         {percent(r.fg[i])}
@@ -221,19 +291,12 @@ function MixDetails({
   };
   return (
     <details className="ap-details ap-zones">
-      <summary>
-        {t("Compare all five shooting zones", "查看五个区域的出手与命中率")}
-      </summary>
+      <summary>{t("Peer’s follow-up by zone", "参照球员后续分区明细")}</summary>
       <p className="ap-sub">
-        {step
-          ? t(
-              `${baseline.name} · ages ${baseline.age} → ${baseline.age! + step}`,
-              `${baseline.name} · ${baseline.age} → ${baseline.age! + step} 岁`,
-            )
-          : t(
-              `At age ${anchor.age}: ${anchor.name} → ${baseline.name}`,
-              `${anchor.age} 岁时：${anchor.name} → ${baseline.name}`,
-            )}
+        {t(
+          `${baseline.name} · ages ${baseline.age} → ${baseline.age! + step}`,
+          `${baseline.name} · ${baseline.age} → ${baseline.age! + step} 岁`,
+        )}
       </p>
       <table>
         <thead>
@@ -248,11 +311,11 @@ function MixDetails({
             <tr key={z}>
               <th scope="row">{z}</th>
               <td>
-                {percent(start.shares[i])} →{" "}
+                {percent(baseline.shares[i])} →{" "}
                 <b>{percent(current?.shares[i] ?? null)}</b>
               </td>
               <td>
-                {fmtFg(start, i)} → <b>{fmtFg(current, i)}</b>
+                {fmtFg(baseline, i)} → <b>{fmtFg(current, i)}</b>
               </td>
             </tr>
           ))}
@@ -292,56 +355,17 @@ function ScoutingNote({
   const later = path[i];
   const metric = t(" pp", " 个百分点");
   const zones = zoneLabels(t);
-  let note: string;
-  if (!later || i <= 0) {
-    note = t(
-      `By ${seasonLabel(anchor.season)}, there is no qualifying follow-up for ${baseline.name} at this horizon. Compare another peer to inspect a documented adjustment.`,
-      `截至 ${seasonLabel(anchor.season)}，${baseline.name} 在该观察期没有符合样本量要求的后续记录。可切换参照球员查看已有记录的转型。`,
-    );
-  } else {
-    const changes = zoneChanges(baseline, later);
-    const ranked = changes
-      .map((value, zone) => ({ value, zone }))
-      .filter(
-        (item) =>
-          item.value != null &&
-          (later.shares[item.zone] ?? 0) * (later.fga ?? 0) >= 25,
-      )
-      .sort((a, b) => b.value! - a.value!);
-    const gain = ranked[0],
-      efficiency =
-        later.rts != null && baseline.rts != null
-          ? later.rts - baseline.rts
-          : null;
-    if (gain && gain.value! >= 2) {
-      const zone = zones[gain.zone];
-      const comparison = t(
-        `From ${baseline.age} to ${later.age}, ${baseline.name} increased ${zone} share by ${gain.value!.toFixed(1)} pp.`,
-        `${baseline.name} 从 ${baseline.age} 到 ${later.age} 岁，${zone}出手占比增加 ${gain.value!.toFixed(1)} 个百分点。`,
-      );
-      const cue =
-        efficiency == null
-          ? t(
-              "Check the player’s zone accuracy and overall true shooting before testing this adjustment.",
-              "可先核对该区命中率和整体真实命中率，再考虑尝试这一调整。",
-            )
-          : efficiency < 0
-            ? t(
-                `Over the same period, relative TS fell ${Math.abs(efficiency).toFixed(1)} pp. Before adding ${zone} attempts for ${anchor.name}, compare the return per shot with the zones that would lose attempts.`,
-                `同期 rTS 下降 ${Math.abs(efficiency).toFixed(1)} 个百分点。若考虑让 ${anchor.name} 增加该区出手，可先比较该区与被替代区域的每次出手得分。`,
-              )
-            : t(
-                `Relative TS changed by ${signed(efficiency)} pp. For ${anchor.name}, test this adjustment in small increments and track whether both zone accuracy and overall efficiency hold.`,
-                `同期 rTS 变化 ${signed(efficiency)} 个百分点。考察 ${anchor.name} 时，可小幅试增该区出手，并跟踪该区命中率及整体效率能否维持。`,
-              );
-      note = comparison + " " + cue;
-    } else {
-      note = t(
-        `Between ages ${baseline.age} and ${later.age}, ${baseline.name} had no verified increase of 2 pp or more in a zone with 25+ estimated attempts. Check changes in zone accuracy before proposing a new shot mix.`,
-        `${baseline.name} 从 ${baseline.age} 到 ${later.age} 岁，在至少有约 25 次出手的区域中，没有观察到占比增加 2 个百分点以上。可先检查原有各区的命中率变化，再考虑调整出手分布。`,
-      );
-    }
-  }
+  const change =
+    later && i > 0
+      ? zoneChanges(baseline, later)
+          .map((value, zone) => ({ value, zone }))
+          .filter(
+            (item): item is { value: number; zone: number } =>
+              item.value != null &&
+              (later.shares[item.zone] ?? 0) * (later.fga ?? 0) >= 25,
+          )
+          .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))[0]
+      : null;
   const horizon = step || (i > 0 ? i : 1),
     sample = outlook[horizon];
   const selectedChange =
@@ -364,35 +388,73 @@ function ScoutingNote({
     })[0];
   return (
     <div className="ap-scout">
-      <h3>{t("Scouting note", "球探观察")}</h3>
-      <p>{note}</p>
-      <p className="ap-scenario">
-        {sample.scenario
-          ? t(
-              `At age ${anchor.age! + horizon}, the median peer change puts ${anchor.name} at ${signed(sample.prediction)}${metric} rTS (middle 50%: ${signed(sample.scenario[0])} to ${signed(sample.scenario[1])}; n=${sample.pairedCount}). Only peers with qualifying follow-up enter this estimate.`,
-              `将参照组的 rTS 变化中位数加到 ${anchor.name} 的起点，得到 ${anchor.age! + horizon} 岁的类比估计 ${signed(sample.prediction)}${metric}。中间 50% 的范围为 ${signed(sample.scenario[0])} 至 ${signed(sample.scenario[1])}${metric}，仅覆盖仍有合格记录的 ${sample.pairedCount} 人。`,
-            )
-          : t(
-              `At age ${anchor.age! + horizon}, ${sample.pairedCount} peers have paired efficiency records. A comparison range requires at least three peers and a known starting rTS.`,
-              `${anchor.age! + horizon} 岁时，有 ${sample.pairedCount} 名参照球员具备前后两季效率记录。类比范围至少需要 3 人，且目标球员的初始 rTS 已知。`,
+      <h3>
+        {t(
+          "Follow-up at age " + (anchor.age! + horizon),
+          `${anchor.age! + horizon} 岁的转型结果`,
+        )}
+      </h3>
+      <p className="ap-change">
+        {later && i > 0 ? (
+          <>
+            <strong>{baseline.name}</strong> · {baseline.age} → {later.age}{" "}
+            {t("years", "岁")}
+            <br />
+            {change && (
+              <>
+                {zones[change.zone]} {t("share", "出手占比")}{" "}
+                {signed(change.value)}
+                {metric} ·{" "}
+              </>
             )}
+            {t("ΔrTS", "rTS 变化")} {signed(selectedChange)}
+            {selectedChange != null && metric}
+          </>
+        ) : (
+          t(
+            `${baseline.name} has no qualifying season at age ${anchor.age! + horizon}.`,
+            `${baseline.name} 在 ${anchor.age! + horizon} 岁没有合格赛季记录。`,
+          )
+        )}
       </p>
-      {sample.scenario && (
-        <p className="ap-sub">
-          {t(
-            `Holding the starting rTS gives ${signed(anchor.rts)} pp. In the young-player backtest this baseline had lower average error at one, three and five years.`,
-            `按起点持平估计，rTS 为 ${signed(anchor.rts)} 个百分点。年轻球员回测中，这一基准在一年、三年和五年后的平均误差都更低。`,
-          )}
-        </p>
-      )}
+      <p className="ap-scenario">
+        {sample.scenario ? (
+          <>
+            {t(
+              `${anchor.name} · estimated rTS`,
+              `${anchor.name} · rTS 类比估计`,
+            )}{" "}
+            <strong>
+              {signed(sample.prediction)}
+              {metric}
+            </strong>
+            <br />
+            {t("Middle 50%", "中间 50%")} {signed(sample.scenario[0])}{" "}
+            {t("to", "至")} {signed(sample.scenario[1])}
+            {metric} ·{" "}
+            {t(
+              `${sample.pairedCount} peers`,
+              `${sample.pairedCount} 名参照球员`,
+            )}
+            <br />
+            {t("Unchanged rTS", "起点持平估计")} {signed(anchor.rts)}
+            {metric}
+          </>
+        ) : (
+          t(
+            `${sample.pairedCount} paired records. A range requires three and a known starting rTS.`,
+            `可用记录 ${sample.pairedCount} 人。估计区间需要至少 3 人及已知的起点 rTS。`,
+          )
+        )}
+      </p>
       {alternative && (
         <button
           className="ap-compare"
           onClick={() => onCompare(alternative.row.playerId, horizon)}
         >
           {t(
-            `Compare ${alternative.row.name} at ${anchor.age! + horizon} · ΔrTS ${signed(alternative.delta)} pp`,
-            `对照 ${alternative.row.name} 在 ${anchor.age! + horizon} 岁的表现 · rTS 变化 ${signed(alternative.delta)} 个百分点`,
+            `Compare ${alternative.row.name} · ΔrTS ${signed(alternative.delta)} pp`,
+            `对照 ${alternative.row.name} · rTS 变化 ${signed(alternative.delta)} 个百分点`,
           )}{" "}
           <span aria-hidden="true">→</span>
         </button>
@@ -436,15 +498,7 @@ export default function AgePeers({
   return (
     <section className="ap-section" id="age-peers" aria-labelledby="ap-title">
       <header className="ap-header">
-        <h2 id="ap-title">
-          {t("Where did similar players go next?", "同龄球员后来怎么打？")}
-        </h2>
-        <p>
-          {t(
-            `Match ${anchor.name}’s age-${anchor.age ?? "—"} shot profile to earlier seasons, then follow those players forward.`,
-            `用 ${anchor.name} 在 ${anchor.age ?? "—"} 岁的投篮特征寻找历史参照，沿年龄追踪他们后来的打法。`,
-          )}
-        </p>
+        <h2 id="ap-title">{t("Same-age comparisons", "同龄转型对照")}</h2>
       </header>
       {peer ? (
         <>
@@ -465,13 +519,16 @@ export default function AgePeers({
                   >{`#${j >= COHORT_SIZE ? rank + 1 : j + 1}　${m.baseline.name}`}</option>
                 ))}
               </select>
-              <div className="ap-match-meta">
-                <span>
-                  {seasonLabel(peer.season)} · {peer.team}
-                </span>
-                <span>
-                  {t("Cosine", "余弦相似度")} {selected.score.toFixed(2)}
-                </span>
+              <div className="ap-score" aria-live="polite">
+                <span>{t("Cosine similarity", "余弦相似度")}</span>
+                <strong>{selected.score.toFixed(2)}</strong>
+                <small>
+                  {t(
+                    `Rank ${Math.max(rank, 0) + 1} of ${ranking.matches.length} at age ${anchor.age}`,
+                    `${anchor.age} 岁 · ${ranking.matches.length} 人中第 ${Math.max(rank, 0) + 1} 名`,
+                  )}
+                </small>
+                <p>{largestProfileGap(anchor, peer, t)}</p>
               </div>
               <table className="ap-metrics">
                 <thead>
@@ -513,13 +570,10 @@ export default function AgePeers({
                   ))}
                 </tbody>
               </table>
-              <span className="ap-pool">
-                {t(
-                  `${ranking.matches.length} ranked players at this age`,
-                  `该年龄共有 ${ranking.matches.length} 名球员可排序`,
-                )}
-              </span>
             </div>
+            <PeerProfile anchor={anchor} peer={peer} t={t} />
+          </div>
+          <div className="ap-follow">
             <EfficiencyChart
               anchor={anchor}
               path={path}
@@ -528,27 +582,28 @@ export default function AgePeers({
               onStep={onStep}
               t={t}
             />
+            <ScoutingNote
+              anchor={anchor}
+              path={path}
+              outlook={outlook}
+              step={index}
+              candidates={ranking.matches}
+              careers={careers}
+              onCompare={(id, nextStep) => {
+                onPeer(id);
+                onStep(nextStep);
+              }}
+              t={t}
+            />
           </div>
-          <ScoutingNote
-            anchor={anchor}
-            path={path}
-            outlook={outlook}
-            step={index}
-            candidates={ranking.matches}
-            careers={careers}
-            onCompare={(id, nextStep) => {
-              onPeer(id);
-              onStep(nextStep);
-            }}
-            t={t}
-          />
-          <MixDetails
-            anchor={anchor}
-            baseline={peer}
-            current={path[index]}
-            step={index}
-            t={t}
-          />
+          {index > 0 && (
+            <MixDetails
+              baseline={peer}
+              current={path[index]}
+              step={index}
+              t={t}
+            />
+          )}
         </>
       ) : (
         <p className="ap-empty">

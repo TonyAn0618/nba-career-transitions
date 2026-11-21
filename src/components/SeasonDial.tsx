@@ -317,8 +317,8 @@ export default function SeasonDial({
       <figcaption>
         <span className="sd-hint">
           {t(
-            "Move clockwise along the rim. Read the bands from inner to outer.",
-            "沿外缘顺时针选龄，下列色带读数由内至外。",
+            "Clockwise by age · Bands from inner to outer",
+            "顺时针选龄 · 色带由内向外",
           )}
         </span>
         <dl className="sd-readout">

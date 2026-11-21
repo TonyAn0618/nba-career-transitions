@@ -5,13 +5,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: auto 0 0;
-  padding-top: 6px;
+  margin: 0;
+  padding-top: 0;
 }
 .career-rings .season-dial > svg {
   display: block;
   width: 100%;
-  max-width: 369px;
+  max-width: 570px;
   height: auto;
   overflow: visible;
   font-family: inherit;
@@ -107,7 +107,7 @@
   overflow-wrap: anywhere;
 }
 .career-rings .season-dial .sd-readout dd {
-  margin: auto 0 0;
+  margin: 0;
   font-size: 14px;
   font-weight: 650;
   line-height: 1.3;

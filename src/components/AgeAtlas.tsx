@@ -24,16 +24,11 @@ import CareerCourts from "./CareerCourts";
 import "./age-atlas.css";
 
 const caseStudies = [
-  ["jamesle01", "LeBron James", "A scorer ages", "得分手的长生涯"],
-  ["lopezbr01", "Brook Lopez", "A center moves outside", "中锋走向外线"],
-  ["derozde01", "DeMar DeRozan", "The mid-range specialist", "中投专长"],
-  ["westbru01", "Russell Westbrook", "Finishing at the rim", "篮下终结"],
-  [
-    "edwaran01",
-    "Anthony Edwards",
-    "A young scorer’s next step",
-    "年轻得分手的下一步",
-  ],
+  ["jamesle01", "LeBron James"],
+  ["lopezbr01", "Brook Lopez"],
+  ["derozde01", "DeMar DeRozan"],
+  ["westbru01", "Russell Westbrook"],
+  ["edwaran01", "Anthony Edwards"],
 ] as const;
 
 const tabIds = ["career", "peers", "context"] as const;
@@ -345,7 +340,7 @@ export default function AgeAtlas({
           </div>
           <label className="atlas-cases">
             <BookOpen size={15} />
-            <span>{t("Guided cases", "案例速览")}</span>
+            <span>{t("Players", "球员案例")}</span>
             <select
               value={caseStudies.some((c) => c[0] === player) ? player : ""}
               onChange={(e) => selectPlayer(e.target.value)}
@@ -354,9 +349,9 @@ export default function AgeAtlas({
               {!caseStudies.some((c) => c[0] === player) && (
                 <option value="">{t("Choose a case", "选择案例")}</option>
               )}
-              {caseStudies.map(([id, name, en, zh]) => (
+              {caseStudies.map(([id, name]) => (
                 <option key={id} value={id}>
-                  {name} · {t(en, zh)}
+                  {name}
                 </option>
               ))}
             </select>
@@ -372,7 +367,6 @@ export default function AgeAtlas({
             />
             <div className="atlas-bio">
               <div className="atlas-kicker">
-                {t("Player profile", "球员档案")} <span>/</span>{" "}
                 {(selected.teams?.length
                   ? selected.teams
                   : [selected.team]

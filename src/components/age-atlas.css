@@ -87,7 +87,7 @@
   margin-left: 5px;
 }
 .atlas-casebar {
-  min-height: 65px;
+  min-height: 46px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -160,7 +160,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  min-height: 139px;
+  min-height: 112px;
   padding: 3px 0 0;
 }
 .atlas-player {
@@ -171,7 +171,7 @@
 }
 .atlas .atlas-portrait {
   width: clamp(114px, 12.5vw, 166px);
-  height: 125px;
+  height: 105px;
   align-self: flex-end;
   background: linear-gradient(0deg, #233137, transparent 95%);
   border: 0;
@@ -195,9 +195,6 @@
   letter-spacing: 0.08em;
   font-weight: 650;
   text-transform: uppercase;
-}
-.atlas-kicker span {
-  color: #688180;
 }
 .atlas-bio h1 {
   font-size: clamp(33px, 4.35vw, 65px);
@@ -412,22 +409,15 @@
 .atlas-manualshare input {
   width: min(75vw, 650px);
 }
-.at-trajectories {
+.at-trajectory-panel {
   display: grid;
-  grid-template-columns: minmax(0, 0.87fr) minmax(0, 1.13fr);
+  grid-template-columns: minmax(200px, 1fr) minmax(0, 2.8fr);
+  align-items: center;
+  gap: 16px;
+  padding: clamp(16px, 2vw, 29px);
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 14px;
-  overflow: hidden;
-}
-.at-trajectory-panel {
-  padding: clamp(16px, 2vw, 29px);
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.at-trajectory-panel:first-child {
-  border-right: 1px solid var(--line);
 }
 .at-trajectory-panel h2,
 .at-court-details summary strong {
@@ -435,7 +425,7 @@
   font-weight: 650;
   letter-spacing: -0.025em;
 }
-.at-trajectory-panel > p,
+.at-trajectory-panel p,
 .at-court-details summary small {
   font-size: 14px;
   color: var(--muted);
@@ -446,16 +436,14 @@
   align-self: center;
   max-width: 100%;
   width: 100%;
-  height: 215px;
-  margin-top: auto;
-  padding-top: 10px;
+  height: auto;
+  max-height: 295px;
   overflow: visible;
 }
 .at-trajectory-panel svg text {
   font-size: 10px;
   fill: #b5c6c1;
 }
-.at-boundary,
 .at-grid,
 .at-baseline,
 .at-history-line,
@@ -467,7 +455,6 @@
   stroke: #344548;
   stroke-dasharray: 2 4;
 }
-.at-boundary,
 .at-baseline {
   stroke: #607371;
 }
@@ -728,12 +715,8 @@
     padding: 13px 0;
     gap: 13px;
   }
-  .at-trajectories {
-    grid-template-columns: 1fr;
-  }
-  .at-trajectory-panel:first-child {
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
+  .at-trajectory-panel {
+    grid-template-columns: minmax(0, 1fr);
   }
   .at-court-content .courts-grid {
     display: grid;

@@ -32,3 +32,14 @@ export function valueAt(
   const value = (metric === "share" ? row.shares : row.fg)[zone];
   return value != null && value >= 0 && value <= 1 ? value : null;
 }
+
+export function estimatedZoneAttempts(row: SeasonRow, i: number) {
+  const share = row.shares[i];
+  if (row.fga === 0) return 0;
+  return row.fga == null || share == null ? null : Math.round(row.fga * share);
+}
+
+export function hasSmallZoneSample(row: SeasonRow, i: number) {
+  const attempts = estimatedZoneAttempts(row, i);
+  return attempts != null && attempts < 25 && valueAt(row, "fg", i) != null;
+}

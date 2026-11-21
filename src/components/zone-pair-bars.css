@@ -1,0 +1,112 @@
+.zone-pairs {
+  --zp-label: clamp(4.6rem, 15%, 8rem);
+  --zp-values: 3.8rem;
+  color: var(--ink, #f3f2e9);
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+}
+.zp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+  margin: 8px 0 20px;
+  color: var(--muted, #afc0bd);
+  font-size: 13px;
+}
+.zp-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.zp-legend i {
+  width: 14px;
+  height: 8px;
+}
+.zp-axis {
+  margin-inline: var(--zp-label) var(--zp-values);
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  height: 18px;
+  color: var(--muted, #afc0bd);
+  font-size: 11px;
+}
+.zp-axis span {
+  position: absolute;
+  left: 0;
+  transform: translateX(-50%);
+}
+.zp-axis span:nth-child(2) {
+  left: 50%;
+}
+.zp-axis span:last-child {
+  left: 100%;
+}
+.zp-groups {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.zp-groups li {
+  display: grid;
+  grid-template-columns: var(--zp-label) minmax(0, 1fr);
+  align-items: stretch;
+}
+.zp-groups strong {
+  align-self: center;
+  font-weight: 520;
+  font-size: 13px;
+  line-height: 1.3;
+  padding-right: 10px;
+}
+.zp-active strong {
+  font-weight: 750;
+  color: var(--accent, #efbd74);
+}
+.zp-bars {
+  margin-right: var(--zp-values);
+  border-left: 1px solid #617270;
+  padding-block: 5px;
+  display: grid;
+  gap: 1px;
+  background: linear-gradient(
+    to right,
+    transparent calc(50% - 0.5px),
+    #354748 calc(50% - 0.5px),
+    #354748 calc(50% + 0.5px),
+    transparent calc(50% + 0.5px),
+    transparent calc(100% - 1px),
+    #354748 calc(100% - 1px)
+  );
+}
+.zp-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 16px;
+}
+.zp-row i {
+  flex: none;
+  height: 11px;
+}
+.zp-value {
+  padding-left: 5px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--ink, #f3f2e9);
+  white-space: nowrap;
+}
+.zone-pairs small {
+  display: block;
+  margin-top: 9px;
+  color: var(--muted, #afc0bd);
+  font-size: 12px;
+}
+.zp-reader {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

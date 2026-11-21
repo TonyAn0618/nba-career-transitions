@@ -64,9 +64,8 @@ export default function ConcentricRings({
         el.matches(":focus-visible")
       ) {
         if (el.closest(".cr-scrubber")) next = -1;
-        if (el.matches(".cr-stats tbody button")) {
-          const tr = el.closest("tr");
-          if (tr) next = tr.sectionRowIndex;
+        if (el.matches("button[data-ring-zone]")) {
+          next = Number(el.dataset.ringZone);
         }
       }
       setKeyboard(next);
@@ -110,6 +109,10 @@ export default function ConcentricRings({
     Math.min(outerRadius - lensWidth, inside + width / 2 - lensWidth / 2),
   );
   const value = active ? valueAt(selected, metric, zoneIndex!) : null;
+  const [labelX, labelY] = point(
+    lensStart + lensWidth / 2,
+    -90 + (zoneIndex ?? 0) * 72,
+  );
   const metricLabel =
     metric === "share"
       ? t("Attempt share", "出手占比")
@@ -148,7 +151,7 @@ export default function ConcentricRings({
   return (
     <figure className="cr-figure cr-concentric" ref={figure}>
       <svg
-        viewBox="-150 -125 300 240"
+        viewBox="-145 -124 290 237"
         role="img"
         aria-labelledby={id + "-ring-title " + id + "-ring-desc"}
         onPointerLeave={(e) => {
@@ -164,7 +167,7 @@ export default function ConcentricRings({
             "由内向外每圈增加一岁，五个扇区代表出手距离。颜色表示",
           ) +
             metricLabel +
-            "。"}{" "}
+            t(".", "。")}{" "}
           {readout}
         </desc>
         <defs>
@@ -234,22 +237,14 @@ export default function ConcentricRings({
               d={sector(lensStart, lensStart + lensWidth, zoneIndex!, 41)}
               fill={fill(value)}
             />
-            {(() => {
-              const [x, y] = point(
-                lensStart + lensWidth / 2,
-                -90 + zoneIndex! * 72,
-              );
-              return (
-                <text
-                  x={x}
-                  y={y}
-                  dy=".34em"
-                  fill={value != null && value >= 0.34 ? "#102521" : "#fff9ee"}
-                >
-                  {value == null ? "—" : percent(value)}
-                </text>
-              );
-            })()}
+            <text
+              x={labelX}
+              y={labelY}
+              dy=".34em"
+              fill={value != null && value >= 0.34 ? "#102521" : "#fff9ee"}
+            >
+              {value == null ? "—" : percent(value)}
+            </text>
           </g>
         )}
         {ringLabels.map((label, i) => {
@@ -334,8 +329,8 @@ export default function ConcentricRings({
         </span>
         {!active &&
           t(
-            "Age increases outward. Hover or tap a band to magnify it.",
-            "由内向外，年龄递增。移动鼠标或轻触色带可局部放大。",
+            "Age increases outward · Hover or tap to enlarge",
+            "由内向外年龄递增 · 悬停或轻触放大",
           )}
       </figcaption>
     </figure>
