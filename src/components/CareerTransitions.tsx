@@ -168,7 +168,6 @@ export default function CareerTransitions({
     );
     document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     document.title =
-      "Shot Atlas · " +
       careers.get(selection.player)![0].name +
       " · " +
       (language === "zh" ? "生涯转型" : "Career transitions");
@@ -272,7 +271,7 @@ export default function CareerTransitions({
           <a
             className="ct-home"
             href={"?lang=" + language}
-            aria-label="Shot Atlas"
+            aria-label={t("Player Career Transitions", "球员生涯转型研究")}
           >
             <svg
               viewBox="0 0 32 32"
@@ -507,7 +506,6 @@ export default function CareerTransitions({
             })}
           </section>
         </div>
-        <footer className="ct-footer">26fall 6411D GOAT</footer>
       </main>
     </div>
   );

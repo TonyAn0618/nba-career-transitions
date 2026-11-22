@@ -1,18 +1,14 @@
 import { useEffect, useEffectEvent, useId, useRef } from "react";
 import { percent, seasonLabel } from "../lib/analysis";
 import { colorAt, valueAt, type Metric } from "../lib/ring-encoding";
-import type { SeasonRow, Translate } from "../lib/types";
+import type { SeasonRow } from "../lib/types";
+import { ringKeyboardProps, type RingSelection } from "./ring-keyboard";
 import "./season-dial.css";
 
-interface Props {
-  ages: number[];
-  byAge: ReadonlyMap<number, SeasonRow>;
-  selected: SeasonRow;
+interface Props extends RingSelection {
   metric: Metric;
   zone: number | null;
   names: string[];
-  t: Translate;
-  onSelect: (row: SeasonRow) => void;
 }
 
 // Angles run clockwise from twelve o'clock. The break separates the career endpoints.
@@ -80,16 +76,19 @@ function AgeWedge({
   );
 }
 
-export default function SeasonDial({
-  ages,
-  byAge,
-  selected,
-  metric,
-  zone,
-  names,
-  t,
-  onSelect,
-}: Props) {
+export default function SeasonDial(props: Props) {
+  const {
+    ages,
+    byAge,
+    selected,
+    metric,
+    zone,
+    names,
+    t,
+    pinned,
+    onPreview,
+    onPin,
+  } = props;
   const id = useId().replace(/:/g, "");
   const svgRef = useRef<SVGSVGElement>(null);
   const angleStep = sweep / Math.max(1, ages.length);
@@ -108,14 +107,14 @@ export default function SeasonDial({
         (i % stride === 0 && (ages.length - 1 - i) * angleStep >= 22),
     );
 
-  function readAt(clientX: number, clientY: number, precise: boolean) {
+  function rowAt(clientX: number, clientY: number, precise: boolean) {
     const ctm = svgRef.current?.getScreenCTM();
-    if (!ctm || !ages.length) return false;
+    if (!ctm || !ages.length) return undefined;
     const p = new DOMPoint(clientX, clientY).matrixTransform(ctm.inverse());
     const radius = Math.hypot(p.x, p.y);
-    if (radius < hitInner || radius > hitOuter) return false;
+    if (radius < hitInner || radius > hitOuter) return undefined;
     const degrees = ((Math.atan2(p.x, -p.y) * 180) / Math.PI + 360) % 360;
-    if (degrees < startAngle || degrees >= startAngle + sweep) return false;
+    if (degrees < startAngle || degrees >= startAngle + sweep) return undefined;
     const offset = (degrees - startAngle) / angleStep;
     const i = Math.floor(offset);
     if (!precise && chosen >= 0 && Math.abs(i - chosen) === 1) {
@@ -124,25 +123,37 @@ export default function SeasonDial({
         Math.abs(offset - boundary) * angleStep <
         Math.min(1.1, angleStep * 0.08)
       )
-        return false;
+        return undefined;
     }
-    const row = byAge.get(ages[i]);
-    if (row && selected.id !== row.id) onSelect(row);
-    return true;
+    return byAge.get(ages[i]);
   }
 
-  const readTouch = useEffectEvent(readAt);
+  const touchAt = useEffectEvent(
+    (touch: Touch, action: "start" | "move" | "tap") => {
+      const row = rowAt(touch.clientX, touch.clientY, action !== "move");
+      if (!row) return false;
+      if (action === "tap") onPin(row);
+      else onPreview(row);
+      return true;
+    },
+  );
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
     // Chromium may ignore touch-action on an SVG stroke and claim the drag as page panning.
     // Only a gesture that starts on the angular rail belongs to this chart.
     let finger: number | null = null;
+    let originX = 0,
+      originY = 0,
+      dragged = false;
     function start(event: TouchEvent) {
       if (finger != null || event.touches.length !== 1) return;
       const touch = event.changedTouches[0];
-      if (touch && readTouch(touch.clientX, touch.clientY, true)) {
+      if (touch && touchAt(touch, "start")) {
         finger = touch.identifier;
+        originX = touch.clientX;
+        originY = touch.clientY;
+        dragged = false;
         if (event.cancelable) event.preventDefault();
       }
     }
@@ -153,11 +164,17 @@ export default function SeasonDial({
       );
       if (!touch) return;
       if (event.cancelable) event.preventDefault();
-      readTouch(touch.clientX, touch.clientY, false);
+      if (Math.hypot(touch.clientX - originX, touch.clientY - originY) > 6)
+        dragged = true;
+      touchAt(touch, "move");
     }
     function end(event: TouchEvent) {
-      if (Array.from(event.changedTouches).some((t) => t.identifier === finger))
-        finger = null;
+      const touch = Array.from(event.changedTouches).find(
+        (t) => t.identifier === finger,
+      );
+      if (!touch) return;
+      if (event.type === "touchend" && !dragged) touchAt(touch, "tap");
+      finger = null;
     }
     svg.addEventListener("touchstart", start, { passive: false });
     svg.addEventListener("touchmove", move, { passive: false });
@@ -176,8 +193,9 @@ export default function SeasonDial({
       <svg
         ref={svgRef}
         viewBox="-144 -143 288 286"
-        role="img"
-        aria-labelledby={id + "-title " + id + "-desc"}
+        {...ringKeyboardProps(props)}
+        aria-labelledby={id + "-title"}
+        aria-describedby={id + "-desc"}
       >
         <title id={id + "-title"}>
           {selected.name +
@@ -190,6 +208,10 @@ export default function SeasonDial({
           {t(
             "Ages run clockwise along the rim. The enlarged inner wedge shows the selected season. Distance increases from the rim zone on the innermost band to three-pointers on the outermost band.",
             "沿外缘顺时针逐岁排列，内侧放大所选赛季。从最内层到最外层依次是篮下、近距离两分、中距离、长两分和三分。",
+          )}{" "}
+          {t(
+            "Use the arrow keys to change age, Enter to toggle pinning and Escape to unpin.",
+            "用方向键切换年龄，回车锁定或解锁，Esc 解锁。",
           )}
         </desc>
         <defs>
@@ -285,7 +307,7 @@ export default function SeasonDial({
         )}
         <g textAnchor="middle" className="sd-hub">
           <text y="-13" className="sd-hub-label">
-            {t("AGE", "年龄")}
+            {pinned ? t("PINNED", "已锁定") : t("AGE", "年龄")}
           </text>
           <text y="11" className="sd-hub-age">
             {selected.age ?? "—"}
@@ -302,23 +324,34 @@ export default function SeasonDial({
             if (event.button !== 0 || event.pointerType === "touch") return;
             if (event.pointerType !== "mouse")
               event.currentTarget.setPointerCapture(event.pointerId);
-            readAt(event.clientX, event.clientY, true);
+            const row = rowAt(event.clientX, event.clientY, true);
+            if (row) onPreview(row);
           }}
           onPointerMove={(event) => {
             if (
               event.pointerType === "mouse" ||
               (event.pointerType === "pen" &&
                 event.currentTarget.hasPointerCapture(event.pointerId))
-            )
-              readAt(event.clientX, event.clientY, false);
+            ) {
+              const row = rowAt(event.clientX, event.clientY, false);
+              if (row) onPreview(row);
+            }
+          }}
+          onClick={(event) => {
+            if ((event.nativeEvent as PointerEvent).pointerType === "touch")
+              return;
+            const row = rowAt(event.clientX, event.clientY, true);
+            if (row) onPin(row);
           }}
         />
       </svg>
       <figcaption>
         <span className="sd-hint">
           {t(
-            "Clockwise by age · Bands from inner to outer",
-            "顺时针选龄 · 色带由内向外",
+            pinned
+              ? "Click the pinned season to unpin"
+              : "Follow the rim clockwise · Click to pin",
+            pinned ? "再点同一赛季解锁" : "沿外缘顺时针选龄 · 点击锁定",
           )}
         </span>
         <dl className="sd-readout">

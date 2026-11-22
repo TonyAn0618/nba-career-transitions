@@ -57,11 +57,16 @@
   gap: 8px;
 }
 .cr-age-controls {
-  gap: 16px;
+  gap: 8px 20px;
+  margin-block: 14px 10px;
 }
 .cr-age-controls label {
   font-size: 14px;
   color: var(--cr-muted);
+}
+.cr-age-controls label > i {
+  width: 12px;
+  height: 8px;
 }
 .cr-age-controls select {
   font-size: 14px;

@@ -92,6 +92,22 @@ function canonical(sourceRows) {
 }
 const shotRows = canonical(shooting.rows);
 const totalRows = canonical(totals.rows);
+// Player Totals predates the shooting breakdown (1996–97) and includes actual games played.
+const nbaDebuts = new Map();
+for (const r of totals.rows) {
+  const season = Number(r.season);
+  if (
+    r.lg !== "NBA" ||
+    !r.player_id ||
+    !(Number(r.g) > 0) ||
+    !Number.isInteger(season) ||
+    season <= 0 ||
+    season > lastSeason
+  )
+    continue;
+  const first = nbaDebuts.get(r.player_id);
+  if (first == null || season < first) nbaDebuts.set(r.player_id, season);
+}
 const affiliations = new Map();
 for (const r of totals.rows.filter(inScope)) {
   if (!/^[A-Z]{3}$/.test(r.team) || r.team === "TOT") continue;
@@ -226,12 +242,14 @@ for (const [id, r] of shotRows.selected) {
     playerId: r.player_id,
     name: r.player,
     season,
+    debutSeason: nbaDebuts.get(r.player_id) ?? null,
     age: number(r.age),
     team: r.team,
     teams: [...(affiliations.get(id) ?? [])].sort(),
     position: r.pos,
     games: number(t.g),
     minutes: number(t.mp),
+    fgm: number(t.fg),
     fga,
     fta,
     points,

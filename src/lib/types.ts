@@ -12,12 +12,15 @@ export interface SeasonRow {
   playerId: string;
   name: string;
   season: number;
+  /** End year of the first NBA regular season with a game played in Player Totals. */
+  debutSeason?: number | null;
   age: number | null;
   team: string;
   teams?: string[];
   position: string;
   games: number | null;
   minutes: number | null;
+  fgm?: number | null;
   fga: number | null;
   fta: number | null;
   points: number | null;

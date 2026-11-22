@@ -17,6 +17,7 @@
     "format": "prettier --write src scripts tests docs README.md index.html package.json tsconfig.json vite.config.ts",
     "format:check": "prettier --check src scripts tests docs README.md index.html package.json tsconfig.json vite.config.ts",
     "photos": "node --experimental-strip-types scripts/sync-photos.mjs",
+    "data:court-regions": "node --experimental-strip-types scripts/league-court-regions.mjs",
     "data:shots": "python3 scripts/sync-shots.py",
     "check:shots": "python3 scripts/check-shots.py --require-cache",
     "predev": "npm run prepare:data",

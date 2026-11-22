@@ -1,19 +1,15 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { percent, seasonLabel } from "../lib/analysis";
 import { colorAt, valueAt, type Metric } from "../lib/ring-encoding";
-import type { SeasonRow, Translate } from "../lib/types";
+import type { SeasonRow } from "../lib/types";
+import { ringKeyboardProps, type RingSelection } from "./ring-keyboard";
 import "./concentric-lens.css";
 
-interface Props {
-  ages: number[];
-  byAge: ReadonlyMap<number, SeasonRow>;
-  selected: SeasonRow;
+interface Props extends RingSelection {
   metric: Metric;
   zone: number | null;
   names: string[];
   ringLabels: string[];
-  t: Translate;
-  onSelect: (row: SeasonRow) => void;
 }
 
 const innerRadius = 35,
@@ -36,21 +32,24 @@ interface HoverCell {
   input: "pointer" | "touch";
 }
 
-export default function ConcentricRings({
-  ages,
-  byAge,
-  selected,
-  metric,
-  zone,
-  names,
-  ringLabels,
-  t,
-  onSelect,
-}: Props) {
+export default function ConcentricRings(props: Props) {
+  const {
+    ages,
+    byAge,
+    selected,
+    metric,
+    zone,
+    names,
+    ringLabels,
+    t,
+    pinned,
+    onPreview,
+    onPin,
+  } = props;
   const id = useId().replace(/:/g, "");
   const figure = useRef<HTMLElement>(null);
   const [hover, setHover] = useState<HoverCell | null>(null);
-  // A value of -1 indicates age navigation with the existing slider/arrows.
+  // The chart focus uses the active zone; the zone buttons choose a specific lens.
   const [keyboard, setKeyboard] = useState<number | null>(null);
   useEffect(() => {
     const section = figure.current?.closest(".career-rings");
@@ -59,12 +58,12 @@ export default function ConcentricRings({
       const el = document.activeElement;
       let next: number | null = null;
       if (
-        el instanceof HTMLElement &&
+        el instanceof Element &&
         section.contains(el) &&
         el.matches(":focus-visible")
       ) {
-        if (el.closest(".cr-scrubber")) next = -1;
-        if (el.matches("button[data-ring-zone]")) {
+        if (el === figure.current?.querySelector("svg")) next = -1;
+        if (el instanceof HTMLButtonElement && el.matches("[data-ring-zone]")) {
           next = Number(el.dataset.ringZone);
         }
       }
@@ -146,14 +145,15 @@ export default function ConcentricRings({
         ? previous
         : { rowId: row.id, zone: k, input },
     );
-    if (row.id !== selected.id) onSelect(row);
+    onPreview(row);
   }
   return (
     <figure className="cr-figure cr-concentric" ref={figure}>
       <svg
         viewBox="-145 -124 290 237"
-        role="img"
-        aria-labelledby={id + "-ring-title " + id + "-ring-desc"}
+        {...ringKeyboardProps(props)}
+        aria-labelledby={id + "-ring-title"}
+        aria-describedby={id + "-ring-desc"}
         onPointerLeave={(e) => {
           if (e.pointerType !== "touch") setHover(null);
         }}
@@ -168,7 +168,10 @@ export default function ConcentricRings({
           ) +
             metricLabel +
             t(".", "。")}{" "}
-          {readout}
+          {t(
+            "Use the arrow keys to change age, Enter to toggle pinning and Escape to unpin.",
+            "用方向键切换年龄，回车锁定或解锁，Esc 解锁。",
+          )}
         </desc>
         <defs>
           <pattern
@@ -274,7 +277,7 @@ export default function ConcentricRings({
         })}
         <g className="cr-hub" textAnchor="middle" pointerEvents="none">
           <text y="-12" className="cr-hub-label">
-            {t("AGE", "年龄")}
+            {pinned ? t("PINNED", "已锁定") : t("AGE", "年龄")}
           </text>
           <text y="13" className="cr-hub-age">
             {selected.age ?? "—"}
@@ -307,15 +310,17 @@ export default function ConcentricRings({
                     onPointerEnter={(e) => {
                       if (e.pointerType !== "touch") inspect(row, k, "pointer");
                     }}
-                    onClick={(e) =>
+                    onClick={(e) => {
+                      if (!row) return;
                       inspect(
                         row,
                         k,
                         (e.nativeEvent as PointerEvent).pointerType === "touch"
                           ? "touch"
                           : "pointer",
-                      )
-                    }
+                      );
+                      onPin(row);
+                    }}
                   />
                 ))}
               </g>
@@ -329,8 +334,10 @@ export default function ConcentricRings({
         </span>
         {!active &&
           t(
-            "Age increases outward · Hover or tap to enlarge",
-            "由内向外年龄递增 · 悬停或轻触放大",
+            pinned
+              ? "Click the pinned ring to unpin"
+              : "Age increases outward · Hover to enlarge, click to pin",
+            pinned ? "再点同一圈解锁" : "由内向外年龄递增 · 点击年轮锁定",
           )}
       </figcaption>
     </figure>

@@ -1,10 +1,10 @@
 import { matchedFollowup } from "./transition-matches.ts";
 import type { SeasonRow } from "./types.ts";
 
-/** One column per season across both recorded careers. Matched intervals have the same ages. */
+/** One column per calendar offset from each player's reference season, including gaps. */
 export function pairedCareer(
-  anchor: SeasonRow[],
-  peer: SeasonRow[],
+  anchor: readonly SeasonRow[],
+  peer: readonly SeasonRow[],
   anchorEnd: number,
   peerEnd: number,
 ) {

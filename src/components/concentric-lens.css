@@ -30,3 +30,10 @@
 .cr-concentric .cr-lens-readout:empty {
   display: none;
 }
+
+.cr-concentric > svg:focus-visible,
+.season-dial > svg:focus-visible {
+  outline: 2px solid var(--cr-highlight, #efbd74);
+  outline-offset: 2px;
+  border-radius: 8px;
+}

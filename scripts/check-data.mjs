@@ -29,7 +29,26 @@ for (const source of manifest.sources) {
     parse(bytes, { columns: true, skip_empty_lines: true }),
   );
 }
+const sourceDebuts = new Map();
+const sourceMakes = new Map();
+for (const row of sourceRows.get("Player Totals.csv")) {
+  if (row.lg !== "NBA") continue;
+  sourceMakes.set(
+    `${row.player_id}:${row.season}:${row.team}`,
+    row.fg === "" || row.fg === "NA" ? null : Number(row.fg),
+  );
+  if (!(Number(row.g) > 0)) continue;
+  sourceDebuts.set(
+    row.player_id,
+    Math.min(Number(row.season), sourceDebuts.get(row.player_id) ?? Infinity),
+  );
+}
 for (const r of d.rows) {
+  const teamSeason = `${r.id}:${r.team}`;
+  assert.ok(sourceMakes.has(teamSeason), teamSeason);
+  assert.equal(r.fgm, sourceMakes.get(teamSeason), teamSeason);
+  assert.equal(r.debutSeason, sourceDebuts.get(r.playerId) ?? null, r.id);
+  assert.ok(r.debutSeason == null || r.debutSeason <= r.season, r.id);
   assert.ok(r.season >= 1997 && r.season <= 2026);
   assert.ok(
     r.shares.every(
@@ -66,6 +85,19 @@ for (const league of d.league) {
   assert.equal(league.threeFg, sum("x3p") / sum("x3pa"));
   assert.equal(league.threePointReconciled, league.season !== 2016);
   assert.equal(league.threeAttemptDifference, league.season === 2016 ? 1 : 0);
+}
+// Shared draft cohort, delayed NBA debut, and debut before shooting-data coverage.
+for (const [id, year] of [
+  ["doncilu01", 2019],
+  ["youngtr01", 2019],
+  ["ginobma01", 2003],
+  ["jordami01", 1985],
+]) {
+  assert.equal(
+    d.rows.find((row) => row.playerId === id)?.debutSeason,
+    year,
+    id,
+  );
 }
 const curry = d.rows.find((r) => r.id === "curryst01:2016");
 assert.equal(curry.threeMade, 402);

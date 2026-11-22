@@ -14,6 +14,10 @@ const popular = [
   "onealsh01",
   "jordami01",
   "allenra02",
+  "lopezbr01",
+  "derozde01",
+  "westbru01",
+  "edwaran01",
 ];
 const normalize = (text: string) =>
   text

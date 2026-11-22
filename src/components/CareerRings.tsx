@@ -1,5 +1,3 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { seasonLabel } from "../lib/analysis";
 import type { SeasonRow, Translate } from "../lib/types";
 import "./career-rings.css";
 
@@ -9,12 +7,14 @@ import ConcentricRings from "./ConcentricRings";
 import { AgeComparison, SeasonShotMix } from "./CareerZoneCharts";
 
 type Props = {
+  pinned: boolean;
+  onPinned: (value: boolean) => void;
   layout: RingLayout;
   onLayout: (value: RingLayout) => void;
   metric: Metric;
   onMetric: (value: Metric) => void;
-  compareYear?: number;
-  onCompareYear?: (year: number) => void;
+  comparisonSeasons: readonly [SeasonRow, SeasonRow];
+  onCompareSeasons: (firstYear: number, secondYear: number) => void;
   rows: SeasonRow[];
   selected: SeasonRow;
   onSelect: (row: SeasonRow) => void;
@@ -26,6 +26,8 @@ type Props = {
 type DatedSeason = SeasonRow & { age: number };
 
 export default function CareerRings({
+  pinned,
+  onPinned,
   layout,
   onLayout,
   rows,
@@ -35,10 +37,17 @@ export default function CareerRings({
   onZone,
   metric,
   onMetric,
-  compareYear,
-  onCompareYear,
+  comparisonSeasons,
+  onCompareSeasons,
   t,
 }: Props) {
+  function previewAge(row: SeasonRow) {
+    if (!pinned && row.id !== selected.id) onSelect(row);
+  }
+  function togglePin(row: SeasonRow) {
+    onPinned(!pinned || row.id !== selected.id);
+    if (row.id !== selected.id) onSelect(row);
+  }
   const known = rows
     .filter((row): row is DatedSeason => Number.isInteger(row.age))
     .sort((a, b) => a.age - b.age || a.season - b.season);
@@ -66,22 +75,6 @@ export default function CareerRings({
     metric === "share"
       ? t("Attempt share", "出手占比")
       : t("Field goal %", "命中率");
-  const season = seasonLabel(selected.season);
-  const index = known.findIndex((row) => row.id === selected.id);
-  const activeAge = selected.age;
-  function selectAge(age: number) {
-    let row = byAge.get(age);
-    if (!row) {
-      row =
-        age > (activeAge ?? first)
-          ? known.find((r) => r.age >= age)
-          : known
-              .slice()
-              .reverse()
-              .find((r) => r.age <= age);
-    }
-    if (row && row.id !== selected.id) onSelect(row);
-  }
   const layouts = [
     ["rings", t("Concentric rings", "同心年轮")],
     ["dial", t("Season dial", "圆周放大")],
@@ -93,7 +86,12 @@ export default function CareerRings({
       className={layout === "both" ? "career-rings cr-dual" : "career-rings"}
       aria-label={t("Career shot profile by age", "各年龄的生涯投篮分布")}
     >
-      <div className="cr-overview">
+      <div
+        className="cr-overview"
+        onKeyDown={(event) => {
+          if (event.key === "Escape") onPinned(false);
+        }}
+      >
         <div className="cr-ring-controls">
           <div className="cr-heading">
             <h2>{t("Career shot profile", "生涯投篮图")}</h2>
@@ -163,7 +161,9 @@ export default function CareerRings({
                 ringLabels={names}
                 names={names}
                 t={t}
-                onSelect={onSelect}
+                pinned={pinned}
+                onPreview={previewAge}
+                onPin={togglePin}
               />
             </div>
           )}
@@ -178,49 +178,14 @@ export default function CareerRings({
                 zone={zone}
                 names={names}
                 t={t}
-                onSelect={onSelect}
+                pinned={pinned}
+                onPreview={previewAge}
+                onPin={togglePin}
               />
             </div>
           )}
         </div>
       </div>
-      {known.length > 0 && (
-        <div className="cr-scrubber">
-          <button
-            type="button"
-            disabled={index <= 0}
-            onClick={() => onSelect(known[index - 1])}
-            aria-label={t("Previous observed age", "上一个有记录的年龄")}
-          >
-            <ChevronLeft size={17} />
-          </button>
-          <span className="cr-end-age">{t(`Age ${first}`, `${first} 岁`)}</span>
-          <input
-            type="range"
-            aria-label={t("Explore seasons by age", "按年龄浏览赛季")}
-            aria-valuetext={
-              activeAge == null
-                ? season
-                : t(`Age ${activeAge}, ${season}`, `${activeAge} 岁，${season}`)
-            }
-            min={first}
-            max={last}
-            step="1"
-            value={activeAge ?? first}
-            disabled={known.length < 2}
-            onChange={(e) => selectAge(Number(e.target.value))}
-          />
-          <span className="cr-end-age">{t(`Age ${last}`, `${last} 岁`)}</span>
-          <button
-            type="button"
-            disabled={index >= known.length - 1}
-            onClick={() => onSelect(known[index + 1])}
-            aria-label={t("Next observed age", "下一个有记录的年龄")}
-          >
-            <ChevronRight size={17} />
-          </button>
-        </div>
-      )}
       <SeasonShotMix
         selected={selected}
         zone={zone}
@@ -230,15 +195,15 @@ export default function CareerRings({
         t={t}
       />
       <AgeComparison
-        key={selected.playerId}
-        known={known}
-        selected={selected}
+        rows={rows}
+        comparisonSeasons={comparisonSeasons}
+        onCompareSeasons={onCompareSeasons}
         zone={zone}
+        onZone={onZone}
         names={names}
+        distances={distances}
         metric={metric}
         onMetric={onMetric}
-        compareYear={compareYear}
-        onCompareYear={onCompareYear}
         t={t}
       />
     </section>

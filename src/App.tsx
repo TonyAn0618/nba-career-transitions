@@ -30,7 +30,6 @@ export default function App() {
     return (
       <div className="loading-screen">
         <img src="./ball.svg" alt="" />
-        <h1>SHOT ATLAS</h1>
         {error ? (
           <>
             <p>Import data / 请先导入数据</p>

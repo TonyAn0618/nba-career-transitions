@@ -1,0 +1,122 @@
+.peer-shot-courts {
+  --peer-shot-ink: #ff9964;
+  --court-floor: #201e1c;
+  --court-lines: #b5b0a7;
+  margin-block: 26px;
+}
+.peer-shot-courts .courts-panel {
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  padding-block-start: 20px;
+  background: transparent;
+}
+.peer-shot-courts .panel-heading {
+  height: auto;
+  flex-wrap: wrap;
+  padding: 0;
+}
+.peer-shot-courts .panel-heading h2 {
+  font-size: 19px;
+}
+.peer-shot-courts .court-toolbar {
+  height: auto;
+  padding: 6px 0;
+}
+.peer-shot-courts :is(.court-toolbar, .court-readout):empty {
+  display: none;
+}
+.peer-shot-courts .courts-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row;
+  gap: 8px;
+  padding-inline: 0;
+}
+.peer-shot-courts .court-player-name b {
+  white-space: normal;
+  font-size: 15px;
+}
+.ap-section .peer-shot-courts .court-player:first-child .court-player-name b {
+  color: var(--ap-player);
+}
+.ap-section .peer-shot-courts .court-player:nth-child(2) .court-player-name b {
+  color: var(--ap-peer);
+}
+.peer-shot-courts .shot-court {
+  flex: none;
+  height: auto;
+  min-height: 0;
+  max-height: 350px;
+}
+.peer-shot-courts .shot-court.full {
+  max-height: 440px;
+}
+.peer-shot-courts
+  :is(
+    .tiny-toggle button,
+    .full-court,
+    .heat-legend,
+    .min-shot-control,
+    .court-player-name span,
+    .court-statline,
+    .court-statline span,
+    .coverage,
+    .coverage button,
+    .court-empty small,
+    .court-readout,
+    .panel-foot
+  ) {
+  font-size: 12px;
+}
+.peer-shot-courts .court-empty,
+.peer-shot-courts .court-statline b {
+  font-size: 14px;
+}
+.peer-shot-courts .coverage {
+  line-height: 1.5;
+}
+.peer-shot-courts .court-readout,
+.peer-shot-courts .panel-foot {
+  padding-inline: 0;
+}
+.peer-shot-courts .panel-foot {
+  flex-wrap: wrap;
+}
+.peer-shot-courts .court-empty {
+  min-height: 150px;
+}
+
+@media (max-width: 740px) {
+  .peer-shot-courts .peer-missing-season .court-player-name {
+    flex-flow: row wrap;
+    gap: 6px;
+    margin: 0;
+  }
+  .peer-shot-courts .peer-missing-season .court-empty {
+    min-height: 0;
+    padding: 2px 0;
+  }
+}
+
+.peer-point-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.peer-point-key span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.peer-point-key i {
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--peer-shot-ink);
+  border-radius: 50%;
+  background: var(--peer-shot-ink);
+}
+.peer-point-key .peer-miss {
+  background: var(--court-floor);
+}

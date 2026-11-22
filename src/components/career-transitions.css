@@ -100,7 +100,6 @@
 .ct-panel-head,
 .ct-stat-label,
 .ct-stat-context,
-.ct-footer,
 .ct-legend,
 .ct-legend span,
 .ct-rts-readouts,
@@ -580,14 +579,6 @@
 }
 .ct-grid .coverage {
   min-height: 14px;
-}
-.ct-footer {
-  justify-content: space-between;
-  gap: 8px 18px;
-  flex-wrap: wrap;
-  font-size: 11px;
-  color: var(--ct-muted);
-  padding: 10px 2px 16px;
 }
 @media (max-width: 880px) {
   .ct-identity {

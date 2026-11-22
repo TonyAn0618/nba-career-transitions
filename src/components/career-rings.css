@@ -9,7 +9,6 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 47%) minmax(0, 1fr);
   grid-template-areas:
     "controls plot pie"
-    "slider slider slider"
     "bars bars bars";
   align-items: center;
   gap: 18px clamp(12px, 1.25vw, 20px);
@@ -60,6 +59,8 @@
   min-width: 0;
 }
 .cr-age-bars {
+  border-top: 1px solid var(--cr-rule);
+  padding-top: 18px;
   grid-area: bars;
   min-width: 0;
 }
@@ -185,76 +186,6 @@
   width: 12px;
   background: repeating-linear-gradient(130deg, #243136 0 2px, #84928e 2px 3px);
 }
-.career-rings .cr-scrubber {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  grid-area: slider;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--cr-rule);
-  border-top: 1px solid var(--cr-rule);
-}
-.career-rings .cr-scrubber button {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 1px solid #45565a;
-  border-radius: 50%;
-  color: var(--cr-text);
-  background: transparent;
-  flex-shrink: 0;
-}
-.career-rings .cr-scrubber button:hover:enabled {
-  color: var(--cr-highlight);
-  border-color: var(--cr-highlight);
-}
-.career-rings .cr-end-age {
-  color: var(--cr-muted);
-  font-size: 12px;
-  white-space: nowrap;
-}
-.career-rings .cr-scrubber input {
-  accent-color: var(--cr-highlight);
-  min-width: 0;
-  flex: 1;
-  height: 25px;
-  cursor: pointer;
-  margin: 0;
-}
-.career-rings .cr-scrubber input[type="range"] {
-  appearance: none;
-  background: transparent;
-}
-.career-rings .cr-scrubber input::-webkit-slider-runnable-track {
-  height: 3px;
-  border-radius: 4px;
-  background: #536568;
-}
-.career-rings .cr-scrubber input::-moz-range-track {
-  height: 3px;
-  border-radius: 4px;
-  background: #536568;
-}
-.career-rings .cr-scrubber input::-webkit-slider-thumb {
-  appearance: none;
-  width: 15px;
-  height: 15px;
-  border: 2px solid var(--cr-base);
-  border-radius: 50%;
-  margin-top: -6px;
-  background: var(--cr-highlight);
-  box-shadow: 0 0 0 1px var(--cr-highlight);
-}
-.career-rings .cr-scrubber input::-moz-range-thumb {
-  width: 11px;
-  height: 11px;
-  border: 2px solid var(--cr-base);
-  border-radius: 50%;
-  background: var(--cr-highlight);
-  box-shadow: 0 0 0 1px var(--cr-highlight);
-}
 .cr-layout-switch {
   display: flex;
   width: fit-content;
@@ -296,7 +227,6 @@
   grid-template-areas:
     "controls controls controls"
     "plot plot pie"
-    "slider slider slider"
     "bars bars bars";
 }
 .cr-dual .cr-ring-controls {
@@ -326,7 +256,6 @@
     grid-template-areas:
       "controls controls"
       "plot pie"
-      "slider slider"
       "bars bars";
   }
   .cr-ring-controls,
@@ -344,7 +273,6 @@
     grid-template-areas:
       "controls controls"
       "plot plot"
-      "slider slider"
       "pie bars";
     align-items: start;
   }
@@ -353,7 +281,7 @@
   .career-rings,
   .career-rings.cr-dual {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "controls" "plot" "slider" "pie" "bars";
+    grid-template-areas: "controls" "plot" "pie" "bars";
     row-gap: 16px;
   }
   .career-rings .cr-ring-controls {
@@ -367,9 +295,6 @@
   }
   .career-rings .cr-layout-switch button {
     min-height: 38px;
-  }
-  .career-rings .cr-scrubber {
-    gap: 8px;
   }
   .cr-dual .cr-plots {
     grid-template-columns: 1fr;

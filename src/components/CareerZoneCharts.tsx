@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { percent, seasonLabel } from "../lib/analysis";
 import {
   estimatedZoneAttempts,
@@ -8,6 +7,7 @@ import {
 } from "../lib/ring-encoding";
 import { completeProfile } from "../lib/transitions";
 import type { SeasonRow, Translate } from "../lib/types";
+import CareerCourts from "./CareerCourts";
 import { ShotPie } from "./SeasonShotPies";
 import { BAND_COLORS } from "./TransitionCharts";
 import ZonePairBars from "./ZonePairBars";
@@ -20,10 +20,11 @@ type ChartProps = {
   t: Translate;
 };
 
-function ageLabel(row: SeasonRow, t: Translate) {
+function seasonAndAge(row: SeasonRow, t: Translate) {
+  const season = seasonLabel(row.season);
   return row.age == null
-    ? seasonLabel(row.season)
-    : t(`Age ${row.age}`, `${row.age} 岁`);
+    ? season
+    : `${season} · ${t(`Age ${row.age}`, `${row.age} 岁`)}`;
 }
 
 export function SeasonShotMix({
@@ -37,8 +38,13 @@ export function SeasonShotMix({
   onZone: (zone: number | null) => void;
   distances: string[];
 }) {
-  const age = ageLabel(selected, t);
-  const title = t(`${age} · Shot mix`, `${age} · 出手构成`);
+  const title =
+    selected.age == null
+      ? t("Shot distribution", "投篮分布")
+      : t(
+          `Age ${selected.age} shot distribution`,
+          `${selected.age}岁 投篮分布`,
+        );
   const detail = names.map((_, i) => {
     const count = estimatedZoneAttempts(selected, i);
     return [
@@ -100,102 +106,124 @@ export function SeasonShotMix({
 }
 
 export function AgeComparison({
-  known,
-  selected,
+  rows,
+  comparisonSeasons,
+  onCompareSeasons,
   zone,
+  onZone,
   names,
+  distances,
   metric,
   onMetric,
-  compareYear,
-  onCompareYear,
   t,
-}: ChartProps & {
-  known: SeasonRow[];
+}: Omit<ChartProps, "selected"> & {
+  rows: SeasonRow[];
+  comparisonSeasons: readonly [SeasonRow, SeasonRow];
+  onCompareSeasons: (firstYear: number, secondYear: number) => void;
+  onZone: (zone: number | null) => void;
+  distances: string[];
   metric: Metric;
   onMetric: (metric: Metric) => void;
-  compareYear?: number;
-  onCompareYear?: (year: number) => void;
 }) {
-  const [localYear, setLocalYear] = useState<number>();
-  const options = known.filter((row) => row.id !== selected.id);
-  const baseline =
-    options.find((row) => row.season === (compareYear ?? localYear)) ??
-    options.find((row) =>
-      row.shares.some(
-        (_, i) =>
-          valueAt(row, "share", i) != null &&
-          valueAt(selected, "share", i) != null,
-      ),
-    ) ??
-    options[0];
+  const [first, second] = comparisonSeasons;
+  function chooseSeason(index: number, year: number) {
+    if (index === 0) {
+      onCompareSeasons(
+        year,
+        year === second.season ? first.season : second.season,
+      );
+    } else {
+      onCompareSeasons(
+        year === first.season ? second.season : first.season,
+        year,
+      );
+    }
+  }
+  const accuracy = metric === "fg";
+  const series = comparisonSeasons.map((row, i) => {
+    const seasonFg =
+      row.fgm != null && row.fga != null && row.fga > 0
+        ? row.fgm / row.fga
+        : null;
+    return {
+      label: seasonAndAge(row, t),
+      color: i === 0 ? "#85beb2" : "#efbd74",
+      values: names.map((_, z) => valueAt(row, metric, z)),
+      seasonAccuracy: accuracy ? { fg: seasonFg, ts: row.ts } : undefined,
+      lowSample: accuracy
+        ? names.map((_, z) => hasSmallZoneSample(row, z))
+        : undefined,
+    };
+  });
+  const title = t("Age comparison", "年龄对比");
   return (
-    <section className="cr-age-bars" aria-label={t("Compare ages", "两龄对照")}>
+    <section id="compare-seasons" className="cr-age-bars" aria-label={title}>
       <div className="cr-heading">
-        <h2>{t("Compare ages", "两龄对照")}</h2>
-        {baseline && (
-          <div className="cr-age-controls">
-            <label>
-              {t("Reference age", "参照年龄")}
-              <select
-                aria-label={t(
-                  "Reference age for zone comparison",
-                  "分区对照的参照年龄",
-                )}
-                value={baseline.season}
-                onChange={(e) =>
-                  (onCompareYear ?? setLocalYear)(Number(e.target.value))
-                }
-              >
-                {options.map((row) => (
-                  <option value={row.season} key={row.id}>
-                    {ageLabel(row, t)} · {seasonLabel(row.season)}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div
-              className="cr-metric"
-              role="group"
-              aria-label={t("Age comparison metric", "两龄对照指标")}
+        <h2>{title}</h2>
+        {rows.length > 1 && (
+          <div
+            className="cr-metric"
+            role="group"
+            aria-label={t("Age comparison metric", "年龄对比指标")}
+          >
+            <button
+              type="button"
+              aria-pressed={metric === "share"}
+              onClick={() => onMetric("share")}
             >
-              <button
-                type="button"
-                aria-pressed={metric === "share"}
-                onClick={() => onMetric("share")}
-              >
-                {t("Shot share", "出手占比")}
-              </button>
-              <button
-                type="button"
-                aria-pressed={metric === "fg"}
-                onClick={() => onMetric("fg")}
-              >
-                {t("FG%", "命中率")}
-              </button>
-            </div>
+              {t("Shot share", "出手占比")}
+            </button>
+            <button
+              type="button"
+              aria-pressed={metric === "fg"}
+              onClick={() => onMetric("fg")}
+            >
+              {t("Shooting accuracy", "命中率")}
+            </button>
           </div>
         )}
       </div>
-      {baseline ? (
-        <ZonePairBars
-          zones={names}
-          series={[baseline, selected].map((row, k) => ({
-            label: ageLabel(row, t) + " · " + seasonLabel(row.season),
-            color: k === 0 ? "#85beb2" : "#efbd74",
-            values: names.map((_, i) => valueAt(row, metric, i)),
-            lowSample:
-              metric === "fg"
-                ? names.map((_, i) => hasSmallZoneSample(row, i))
-                : undefined,
-          }))}
-          activeZone={zone}
-          t={t}
-        />
+      {rows.length > 1 ? (
+        <>
+          <div className="cr-age-controls">
+            {comparisonSeasons.map((row, i) => (
+              <label key={i}>
+                <i aria-hidden="true" style={{ background: series[i].color }} />
+                {i === 0 ? t("Season A", "赛季 A") : t("Season B", "赛季 B")}
+                <select
+                  value={row.season}
+                  onChange={(e) => chooseSeason(i, Number(e.target.value))}
+                >
+                  {rows.map((option) => (
+                    <option key={option.id} value={option.season}>
+                      {seasonAndAge(option, t)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          </div>
+          <ZonePairBars
+            zones={names}
+            distances={distances}
+            series={series}
+            showLegend={false}
+            activeZone={zone}
+            t={t}
+          />
+          <CareerCourts
+            first={first}
+            second={second}
+            zone={zone}
+            onClearZone={() => onZone(null)}
+            t={t}
+          />
+        </>
       ) : (
         <p className="cr-mix-missing">
           {t(
-            "Age comparison needs two recorded seasons.",
-            "至少需要两个有记录的赛季才能比较年龄。",
+            "Season comparison requires two recorded seasons.",
+            "至少需要两个有记录的赛季才能对照。",
           )}
         </p>
       )}

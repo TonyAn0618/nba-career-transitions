@@ -19,6 +19,7 @@ import re
 from pathlib import Path
 import subprocess
 import sys
+import tarfile
 import unicodedata
 import zipfile
 
@@ -29,7 +30,11 @@ SOURCE_BASE = f"https://raw.githubusercontent.com/DomSamangy/NBA_Shots_04_25/{SO
 CACHE = ROOT / "data/cache/shots"
 OUTPUT = ROOT / "public/data/shots"
 MANIFEST = ROOT / "data/shot-manifest.json"
-YEARS = list(range(2004, 2026))
+DETAIL_COMMIT = "46488f0f8e1cab58fc1256511ea808166a443a15"
+DETAIL_REPOSITORY = "https://github.com/shufinskiy/nba_data"
+DETAIL_ARCHIVE = "shotdetail_2025.tar.xz"
+DETAIL_URL = f"https://raw.githubusercontent.com/shufinskiy/nba_data/{DETAIL_COMMIT}/datasets/{DETAIL_ARCHIVE}"
+YEARS = list(range(2004, 2027))
 COLUMNS = ["x", "y", "made", "points", "distance", "teamId", "gameId", "date", "quarter", "secondsLeft", "zone", "side", "action"]
 CORRECTED_SEASONS = {2020, 2021, 2022}
 # Stable NBA franchise ids. Values are Basketball-Reference abbreviations (nba.json teams),
@@ -81,6 +86,8 @@ def canonical_coordinates(season: int, raw_x: float, raw_y: float) -> tuple[floa
     2020-22 source files applied a second x flip/scale and y scale/offset.
     Inverting that transform restores ALL rows' reported distance and side.
     """
+    if season == 2026:
+        return round(-raw_x / 10, 2), round(5.25 + raw_y / 10, 2)
     if season in CORRECTED_SEASONS:
         return round(-10 * raw_x, 2), round(10 * (raw_y - 5.25), 2)
     return round(raw_x, 2), round(raw_y, 2)
@@ -122,25 +129,19 @@ def write_json(path: Path, value: object) -> tuple[str, int]:
 
 
 def download(year: int, previous: dict, offline: bool) -> Path:
-    path = CACHE / f"NBA_{year}_Shots.csv.zip"
+    path = CACHE / (DETAIL_ARCHIVE if year == 2026 else f"NBA_{year}_Shots.csv.zip")
     expected = previous.get(path.name, {}).get("sha256")
     if path.exists():
-        actual = hash_bytes(path.read_bytes())
-        if expected and actual != expected:
+        if expected and hash_bytes(path.read_bytes()) != expected:
             raise ValueError(f"Cached archive hash changed: {path}. Remove only that cache file to fetch the pinned source again.")
-        with zipfile.ZipFile(path) as archive:
-            if archive.testzip() is not None:
-                raise ValueError(f"Corrupt cached ZIP: {path}")
         return path
     if offline:
         raise FileNotFoundError(f"Missing offline cache: {path}")
     path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_suffix(path.suffix + ".part")
+    url = DETAIL_URL if year == 2026 else f"{SOURCE_BASE}/{path.name}"
     subprocess.run(["curl", "--fail", "--location", "--silent", "--show-error", "--retry", "3",
-                    "--connect-timeout", "20", "--max-time", "180", f"{SOURCE_BASE}/{path.name}", "--output", str(temp)], check=True)
-    with zipfile.ZipFile(temp) as archive:
-        if archive.testzip() is not None:
-            raise ValueError(f"Corrupt downloaded ZIP: {path}")
+                    "--connect-timeout", "20", "--max-time", "180", url, "--output", str(temp)], check=True)
     if expected and hash_bytes(temp.read_bytes()) != expected:
         raise ValueError(f"Pinned source hash mismatch: {path.name}")
     temp.replace(path)
@@ -176,17 +177,50 @@ def make_identity_map(dataset: dict, photos: dict):
 
 
 def source_transform(year: int) -> dict:
+    if year == 2026:
+        return {"x": "-LOC_X / 10", "y": "5.25 + LOC_Y / 10"}
     return {"x": "-10 * LOC_X", "y": "10 * (LOC_Y - 5.25)"} if year in CORRECTED_SEASONS else {"x": "LOC_X", "y": "LOC_Y"}
 
 
+def shotchart_rows(reader):
+    """Adapt NBA ShotChartDetail rows to the historical compilation's column names."""
+    for row in reader:
+        if row["SHOT_ATTEMPTED_FLAG"] != "1" or row["SHOT_MADE_FLAG"] not in {"0", "1"}:
+            raise ValueError("Unexpected ShotChartDetail attempt/outcome flag")
+        if not row["GAME_ID"].zfill(10).startswith("00225"):
+            raise ValueError(f"Unexpected 2025–26 regular-season game ID: {row['GAME_ID']}")
+        side = re.search(r"\(([A-Z]+)\)$", row["SHOT_ZONE_AREA"])
+        if not side:
+            raise ValueError(f"Unrecognized ShotChartDetail zone area: {row['SHOT_ZONE_AREA']}")
+        yield {**row, "SEASON_1": 2026, "SHOT_MADE": "true" if row["SHOT_MADE_FLAG"] == "1" else "false",
+               "QUARTER": row["PERIOD"], "MINS_LEFT": row["MINUTES_REMAINING"], "SECS_LEFT": row["SECONDS_REMAINING"],
+               "BASIC_ZONE": row["SHOT_ZONE_BASIC"], "ZONE_ABB": side[1],
+               "HOME_TEAM": row["HTM"], "AWAY_TEAM": row["VTM"]}
+
+
 def import_year(year: int, archive_path: Path, resolve, season_rows: dict):
-    with zipfile.ZipFile(archive_path) as archive:
-        member = next(n for n in archive.namelist() if n.endswith(".csv") and not n.startswith("__MACOSX/"))
-        raw = archive.read(member)
-    reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig")))
-    required = {"PLAYER_ID", "PLAYER_NAME", "TEAM_ID", "TEAM_NAME", "LOC_X", "LOC_Y", "SHOT_DISTANCE", "SHOT_MADE", "SHOT_TYPE", "GAME_DATE", "GAME_ID", "QUARTER", "MINS_LEFT", "SECS_LEFT", "BASIC_ZONE", "ZONE_ABB", "ACTION_TYPE"}
-    if not required <= set(reader.fieldnames or []):
-        raise ValueError(f"Required source columns missing in {year}: {required - set(reader.fieldnames or [])}")
+    if year == 2026:
+        member = "shotdetail_2025.csv"
+        with tarfile.open(archive_path, "r:xz") as archive:
+            raw = archive.extractfile(member).read()
+    else:
+        with zipfile.ZipFile(archive_path) as archive:
+            member = next(n for n in archive.namelist() if n.endswith(".csv") and not n.startswith("__MACOSX/"))
+            raw = archive.read(member)
+    csv_reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig")))
+    required = {"PLAYER_ID", "PLAYER_NAME", "TEAM_ID", "TEAM_NAME", "LOC_X", "LOC_Y", "SHOT_DISTANCE",
+                "SHOT_TYPE", "GAME_DATE", "GAME_ID", "ACTION_TYPE"}
+    if year == 2026:
+        required |= {"SHOT_ATTEMPTED_FLAG", "SHOT_MADE_FLAG", "PERIOD", "MINUTES_REMAINING", "SECONDS_REMAINING",
+                     "SHOT_ZONE_BASIC", "SHOT_ZONE_AREA", "HTM", "VTM"}
+    else:
+        required |= {"SEASON_1", "SHOT_MADE", "QUARTER", "MINS_LEFT", "SECS_LEFT", "BASIC_ZONE", "ZONE_ABB",
+                     "HOME_TEAM", "AWAY_TEAM"}
+    missing = required - set(csv_reader.fieldnames or [])
+    if missing:
+        raise ValueError(f"Required source columns missing in {year}: {missing}")
+    reader = shotchart_rows(csv_reader) if year == 2026 else csv_reader
+    date_format = "%Y%m%d" if year == 2026 else "%m-%d-%Y"
     groups = {}
     games = {}
     game_id_contexts = collections.defaultdict(set)
@@ -227,7 +261,7 @@ def import_year(year: int, archive_path: Path, resolve, season_rows: dict):
         if r["SHOT_TYPE"] not in ("2PT Field Goal", "3PT Field Goal"):
             raise ValueError(f"Invalid SHOT_TYPE at {year}:{source_row_number}")
         points = int(r["SHOT_TYPE"][0])
-        date = datetime.strptime(r["GAME_DATE"], "%m-%d-%Y").strftime("%Y-%m-%d")
+        date = datetime.strptime(r["GAME_DATE"], date_format).strftime("%Y-%m-%d")
         quarter = int(r["QUARTER"])
         seconds = int(r["MINS_LEFT"]) * 60 + int(r["SECS_LEFT"])
         if quarter < 1 or not 0 <= seconds <= (720 if quarter <= 4 else 300):
@@ -288,7 +322,7 @@ def import_year(year: int, archive_path: Path, resolve, season_rows: dict):
                    "fg": totals["made"] / totals["attempts"],
                    "threeFg": totals["threeMade"] / totals["threeAttempts"],
                    "scope": "recorded_shots_only", "zones": dict(zones)})
-    source = {"season": year, "file": archive_path.name, "url": f"{SOURCE_BASE}/{archive_path.name}",
+    source = {"season": year, "file": archive_path.name, "url": DETAIL_URL if year == 2026 else f"{SOURCE_BASE}/{archive_path.name}",
               "bytes": archive_path.stat().st_size, "sha256": hash_bytes(archive_path.read_bytes()),
               "csvFile": member, "csvBytes": len(raw), "csvSha256": hash_bytes(raw),
               "rows": totals["attempts"], "players": len(groups), "games": len(games), "distinctGameIds": len(game_id_contexts),
@@ -301,7 +335,7 @@ def import_year(year: int, archive_path: Path, resolve, season_rows: dict):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--offline", action="store_true", help="Require the pinned ZIPs in data/cache/shots; never access the network")
+    parser.add_argument("--offline", action="store_true", help="Require the pinned archives in data/cache/shots; never access the network")
     args = parser.parse_args()
     if not (ROOT / "public/data/nba.json").exists():
         raise FileNotFoundError("Run npm run data first to create public/data/nba.json for cross-source identity and FGA checks.")
@@ -329,10 +363,11 @@ def main():
             item["playerId"] = p["playerId"]
         if p["playerId"] is None:
             unmatched.append({"key": key, "name": p["name"]})
-    retrieved_at = previous_manifest.get("retrievedAt", datetime.now(timezone.utc).isoformat())
-    metadata = {"schemaVersion": 1, "sourceCommit": SOURCE_COMMIT, "source": "NBA.com shot records compiled by Dominic Samangy",
-                "sourceRepository": SOURCE_REPOSITORY, "retrievedAt": retrieved_at,
-                "seasonType": "NBA regular season", "firstSeason": 2004, "lastSeason": 2025,
+    retrieved_at = previous_manifest.get("retrievedAt") if previous_manifest.get("detailSourceCommit") == DETAIL_COMMIT else None
+    retrieved_at = retrieved_at or datetime.now(timezone.utc).isoformat()
+    metadata = {"schemaVersion": 1, "sourceCommit": SOURCE_COMMIT, "source": "NBA.com shot records compiled by Dominic Samangy (2003–25) and shufinskiy (2025–26)",
+                "sourceRepository": SOURCE_REPOSITORY, "detailSourceRepository": DETAIL_REPOSITORY, "detailSourceCommit": DETAIL_COMMIT, "retrievedAt": retrieved_at,
+                "seasonType": "NBA regular season", "firstSeason": YEARS[0], "lastSeason": YEARS[-1],
                 "totalShots": sum(s["rows"] for s in sources), "playerCount": len(players),
                 "playerSeasonCount": len(entries), "seasonCount": len(YEARS),
                 "coordinateSystem": {"units": "feet", "hoop": [0, 5.25], "baselineY": 0, "halfCourt": [-25, 25, 0, 47], "fullCourt": [-25, 25, 0, 94],
@@ -348,9 +383,9 @@ def main():
                 "inputDependencies": dependency_projection(dataset, photos),
                 "index": {"file": "public/data/shots/index.json", "sha256": index_hash, "bytes": index_bytes},
                 "unmatched": unmatched,
-                "policy": {"noSyntheticLocations": True, "noDeduplication": "The source lacks event IDs; identical records are preserved and counted.",
+                "policy": {"noSyntheticLocations": True, "noDeduplication": "Identical output records are preserved and counted.",
                            "missingSeasonTotals": "Coverage compares recorded shots with independently compiled Basketball-Reference season FGA; differences remain visible.",
-                           "noCurrentSeasonClaim": "This is a fixed historical snapshot through 2024-25, not a live NBA feed."}}
+                           "noCurrentSeasonClaim": "This is a fixed historical snapshot through 2025-26, not a live NBA feed."}}
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
     print(f"Total: {metadata['totalShots']:,} shots / {metadata['playerCount']:,} players / {metadata['playerSeasonCount']:,} player-seasons")
     print(f"Index: {index_bytes:,} bytes. Coverage: {metadata['coverageStatuses']}")

@@ -11,33 +11,33 @@
   "horizons": [
     {
       "years": 1,
-      "scored": 300,
+      "scored": 301,
       "noQualifyingOutcome": 42,
-      "insufficientPeersWithOutcome": 1,
-      "peerMae": 3.496,
-      "persistenceMae": 3.232,
-      "intervalHits": 116,
-      "coveragePct": 38.667
+      "insufficientPeersWithOutcome": 0,
+      "peerMae": 3.426,
+      "persistenceMae": 3.216,
+      "intervalHits": 119,
+      "coveragePct": 39.535
     },
     {
       "years": 3,
-      "scored": 245,
-      "noQualifyingOutcome": 82,
-      "insufficientPeersWithOutcome": 16,
-      "peerMae": 3.754,
-      "persistenceMae": 3.453,
-      "intervalHits": 97,
-      "coveragePct": 39.592
+      "scored": 252,
+      "noQualifyingOutcome": 83,
+      "insufficientPeersWithOutcome": 8,
+      "peerMae": 3.625,
+      "persistenceMae": 3.432,
+      "intervalHits": 86,
+      "coveragePct": 34.127
     },
     {
       "years": 5,
-      "scored": 150,
+      "scored": 166,
       "noQualifyingOutcome": 143,
-      "insufficientPeersWithOutcome": 50,
-      "peerMae": 4.189,
-      "persistenceMae": 3.79,
-      "intervalHits": 54,
-      "coveragePct": 36
+      "insufficientPeersWithOutcome": 34,
+      "peerMae": 3.894,
+      "persistenceMae": 3.662,
+      "intervalHits": 64,
+      "coveragePct": 38.554
     }
   ]
 }

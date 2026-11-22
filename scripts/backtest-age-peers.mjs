@@ -1,12 +1,9 @@
 /** Node 24: node scripts/backtest-age-peers.mjs [--check] */
 import assert from "node:assert/strict";
 import { readFileSync, writeFileSync } from "node:fs";
-import {
-  adequateSeason,
-  cohortOutlook,
-  profile,
-  rankAgePeers,
-} from "../src/lib/age-peers.ts";
+import { adequateSeason, cohortOutlook } from "../src/lib/age-peers.ts";
+
+import { careerProfile, rankCareerPeers } from "../src/lib/career-peers.ts";
 
 const firstQuery = 2015,
   lastQuery = 2020,
@@ -39,7 +36,7 @@ for (const career of careers.values()) {
         row.age <= 26 &&
         row.minutes >= 1000 &&
         Number.isFinite(row.rts) &&
-        profile(row),
+        careerProfile(row, career),
     );
   if (first) queries.push(first);
 }
@@ -53,7 +50,7 @@ const totals = horizons.map((years) => ({
   hits: 0,
 }));
 for (let asOf = firstQuery; asOf <= lastQuery; asOf++) {
-  // Physically remove every post-query observation before any standardization, ranking or forecast.
+  // Physically remove every post-query observation before ranking or forecasting.
   const known = new Map(
     [...careers].map(([id, rows]) => [
       id,
@@ -61,7 +58,7 @@ for (let asOf = firstQuery; asOf <= lastQuery; asOf++) {
     ]),
   );
   for (const anchor of queries.filter((row) => row.season === asOf)) {
-    const { matches } = rankAgePeers(anchor, known);
+    const { matches } = rankCareerPeers(anchor, known);
     const predictions = cohortOutlook(matches, known, anchor);
     for (const metric of totals) {
       const { years } = metric;

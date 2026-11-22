@@ -1,90 +1,87 @@
-import { useMemo, useState } from "react";
-import { ChevronDown } from "lucide-react";
-import { seasonLabel } from "../lib/analysis";
-import type { SeasonRow, Translate } from "../lib/types";
+import { useMemo } from "react";
 import useShotIndex from "../hooks/useShotIndex";
-import LocationCourts from "./LocationCourts";
+import { missingPeerSeason, type PeerStage } from "../lib/peer-stages";
+import type { CareerProfile } from "../lib/career-peers";
+import type { SeasonRow, Translate } from "../lib/types";
+import LocationCourts, { type CourtSeason } from "./LocationCourts";
+import "./peer-shot-courts.css";
 
-type Props = {
-  compareYear?: number;
-  onCompareYear: (year: number) => void;
-  rows: SeasonRow[];
-  selected: SeasonRow;
-  zone: number | null;
-  onZone: (z: number | null) => void;
-  t: Translate;
-};
-
-function CourtComparison({
-  rows,
-  selected,
-  zone,
-  onZone,
+export default function CareerCourts({
+  first,
+  second,
+  careerYear,
+  careerRows,
+  zone = null,
+  onClearZone,
   t,
-  compareYear,
-  onCompareYear,
-}: Props) {
+}: {
+  first: CourtSeason;
+  second: CourtSeason;
+  careerYear?: number;
+  careerRows?: readonly [readonly SeasonRow[], readonly SeasonRow[]];
+  zone?: number | null;
+  onClearZone?: () => void;
+  t: Translate;
+}) {
   const { shotIndex, indexError, retryIndex } = useShotIndex();
-  const base = rows.find((r) => r.season === compareYear) ?? rows[0];
-  const pair = useMemo(
-    () => (base === selected ? [selected] : [base, selected]),
-    [base, selected],
-  );
+  const seasons = useMemo(() => [first, second], [first, second]);
   return (
-    <div className="at-court-content">
-      <label>
-        {t("Comparison season", "对照赛季")}{" "}
-        <select
-          value={base.season}
-          disabled={rows.length < 2}
-          onChange={(e) => onCompareYear(Number(e.target.value))}
-        >
-          {rows
-            .filter((r) => r !== selected || rows.length === 1)
-            .map((r) => (
-              <option value={r.season} key={r.id}>
-                {r.age} {t("yr", "岁")} · {seasonLabel(r.season)}
-              </option>
-            ))}
-        </select>
-      </label>
+    <div
+      id={careerYear != null || careerRows ? "peer-shot-courts" : undefined}
+      className="peer-shot-courts"
+    >
       <LocationCourts
-        initialMode="frequency"
-        selected={pair}
+        selected={seasons}
+        careerYear={careerYear}
+        careerRows={careerRows}
+        seasonComparison={careerYear == null && !careerRows}
+        initialMode="accuracy"
         index={shotIndex}
         indexError={indexError}
         onRetryIndex={retryIndex}
         zone={zone}
+        onClearZone={onClearZone}
         hoverZone={null}
-        onClearZone={() => onZone(null)}
         focus={null}
         t={t}
       />
     </div>
   );
 }
-export default function CareerCourts(props: Props) {
-  const [open, setOpen] = useState(false);
-  const { t } = props;
+
+export function PeerStageCourts({
+  stage,
+  totals,
+  anchor,
+  baseline,
+  careers,
+  t,
+}: {
+  stage: PeerStage | null;
+  totals: { target: CareerProfile; peer: CareerProfile };
+  anchor: SeasonRow;
+  baseline: SeasonRow;
+  careers: readonly [readonly SeasonRow[], readonly SeasonRow[]];
+  t: Translate;
+}) {
+  function season(side: "target" | "peer", match: SeasonRow): CourtSeason {
+    if (!stage) return match;
+    return (
+      stage[side] ?? {
+        playerId: match.playerId,
+        name: match.name,
+        missing: "peer-stage",
+        detail: missingPeerSeason(stage.year, totals[side], t),
+      }
+    );
+  }
   return (
-    <details
-      className="at-court-details"
-      open={open}
-      onToggle={(e) => setOpen(e.currentTarget.open)}
-    >
-      <summary>
-        <div>
-          <strong>{t("Compare shot locations", "逐球位置对照")}</strong>
-          <small>
-            {t(
-              "Recorded shots on aligned courts · 2003–04 to 2024–25",
-              "同尺度球场上的真实出手 · 2003–04 至 2024–25",
-            )}
-          </small>
-        </div>
-        <ChevronDown size={19} />
-      </summary>
-      {open && <CourtComparison {...props} />}
-    </details>
+    <CareerCourts
+      first={season("target", anchor)}
+      second={season("peer", baseline)}
+      careerYear={stage?.year}
+      careerRows={stage ? undefined : careers}
+      t={t}
+    />
   );
 }

@@ -1,18 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BookOpen,
-  ChevronDown,
   CircleDot,
   Globe2,
   Layers3,
   Link2,
   Radar,
-  ScanLine,
   Search,
   X,
 } from "lucide-react";
 import type { Dataset, Language, SeasonRow, Translate } from "../lib/types";
 import { percent, pp, seasonLabel } from "../lib/analysis";
+import {
+  firstSeason as firstShotSeason,
+  lastSeason as lastShotSeason,
+} from "../../data/shot-manifest.json";
 import PlayerPicker from "./PlayerPicker";
 import PlayerPortrait from "./PlayerPortrait";
 import CareerRings from "./CareerRings";
@@ -20,16 +22,7 @@ import type { RingLayout } from "../lib/ring-encoding";
 import AgePeers from "./AgePeers";
 import AgeContext from "./AgeContext";
 import CareerTrajectory from "./CareerTrajectory";
-import CareerCourts from "./CareerCourts";
 import "./age-atlas.css";
-
-const caseStudies = [
-  ["jamesle01", "LeBron James"],
-  ["lopezbr01", "Brook Lopez"],
-  ["derozde01", "DeMar DeRozan"],
-  ["westbru01", "Russell Westbrook"],
-  ["edwaran01", "Anthony Edwards"],
-] as const;
 
 const tabIds = ["career", "peers", "context"] as const;
 type AtlasTab = (typeof tabIds)[number];
@@ -77,8 +70,8 @@ function Methods({
         <h3>{t("Season records", "赛季记录")}</h3>
         <p>
           {t(
-            `Regular seasons from ${seasonLabel(data.metadata.firstSeason)} to ${seasonLabel(data.metadata.lastSeason)}. Each of the ${data.metadata.rowCount.toLocaleString()} player-seasons contributes one full-season record, including a combined record when a player changes teams.`,
-            `常规赛覆盖 ${seasonLabel(data.metadata.firstSeason)} 至 ${seasonLabel(data.metadata.lastSeason)}，共 ${data.metadata.rowCount.toLocaleString()} 条球员赛季记录。赛季总览对多队球员使用全季合计，球队对照单独读取分队记录。`,
+            `NBA regular seasons from ${seasonLabel(data.metadata.firstSeason)} to ${seasonLabel(data.metadata.lastSeason)}. Each of the ${data.metadata.rowCount.toLocaleString()} player-seasons contributes one full-season record, including a combined record when a player changes teams.`,
+            `NBA 常规赛覆盖 ${seasonLabel(data.metadata.firstSeason)} 至 ${seasonLabel(data.metadata.lastSeason)}，共 ${data.metadata.rowCount.toLocaleString()} 条球员赛季记录。球员在同一季效力多队时使用全季合计。`,
           )}
         </p>
         <h3>{t("Reading efficiency", "如何读效率")}</h3>
@@ -91,10 +84,62 @@ function Methods({
         <h3>{t("What the court covers", "投篮坐标覆盖")}</h3>
         <p>
           {t(
-            "Shot locations span 2003–04 to 2024–25. Each court reports the recorded attempts and season total. Five-zone statistics also cover seasons without coordinates.",
-            "逐球坐标覆盖 2003–04 至 2024–25。每张场图注明已记录出手数与该季总出手数，坐标覆盖期外仍可查看赛季五区统计。",
+            `Shot locations span ${seasonLabel(firstShotSeason)} to ${seasonLabel(lastShotSeason)}. Each court shows recorded attempts and total attempts for the displayed period. Career maps pool shots and league region counts over the seasons with coordinates.`,
+            `逐球坐标覆盖 ${seasonLabel(firstShotSeason)} 至 ${seasonLabel(lastShotSeason)}。场图标明有坐标的出手数与所示期间的总出手数。生涯热区汇总有坐标赛季的投篮，颜色参照同期联盟在同一区域的总命中数与总出手数。`,
           )}
         </p>
+        <details className="atlas-method-group">
+          <summary>{t("How matches are scored", "匹配方法与数据范围")}</summary>
+          <p>
+            {t(
+              "Matching uses the target’s entire recorded NBA career. If their last season is career year N, each peer is compared through year N and must play the same primary position that year. Peers must have debuted at least one season earlier. Missed seasons count toward elapsed career time. The career overview pools each player’s recorded seasons. Three-point rates use box-score totals, and two-point zones are weighted by estimated attempts in seasons with complete distance data. Season age is measured on January 31.",
+              "匹配使用目标球员在库中的全部生涯。若最后一个有记录的赛季是生涯第 N 季，则取参照球员截至第 N 季的表现，并要求两人在第 N 季的主位置相同。参照球员须至少早一个赛季首秀。整季缺席也计入生涯年份。「生涯至今」汇总两人各自有记录的全部赛季，三分按常规赛总数计算，两分分区按有完整距离数据赛季的估算出手数加权。赛季年龄按当季 1 月 31 日计算。",
+            )}
+          </p>
+          <p>
+            {t(
+              "The three component scores have equal weight. Distribution measures overlap in the five shot shares. Accuracy compares zone FG%, weighted by common attempts, using zones with at least 25 estimated attempts each. Volume compares attempts per 36 minutes. Each component combines the career aggregate and comparisons at corresponding career seasons where available. A history needs at least 200 attempts with complete zone shares.",
+              "三项等权。出手分布看五区占比的重合度；命中率看五区准度差，按共同出手量加权，两人在该区估算均至少 25 次出手才计入；出手量取每 36 分钟出手的较小值除以较大值。每项各半考虑累计生涯与相同生涯年份的逐季表现，某项缺少可比年份时用累计值。生涯需至少 200 次具有完整分区占比的出手。",
+            )}
+          </p>
+        </details>
+        <details className="atlas-method-group">
+          <summary>
+            {t("Career follow-up comparisons", "后续转型的计算方法")}
+          </summary>
+          <p>
+            {t(
+              "The earlier period includes the match season. The later period runs through the peer’s last recorded regular season. Shares and FG% pool attempts, per-game rates divide totals by games, and relative TS compares against the league in the same seasons, weighted by true shooting attempts. The shot-volume calculation applies the peer’s later shot shares to the target player’s attempts per game in the reference season.",
+              "前段含匹配季，后段截至参照球员在库中最后一个有记录的常规赛季。出手占比和命中率按出手数汇总，每场指标用合计数除以出场数。相对联盟真实命中率按各季的投篮出手数加上 0.44 倍罚球出手数加权。出手量试算将参照球员后段的出手占比乘以目标球员在对照季的场均总出手。",
+            )}
+          </p>
+        </details>
+        <details className="atlas-method-group">
+          <summary>
+            {t(
+              "How stages and styles are defined",
+              "阶段、打法与缺失数据如何定义",
+            )}
+          </summary>
+          <p>
+            {t(
+              "A season qualifies with complete shot shares, at least one attempt, and either 500 minutes or 200 attempts. Position comes from the first qualifying season at ages 20–23. Each player counts once per stage. Season shot shares are weighted by attempts.",
+              "合格赛季要求五区占比完整、有出手，且上场至少 500 分钟或出手至少 200 次。位置取自 20–23 岁之间的第一个合格赛季。每人每阶段只计一次，各季出手占比按出手次数加权。",
+            )}
+          </p>
+          <p>
+            {t(
+              "Styles use the largest of inside (0–10 ft), midrange (10 ft to the arc) and three-point share. A lead under 5 percentage points counts as mixed. Inside leaders with at least half of all attempts from 0–3 ft are rim-heavy.",
+              "比较近筐（0–10 英尺）、中距离（10 英尺至三分线）与三分占比，按最高者归类。前两类相差不足 5 个百分点归为均衡型。近筐领先且至少半数出手在 0–3 英尺的球员归为篮下型。",
+            )}
+          </p>
+          <p>
+            {t(
+              "Each age group’s percentages use everyone with a qualifying record in that age group, including players with a mixed style. A ribbon counts players with one of the four displayed styles in both adjacent age groups.",
+              "各年龄段的占比以该阶段所有有合格记录的球员为分母，包含均衡型。每条流带统计在相邻两个年龄段均属于图中四种打法的球员人数。",
+            )}
+          </p>
+        </details>
         <p className="atlas-source-links">
           <a
             href={`https://github.com/sumitrodatta/bball-reference-datasets/tree/${data.metadata.sourceCommit}`}
@@ -102,7 +147,10 @@ function Methods({
             Basketball-Reference · Sumitro Datta
           </a>
           <a href="https://github.com/DomSamangy/NBA_Shots_04_25">
-            NBA.com · Dominic Samangy
+            NBA.com · Dominic Samangy (2003–04 – 2024–25)
+          </a>
+          <a href="https://github.com/shufinskiy/nba_data/blob/46488f0f8e1cab58fc1256511ea808166a443a15/datasets/shotdetail_2025.tar.xz">
+            NBA.com · ShotChartDetail (2025–26)
           </a>
         </p>
         {compareYear !== season && (
@@ -159,78 +207,114 @@ export default function AgeAtlas({
   const [metric, setMetric] = useState<"share" | "fg">(
     query.get("metric") === "fg" ? "fg" : "share",
   );
+  const [pinned, setPinned] = useState(() => query.get("pin") === "1");
   const [layout, setLayout] = useState<RingLayout>(() => {
     const value = query.get("layout");
     return value === "dial" || value === "both" ? value : "rings";
   });
-  const [requestedCompare, setCompareYear] = useState<number | undefined>(() =>
-    query.has("compare") ? Number(query.get("compare")) : undefined,
-  );
+  const [requestedPair, setRequestedPair] = useState<
+    readonly [number | null, number | null]
+  >(() => [
+    Number(query.get("compare")) || null,
+    Number(query.get("compareTo") ?? query.get("ref") ?? query.get("to")) ||
+      null,
+  ]);
   const [peer, setPeer] = useState<string | null>(query.get("peer"));
-  const [step, setStep] = useState(() =>
-    Math.max(0, Math.min(5, parseInt(query.get("step") ?? "0", 10) || 0)),
-  );
   const [methods, setMethods] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shareFallback, setShareFallback] = useState("");
   const rows = careers.get(player)!;
-  const selected = rows.find((r) => r.season === year) ?? rows[rows.length - 1];
   const first = rows[0],
     last = rows[rows.length - 1];
-  const alternatives = rows.filter((r) => r !== selected);
-  const comparison =
-    alternatives.find((r) => r.season === requestedCompare) ??
+  const selected = rows.find((r) => r.season === year) ?? last;
+  const summarySeason = tab === "peers" ? last : selected;
+  const [peerYear, setPeerYear] = useState<number | null>(() => {
+    if (query.has("stage")) {
+      const stage = Number(query.get("stage"));
+      return Number.isSafeInteger(stage) && stage > 0 ? stage : null;
+    }
+    // Earlier share links stored offsets and wrote step=0 even before any interaction.
+    const offset = Number(query.get("step"));
+    return offset !== 0 &&
+      Number.isSafeInteger(offset) &&
+      selected.debutSeason != null
+      ? selected.season - selected.debutSeason + 1 + offset
+      : null;
+  });
+  const secondSeason = rows.find((r) => r.season === requestedPair[1]) ?? last;
+  const alternatives = rows.filter((r) => r !== secondSeason);
+  const firstSeason =
+    alternatives.find((r) => r.season === requestedPair[0]) ??
     alternatives.find((r) =>
-      r.shares.some((value, i) => value != null && selected.shares[i] != null),
+      r.shares.some(
+        (value, i) => value != null && secondSeason.shares[i] != null,
+      ),
     ) ??
     alternatives[0] ??
-    selected;
-  const compareYear = comparison.season;
+    secondSeason;
+  const comparisonSeasons = useMemo(
+    () => [firstSeason, secondSeason] as const,
+    [firstSeason, secondSeason],
+  );
+  function selectComparison(firstYear: number, secondYear: number) {
+    setRequestedPair([firstYear, secondYear]);
+  }
   const t: Translate = (en, zh) => (lang === "en" ? en : zh);
   useEffect(() => {
     const params = new URLSearchParams({
       player,
       ref: String(selected.season),
-      step: String(step),
       lang,
     });
+    if (peerYear != null) params.set("stage", String(peerYear));
+    if (pinned) params.set("pin", "1");
     if (peer) params.set("peer", peer);
     if (zone != null) params.set("band", String(zone));
     if (layout !== "rings") params.set("layout", layout);
     if (metric === "fg") params.set("metric", "fg");
-    if (requestedCompare != null && compareYear === requestedCompare)
-      params.set("compare", String(compareYear));
+    if (firstSeason.season === requestedPair[0])
+      params.set("compare", String(firstSeason.season));
+    if (secondSeason.season !== selected.season)
+      params.set("compareTo", String(secondSeason.season));
     if (tab !== "career") params.set("view", tab);
+    const fragment = window.location.hash;
+    const keepFragment =
+      (tab === "career" &&
+        (fragment === "#career-rings" || fragment === "#compare-seasons")) ||
+      (tab === "peers" &&
+        (fragment === "#age-peers" ||
+          fragment === "#peer-follow-up" ||
+          fragment === "#peer-shot-courts" ||
+          fragment === "#peer-transition") &&
+        document.getElementById(fragment.slice(1)));
     window.history.replaceState(
       null,
       "",
-      window.location.pathname +
-        "?" +
-        params +
-        (tab === "career" && window.location.hash === "#career-rings"
-          ? "#career-rings"
-          : ""),
+      window.location.pathname + "?" + params + (keepFragment ? fragment : ""),
     );
     document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
     document.title =
-      selected.name +
+      (tab === "context"
+        ? t("League shooting trends", "联盟打法变化")
+        : selected.name) +
       " · " +
-      t("Career transitions", "生涯转型") +
-      " | Shot Atlas";
+      t("Player Career Transitions", "球员生涯转型研究");
     setShareFallback("");
     setCopied(false);
   }, [
     player,
     selected,
-    step,
+    peerYear,
     lang,
     peer,
+    pinned,
     zone,
     metric,
     layout,
     tab,
-    compareYear,
-    requestedCompare,
+    firstSeason,
+    secondSeason,
+    requestedPair,
   ]);
   useEffect(() => {
     if (!copied) return;
@@ -239,26 +323,33 @@ export default function AgeAtlas({
   }, [copied]);
 
   useEffect(() => {
-    if (window.location.hash === "#career-rings") {
-      document
-        .getElementById("career-rings")
-        ?.scrollIntoView({ block: "start" });
+    const id = window.location.hash.slice(1);
+    if (
+      [
+        "career-rings",
+        "compare-seasons",
+        "age-peers",
+        "peer-follow-up",
+        "peer-shot-courts",
+        "peer-transition",
+      ].includes(id)
+    ) {
+      document.getElementById(id)?.scrollIntoView({ block: "start" });
     }
   }, []);
   function selectPlayer(id: string) {
     if (id === player) return;
     setPlayer(id);
+    setPinned(false);
     setYear(0);
-    setCompareYear(undefined);
+    setRequestedPair([null, null]);
     setZone(null);
     setPeer(null);
-    setStep(0);
+    setPeerYear(null);
   }
   function selectSeason(row: SeasonRow) {
     if (row.id === selected.id) return;
     setYear(row.season);
-    setPeer(null);
-    setStep(0);
   }
   async function share() {
     try {
@@ -270,13 +361,15 @@ export default function AgeAtlas({
   }
   const labels = [
     t("Career profile", "生涯与出手"),
-    t("Historical peers", "同龄转型参照"),
-    t("Teams & cohorts", "球队与群体"),
+    t("Career transition references", "生涯转型参考"),
+    t("League shooting trends", "联盟打法变化"),
   ];
   const icons = [CircleDot, Radar, Layers3];
   const points36 =
-    selected.points != null && selected.minutes != null && selected.minutes > 0
-      ? ((selected.points * 36) / selected.minutes).toFixed(1)
+    summarySeason.points != null &&
+    summarySeason.minutes != null &&
+    summarySeason.minutes > 0
+      ? ((summarySeason.points * 36) / summarySeason.minutes).toFixed(1)
       : "—";
   return (
     <div className="atlas">
@@ -287,11 +380,8 @@ export default function AgeAtlas({
         <div className="atlas-wrap atlas-bar">
           <a className="atlas-mark" href={"?lang=" + lang}>
             <img src="./ball.svg" alt="" />
-            <b>Shot Atlas</b>
+            <b>{t("Player Career Transitions", "球员生涯转型研究")}</b>
           </a>
-          <span className="atlas-brand-section">
-            {t("Career transitions", "生涯转型研究")}
-          </span>
           <div className="atlas-tools">
             <button
               onClick={() => setMethods(true)}
@@ -302,10 +392,7 @@ export default function AgeAtlas({
             </button>
             <button
               onClick={share}
-              aria-label={t(
-                "Share player, season and analysis view",
-                "分享球员、赛季和分析视图",
-              )}
+              aria-label={t("Share this view", "分享当前视图")}
             >
               <Link2 />
               <span>{copied ? t("Copied", "已复制") : t("Share", "分享")}</span>
@@ -332,106 +419,74 @@ export default function AgeAtlas({
         </label>
       )}
       <main className="atlas-wrap" id="atlas-workspace">
-        <div className="atlas-casebar">
-          <div className="atlas-collection">
-            <span /> {t("NBA regular season", "NBA 常规赛")} <i />{" "}
-            {seasonLabel(data.metadata.firstSeason)} —{" "}
-            {seasonLabel(data.metadata.lastSeason)}
-          </div>
-          <label className="atlas-cases">
-            <BookOpen size={15} />
-            <span>{t("Players", "球员案例")}</span>
-            <select
-              value={caseStudies.some((c) => c[0] === player) ? player : ""}
-              onChange={(e) => selectPlayer(e.target.value)}
-              aria-label={t("Guided player cases", "球员案例速览")}
+        {tab !== "context" && (
+          <>
+            <section
+              className="atlas-identity"
+              aria-labelledby="atlas-player-name"
             >
-              {!caseStudies.some((c) => c[0] === player) && (
-                <option value="">{t("Choose a case", "选择案例")}</option>
-              )}
-              {caseStudies.map(([id, name]) => (
-                <option key={id} value={id}>
-                  {name}
-                </option>
+              <div className="atlas-player">
+                <PlayerPortrait
+                  playerId={player}
+                  name={selected.name}
+                  className="atlas-portrait"
+                />
+                <div className="atlas-bio">
+                  <div className="atlas-kicker">
+                    {tab === "peers" &&
+                      t("Last recorded season · ", "最近记录赛季 · ")}
+                    {(summarySeason.teams?.length
+                      ? summarySeason.teams
+                      : [summarySeason.team]
+                    ).join(" · ")}{" "}
+                    · {summarySeason.position} ·{" "}
+                    {seasonLabel(summarySeason.season)}
+                  </div>
+                  <h1 id="atlas-player-name">{selected.name}</h1>
+                  <div className="atlas-career-range">
+                    {first.age}–{last.age} {t("years old", "岁")} <i />{" "}
+                    {t(
+                      `${rows.length} recorded seasons`,
+                      `${rows.length} 个记录赛季`,
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="atlas-hero-actions">
+                <div className="atlas-find">
+                  <Search size={15} />
+                  <PlayerPicker
+                    players={data.players}
+                    value={player}
+                    onChange={selectPlayer}
+                    label={t("Search all players", "搜索所有球员")}
+                    triggerText={t("Search all players", "搜索所有球员")}
+                    t={t}
+                  />
+                </div>
+              </div>
+            </section>
+            <div className="atlas-metrics">
+              {[
+                [
+                  t("Shot attempts", "赛季出手"),
+                  summarySeason.fga?.toLocaleString() ?? "—",
+                ],
+                [t("Points per 36 min", "每 36 分钟得分"), points36],
+                [t("True shooting", "真实命中率"), percent(summarySeason.ts)],
+                [
+                  t("TS vs. league", "相对联盟真实命中率"),
+                  pp(summarySeason.rts),
+                ],
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <span>{label}</span>
+                  <b>{value}</b>
+                </div>
               ))}
-            </select>
-            <ChevronDown size={14} />
-          </label>
-        </div>
-        <section className="atlas-identity" aria-labelledby="atlas-player-name">
-          <div className="atlas-player">
-            <PlayerPortrait
-              playerId={player}
-              name={selected.name}
-              className="atlas-portrait"
-            />
-            <div className="atlas-bio">
-              <div className="atlas-kicker">
-                {(selected.teams?.length
-                  ? selected.teams
-                  : [selected.team]
-                ).join(" · ")}{" "}
-                · {selected.position}
-              </div>
-              <h1 id="atlas-player-name">{selected.name}</h1>
-              <div className="atlas-career-range">
-                {first.age}–{last.age} {t("years old", "岁")} <i />{" "}
-                {t(
-                  `${rows.length} recorded seasons`,
-                  `${rows.length} 个记录赛季`,
-                )}
-              </div>
             </div>
-          </div>
-          <div className="atlas-hero-actions">
-            <div className="atlas-find">
-              <Search size={15} />
-              <PlayerPicker
-                players={data.players}
-                value={player}
-                onChange={selectPlayer}
-                label={t("Search all players", "搜索所有球员")}
-                triggerText={t("Search all players", "搜索所有球员")}
-                t={t}
-              />
-            </div>
-            <label className="atlas-season">
-              <span>{t("Selected age", "所选年龄")}</span>
-              <select
-                aria-label={t("Select age and season", "选择年龄和赛季")}
-                value={selected.season}
-                onChange={(e) =>
-                  selectSeason(
-                    rows.find((r) => r.season === Number(e.target.value))!,
-                  )
-                }
-              >
-                {rows.map((r) => (
-                  <option key={r.id} value={r.season}>
-                    {t(`Age ${r.age}`, `${r.age} 岁`)} · {seasonLabel(r.season)}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown size={14} />
-            </label>
-          </div>
-        </section>
-        <div className="atlas-metrics">
-          {[
-            [
-              t("Shot attempts", "赛季出手"),
-              selected.fga?.toLocaleString() ?? "—",
-            ],
-            [t("Points per 36 min", "每 36 分钟得分"), points36],
-            [t("True shooting", "真实命中率"), percent(selected.ts)],
-            [t("TS vs. league", "相对联盟真实命中率"), pp(selected.rts)],
-          ].map(([label, value]) => (
-            <div key={label}>
-              <span>{label}</span>
-              <b>{value}</b>
-            </div>
-          ))}
-        </div>
+          </>
+        )}
         <nav
           className="atlas-tabs"
           aria-label={t("Analysis views", "分析视图")}
@@ -454,10 +509,13 @@ export default function AgeAtlas({
           {tab === "career" && (
             <>
               <CareerRings
+                key={"rings-" + player}
+                pinned={pinned}
+                onPinned={setPinned}
                 layout={layout}
                 onLayout={setLayout}
-                compareYear={compareYear}
-                onCompareYear={setCompareYear}
+                comparisonSeasons={comparisonSeasons}
+                onCompareSeasons={selectComparison}
                 metric={metric}
                 onMetric={setMetric}
                 rows={rows}
@@ -473,66 +531,30 @@ export default function AgeAtlas({
                 onSelect={selectSeason}
                 t={t}
               />
-              <CareerCourts
-                compareYear={compareYear}
-                onCompareYear={setCompareYear}
-                key={player}
-                rows={rows}
-                selected={selected}
-                zone={zone}
-                onZone={setZone}
-                t={t}
-              />
-              <button
-                className="atlas-peer-link"
-                onClick={() => {
-                  setTab("peers");
-                  document
-                    .querySelector(".atlas-tabs")
-                    ?.scrollIntoView({ block: "start" });
-                }}
-              >
-                <Radar size={17} />
-                {t(
-                  `Find historical peers at age ${selected.age}`,
-                  `查看 ${selected.age} 岁的同龄转型参照`,
-                )}
-              </button>
             </>
           )}
           {tab === "peers" && (
             <AgePeers
-              anchor={selected}
+              anchor={last}
               careers={careers}
               peerId={peer}
               onPeer={setPeer}
-              step={step}
-              onStep={setStep}
+              selectedYear={peerYear}
+              onYear={setPeerYear}
               t={t}
             />
           )}
-          {tab === "context" && (
-            <AgeContext data={data} selected={selected} rows={rows} t={t} />
-          )}
+          {tab === "context" && <AgeContext data={data} t={t} />}
         </div>
       </main>
-      <footer className="atlas-wrap atlas-footer">
-        <span>
-          <ScanLine size={16} /> Shot Atlas
-        </span>
-        <span>COMP 6411D · Team GOAT</span>
-        <button onClick={() => setMethods(true)}>
-          {t("Sources & methods", "数据来源与方法")}
-        </button>
-      </footer>
       {methods && (
         <Methods
           data={data}
           t={t}
           lang={lang}
           player={player}
-          season={selected.season}
-          compareYear={compareYear}
+          season={secondSeason.season}
+          compareYear={firstSeason.season}
           onClose={() => setMethods(false)}
         />
       )}

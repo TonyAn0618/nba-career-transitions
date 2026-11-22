@@ -28,7 +28,7 @@
   background: #111b1e;
 }
 .atlas-bar {
-  min-height: 60px;
+  min-height: 70px;
   display: flex;
   align-items: center;
   gap: 18px;
@@ -36,26 +36,21 @@
 .atlas-mark {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  min-width: 0;
+  gap: 12px;
   color: var(--ink);
-  font-size: 23px;
-  letter-spacing: -1px;
-  line-height: 1;
+  font-size: clamp(24px, 2.5vw, 34px);
+  line-height: 1.2;
+}
+.atlas-mark b {
+  font-weight: 720;
 }
 .atlas-mark img {
-  width: 30px;
-  height: 30px;
-  display: block;
-}
-.atlas-brand-section {
-  border-left: 1px solid #435052;
-  padding-left: 17px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  color: var(--muted);
+  width: 32px;
+  height: 32px;
 }
 .atlas-tools {
+  flex-shrink: 0;
   margin-left: auto;
   display: flex;
   align-items: center;
@@ -86,15 +81,6 @@
   min-height: 32px;
   margin-left: 5px;
 }
-.atlas-casebar {
-  min-height: 46px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.atlas-collection,
-.atlas-cases,
 .atlas-career-range {
   display: flex;
   align-items: center;
@@ -102,27 +88,12 @@
   color: var(--muted);
   font-size: 13px;
 }
-.atlas-collection {
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-.atlas-collection > span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #82bdb2;
-}
-.atlas-collection i,
 .atlas-career-range i {
   display: inline-block;
   width: 3px;
   height: 3px;
   background: #758584;
   border-radius: 50%;
-}
-.atlas-cases {
-  position: relative;
-  gap: 7px;
 }
 .atlas select,
 .atlas-methods select {
@@ -131,28 +102,9 @@
   border: 1px solid var(--control-line);
   border-radius: 5px;
 }
-.atlas-cases select,
-.atlas-season select {
-  appearance: none;
-  background: transparent;
-  border: 0;
-  padding: 6px 21px 6px 4px;
-  color: var(--ink);
-  cursor: pointer;
-  font-size: 14px;
-}
-.atlas-cases select {
-  max-width: min(260px, 32vw);
-}
 .atlas select option {
   color: #edeee5;
   background: #182327;
-}
-.atlas-cases > svg:last-child,
-.atlas-season > svg {
-  position: absolute;
-  right: 3px;
-  pointer-events: none;
 }
 .atlas-identity {
   position: relative;
@@ -161,7 +113,7 @@
   justify-content: space-between;
   gap: 16px;
   min-height: 112px;
-  padding: 3px 0 0;
+  padding: 18px 0 0;
 }
 .atlas-player {
   display: flex;
@@ -248,21 +200,6 @@
   top: calc(100% + 4px);
   z-index: 20;
 }
-.atlas-season {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  justify-content: space-between;
-}
-.atlas-season > span {
-  color: var(--muted);
-  font-size: 13px;
-}
-.atlas-season select {
-  font-weight: 600;
-  padding-right: 17px;
-}
 .atlas-metrics {
   display: flex;
   flex-wrap: wrap;
@@ -325,37 +262,6 @@
   gap: 18px;
   min-width: 0;
 }
-.atlas-footer {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  border-top: 1px solid var(--line);
-  padding: 20px 0 35px;
-  font-size: 13px;
-  color: var(--muted);
-}
-.atlas-footer > span:first-child {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  font-weight: bold;
-  color: #d1dcd5;
-}
-.atlas-footer button {
-  margin-left: auto;
-  color: var(--muted);
-  font-size: 13px;
-}
-.atlas-peer-link {
-  color: var(--accent);
-  display: inline-flex;
-  align-items: center;
-  justify-self: start;
-  gap: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  padding: 0.45em 0;
-}
 .atlas-methods {
   color: var(--ink);
   background: var(--panel);
@@ -388,6 +294,13 @@
   font-size: 15px;
   color: var(--muted);
 }
+.atlas-method-group {
+  margin-top: 14px;
+}
+.atlas-method-group summary {
+  font-weight: 600;
+  cursor: pointer;
+}
 .atlas-source-links {
   display: grid;
   margin: 15px 0;
@@ -419,14 +332,12 @@
   border: 1px solid var(--line);
   border-radius: 14px;
 }
-.at-trajectory-panel h2,
-.at-court-details summary strong {
+.at-trajectory-panel h2 {
   font-size: clamp(18px, 1.5vw, 23px);
   font-weight: 650;
   letter-spacing: -0.025em;
 }
-.at-trajectory-panel p,
-.at-court-details summary small {
+.at-trajectory-panel p {
   font-size: 14px;
   color: var(--muted);
   line-height: 1.55;
@@ -498,71 +409,6 @@
 .at-plot-caption span {
   color: var(--muted);
 }
-.at-court-details {
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--panel);
-}
-.at-court-details summary {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px clamp(16px, 2vw, 29px);
-  gap: 10px;
-  cursor: pointer;
-  list-style: none;
-}
-.at-court-details summary:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 3px;
-}
-.at-court-details summary::-webkit-details-marker {
-  display: none;
-}
-.at-court-details[open] summary > svg {
-  transform: rotate(180deg);
-}
-.at-court-details summary small {
-  display: block;
-}
-.at-court-content {
-  padding: 0 clamp(16px, 2vw, 29px) 20px;
-}
-.at-court-content > label {
-  font-size: 14px;
-  color: var(--muted);
-}
-.at-court-content select {
-  padding: 4px 8px;
-}
-.at-court-content .courts-panel {
-  margin-top: 12px;
-}
-.at-court-content .courts-grid {
-  min-height: 260px;
-}
-.at-court-content .court-player-name b,
-.at-court-content .court-player-name span,
-.at-court-content .court-statline,
-.at-court-content .court-statline b,
-.at-court-content .court-statline span,
-.at-court-content .coverage,
-.at-court-content .coverage button,
-.at-court-content .court-readout,
-.at-court-content .panel-foot,
-.at-court-content .court-empty small,
-.at-court-content .tiny-toggle button,
-.at-court-content .filter-chip,
-.at-court-content .full-court {
-  font-size: 12px;
-}
-.at-court-content .court-empty,
-.at-court-content .panel-heading h2 {
-  font-size: 15px;
-}
-.at-court-content .coverage {
-  line-height: 1.4;
-}
 @media (max-width: 800px) {
   .atlas-metrics {
     display: grid;
@@ -572,14 +418,6 @@
     flex-direction: column;
     gap: 7px;
     padding: 0 10px;
-  }
-  .atlas-brand-section {
-    display: none;
-  }
-  .atlas-casebar {
-    flex-wrap: wrap;
-    padding: 8px 0;
-    min-height: 45px;
   }
   .atlas-identity {
     min-height: 100px;
@@ -604,8 +442,7 @@
     font-size: 21px;
   }
   .atlas-mark img {
-    width: 26px;
-    height: 26px;
+    display: none;
   }
   .atlas-tools {
     gap: 0;
@@ -613,31 +450,17 @@
   .atlas-tools button {
     padding: 0 8px;
   }
-  .atlas-tools button span {
+  .atlas-tools button span,
+  .atlas-tools button:last-child svg {
     display: none;
   }
-  .atlas-casebar {
-    align-items: flex-start;
-    gap: 2px;
-    padding: 9px 0 6px;
+  .atlas-tools button:first-child {
+    gap: 4px;
+    padding-inline: 4px;
   }
-  .atlas-collection {
+  .atlas-tools button:first-child span {
+    display: inline;
     font-size: 12px;
-    min-height: 28px;
-  }
-  .atlas-cases {
-    font-size: 12px;
-  }
-  .atlas-cases > svg:first-child,
-  .atlas-cases > span {
-    display: none;
-  }
-  .atlas-cases select {
-    max-width: 36vw;
-    font-size: 12px;
-  }
-  .atlas-cases svg:last-child {
-    width: 11px;
   }
   .atlas-identity {
     display: block;
@@ -676,15 +499,6 @@
   .atlas-find .player-picker-trigger {
     font-size: 13px;
   }
-  .atlas-season {
-    gap: 1px;
-  }
-  .atlas-season > span {
-    font-size: 12px;
-  }
-  .atlas-season select {
-    font-size: 13px;
-  }
   .atlas-metrics {
     margin: 12px 0 7px;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -718,35 +532,9 @@
   .at-trajectory-panel {
     grid-template-columns: minmax(0, 1fr);
   }
-  .at-court-content .courts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
-  }
-  .at-court-content .court-player + .court-player {
-    border-left: 0;
-  }
-  .at-court-content .panel-heading {
-    height: auto;
-    min-height: 42px;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  .atlas-footer {
-    gap: 7px;
-    font-size: 11px;
-  }
-  .atlas-footer button {
-    font-size: 12px;
-  }
 }
 @media (max-width: 385px) {
-  .atlas-season > span {
-    display: none;
-  }
   .atlas-tabs svg {
     display: none;
-  }
-  .atlas-cases select {
-    max-width: 30vw;
   }
 }
