@@ -1,16 +1,18 @@
 {
   "schemaVersion": 1,
   "sourceCommit": "69e63559bc17393312ad258c11f93d78be002079",
-  "source": "NBA.com shot records compiled by Dominic Samangy",
+  "source": "NBA.com shot records compiled by Dominic Samangy (2003–25) and shufinskiy (2025–26)",
   "sourceRepository": "https://github.com/DomSamangy/NBA_Shots_04_25",
-  "retrievedAt": "2026-11-04T07:14:23.383258+00:00",
+  "detailSourceRepository": "https://github.com/shufinskiy/nba_data",
+  "detailSourceCommit": "46488f0f8e1cab58fc1256511ea808166a443a15",
+  "retrievedAt": "2026-11-21T02:55:49.702832+00:00",
   "seasonType": "NBA regular season",
   "firstSeason": 2004,
-  "lastSeason": 2025,
-  "totalShots": 4450789,
-  "playerCount": 2265,
-  "playerSeasonCount": 10872,
-  "seasonCount": 22,
+  "lastSeason": 2026,
+  "totalShots": 4669949,
+  "playerCount": 2368,
+  "playerSeasonCount": 11454,
+  "seasonCount": 23,
   "coordinateSystem": {
     "units": "feet",
     "hoop": [
@@ -38,14 +40,14 @@
     ]
   },
   "coverageStatuses": {
-    "complete": 10439,
-    "unverified": 43,
-    "excess": 5,
+    "complete": 11014,
+    "unverified": 49,
+    "excess": 6,
     "partial": 385
   },
-  "unmatchedPlayerSeasons": 43,
-  "exactDuplicateRows": 202,
-  "outsideHalfCourt": 9393,
+  "unmatchedPlayerSeasons": 49,
+  "exactDuplicateRows": 205,
+  "outsideHalfCourt": 9422,
   "sources": [
     {
       "season": 2004,
@@ -1052,24 +1054,69 @@
           "unmatched": 2
         }
       }
+    },
+    {
+      "season": 2026,
+      "file": "shotdetail_2025.tar.xz",
+      "url": "https://raw.githubusercontent.com/shufinskiy/nba_data/46488f0f8e1cab58fc1256511ea808166a443a15/datasets/shotdetail_2025.tar.xz",
+      "bytes": 2825192,
+      "sha256": "dcb6c29edda8463132ab62f63118b5cee80d751bcbee9ad98fa38ebe12e6d33c",
+      "csvFile": "shotdetail_2025.csv",
+      "csvBytes": 44640276,
+      "csvSha256": "496e73886e0f8a1bc565a30c4f915d3a140ddd39b701c8959fe5e631d9cc0706",
+      "rows": 219160,
+      "players": 582,
+      "games": 1230,
+      "distinctGameIds": 1230,
+      "coordinateTransform": {
+        "x": "-LOC_X / 10",
+        "y": "5.25 + LOC_Y / 10"
+      },
+      "coordinateRangeFeet": {
+        "minX": -25.0,
+        "maxX": 25.0,
+        "minY": 0.15,
+        "maxY": 78.65
+      },
+      "quality": {
+        "distanceVerified": 219160,
+        "cornerSideVerified": 23570,
+        "outsideHalfCourt": 29,
+        "outsideFullCourt": 0,
+        "exactDuplicateRows": 3,
+        "invalidRows": 0,
+        "reusedGameIds": [],
+        "coverageStatuses": {
+          "complete": 575,
+          "unverified": 6,
+          "excess": 1
+        },
+        "missingAgainstMatchedSeasonFga": 0,
+        "identityMethods": {
+          "verified_nba_id": 567,
+          "unique_unsuffixed_name_and_season": 7,
+          "unique_exact_name_and_season": 2,
+          "unmatched": 6
+        }
+      }
     }
   ],
   "inputDependencies": [
     {
       "file": "public/data/nba.json",
       "projection": "player_id_name_and_season_fga",
-      "sha256": "6d329c7d9a143f2ef5d705b5da744a5261b96ae908bfe78dabbb4d5b8bd3f850"
+      "sha256": "9d91cade3d6aa888939ec3b88dcf58c98009c2438a53b55974dfcf5b3352bc61"
     },
     {
       "file": "src/lib/player-photos.json",
       "projection": "player_nba_id_map",
-      "sha256": "2b159d0006ab46c82c9971ff6177f64cb155322debb8a6a20de1203660b48f0f"
+      "sha256": "1c3715217708a0cc48d3daf64407cdbf27f5def7eddf9fea63e10a660fe77485"
     }
   ],
   "index": {
     "file": "public/data/shots/index.json",
-    "sha256": "ec7f7dbd0386d01936ccc068aef9db0dc1a12de3dbedf9307fe7fe6e6134c123",
-    "bytes": 5415873
+    "sha256": "c64faaf7292b4c4e8b800a0b5da6919726ec4d51111e7410af61c3cd918738cd",
+    "bytes": 5704839
   },
   "unmatched": [
     {
@@ -1243,12 +1290,36 @@
     {
       "key": "1641842:2025",
       "name": "Ronald Holland II"
+    },
+    {
+      "key": "1628502:2026",
+      "name": "Nigel Hayes-Davis"
+    },
+    {
+      "key": "1630286:2026",
+      "name": "Trevon Scott"
+    },
+    {
+      "key": "1631466:2026",
+      "name": "Nate Williams"
+    },
+    {
+      "key": "1641842:2026",
+      "name": "Ronald Holland II"
+    },
+    {
+      "key": "1642380:2026",
+      "name": "Adama Bal"
+    },
+    {
+      "key": "1642856:2026",
+      "name": "Egor Dëmin"
     }
   ],
   "policy": {
     "noSyntheticLocations": true,
-    "noDeduplication": "The source lacks event IDs; identical records are preserved and counted.",
+    "noDeduplication": "Identical output records are preserved and counted.",
     "missingSeasonTotals": "Coverage compares recorded shots with independently compiled Basketball-Reference season FGA; differences remain visible.",
-    "noCurrentSeasonClaim": "This is a fixed historical snapshot through 2024-25, not a live NBA feed."
+    "noCurrentSeasonClaim": "This is a fixed historical snapshot through 2025-26, not a live NBA feed."
   }
 }

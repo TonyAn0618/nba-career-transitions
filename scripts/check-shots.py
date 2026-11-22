@@ -2,7 +2,7 @@
 """Validate every generated shot, lazy-file hash, coverage value and source archive.
 
 Run from any directory: python3 scripts/check-shots.py
-The ZIP cache is checked when present. --require-cache makes it mandatory.
+The source archive cache is checked when present. --require-cache makes it mandatory.
 """
 from __future__ import annotations
 import argparse
@@ -85,6 +85,12 @@ def main():
             out_of_view += y > 47
             season_threes[entry["season"]] += points == 3
         assert made == entry["made"]
+        if key == "1629029:2026":
+            # Basketball-Reference Player Totals, 2025–26: one season with independently verified event-level totals.
+            triples = [shot for shot in file["shots"] if shot[3] == 3]
+            assert entry["playerId"] == "doncilu01"
+            assert len(file["games"]) == 64
+            assert (len(file["shots"]), made, len(triples), sum(shot[2] for shot in triples)) == (1457, 693, 694, 254)
         assert dict(team_counts) == {t["id"]: t["attempts"] for t in entry["teams"]}
         assert dict(team_made) == {t["id"]: t["made"] for t in entry["teams"]}
         assert file["teams"] == entry["teams"]
@@ -110,6 +116,7 @@ def main():
         players.add(entry["nbaId"])
         season_totals[entry["season"]] += entry["attempts"]
         season_makes[entry["season"]] += made
+    assert "1629029:2026" in index["playerSeasons"], "Missing Luka Dončić 2025–26 court"
     assert len(players) == index["metadata"]["playerCount"]
     assert len(index["playerSeasons"]) == index["metadata"]["playerSeasonCount"]
     assert sum(season_totals.values()) == index["metadata"]["totalShots"]

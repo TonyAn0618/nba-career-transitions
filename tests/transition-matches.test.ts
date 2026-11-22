@@ -69,7 +69,7 @@ test("detects a concentrated multi-season shift and ranks disjoint career interv
 });
 test("the highest Edwards detection opens the same real twin as the corresponding manual seasons", () => {
   const detected = detectCareerShifts(edwards);
-  assert.equal(detected.examined, 9);
+  assert.equal(detected.examined, 12);
   const best = detected.shifts[0];
   assert.equal(best.first.id, a.id);
   assert.equal(best.last.id, b.id);

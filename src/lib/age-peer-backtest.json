@@ -1,0 +1,43 @@
+{
+  "sourceCommit": "3981e43c07e963db539c527beb8a7b4b99ec8716",
+  "firstQuery": 2015,
+  "lastQuery": 2020,
+  "lastOutcome": 2025,
+  "minAge": 20,
+  "maxAge": 26,
+  "minAnchorMinutes": 1000,
+  "minPairedPeers": 3,
+  "uniqueQueries": 343,
+  "horizons": [
+    {
+      "years": 1,
+      "scored": 301,
+      "noQualifyingOutcome": 42,
+      "insufficientPeersWithOutcome": 0,
+      "peerMae": 3.426,
+      "persistenceMae": 3.216,
+      "intervalHits": 119,
+      "coveragePct": 39.535
+    },
+    {
+      "years": 3,
+      "scored": 252,
+      "noQualifyingOutcome": 83,
+      "insufficientPeersWithOutcome": 8,
+      "peerMae": 3.625,
+      "persistenceMae": 3.432,
+      "intervalHits": 86,
+      "coveragePct": 34.127
+    },
+    {
+      "years": 5,
+      "scored": 166,
+      "noQualifyingOutcome": 143,
+      "insufficientPeersWithOutcome": 34,
+      "peerMae": 3.894,
+      "persistenceMae": 3.662,
+      "intervalHits": 64,
+      "coveragePct": 38.554
+    }
+  ]
+}

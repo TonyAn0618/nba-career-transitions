@@ -1,0 +1,144 @@
+.peer-shot-courts .courts-grid {
+  gap: clamp(12px, 2vw, 28px);
+}
+.peer-shot-courts .court-player + .court-player {
+  border-left: 0;
+  padding-left: 0;
+}
+.peer-shot-courts .court-player-name {
+  margin-bottom: 8px;
+}
+.peer-region-court {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  aspect-ratio: auto;
+  overflow: visible;
+  touch-action: pan-y;
+}
+.peer-region-area {
+  stroke: white;
+  stroke-width: 0.11;
+  stroke-linejoin: round;
+  cursor: pointer;
+  outline: none;
+}
+.peer-region-lines,
+.peer-region-highlight,
+.peer-region-label {
+  pointer-events: none;
+}
+.peer-region-lines {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 0.23;
+}
+.peer-region-hoop {
+  stroke-width: 0.3;
+}
+.peer-region-highlight {
+  fill: none;
+  stroke: white;
+  stroke-width: 0.58;
+  stroke-linejoin: round;
+}
+.peer-region-highlight .inner {
+  stroke: #172827;
+  stroke-width: 0.27;
+  stroke-dasharray: 0.82 0.31;
+}
+.peer-region-label {
+  text-anchor: middle;
+  font-family: "Arial Narrow", "Roboto Condensed", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  paint-order: stroke fill;
+  stroke-width: 0.2;
+  stroke-linejoin: round;
+}
+.peer-region-pct {
+  font-size: 1.65px;
+  font-weight: 700;
+}
+.peer-region-count {
+  font-size: 1.38px;
+  font-weight: 500;
+}
+.peer-region-label.is-corner .peer-region-pct {
+  font-size: 1.48px;
+}
+.peer-region-label.is-corner .peer-region-count {
+  font-size: 1.25px;
+}
+.peer-region-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin-block: 10px;
+  font-size: 12px;
+  color: var(--ap-muted, var(--muted));
+}
+.peer-region-legend strong {
+  font-weight: 600;
+  color: var(--ap-ink, var(--ink));
+}
+.peer-region-legend small {
+  font-size: inherit;
+}
+.peer-region-keys {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+.peer-region-keys span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.peer-region-keys i {
+  width: 12px;
+  height: 10px;
+  border: 1px solid #0003;
+}
+.peer-region-keys .peer-region-hatch {
+  background: repeating-linear-gradient(35deg, #d9d9d3 0 3px, #999a94 3px 4px);
+}
+@media (max-width: 740px) {
+  .peer-shot-courts .courts-grid.count-2 {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+}
+.peer-shot-courts .court-player {
+  container-type: inline-size;
+}
+.peer-shot-courts:not(:has(.peer-region-area[data-state="empty"]))
+  .peer-region-empty-key,
+.peer-shot-courts:not(:has(.peer-region-area[data-state="unrated"]))
+  .peer-region-unrated-key {
+  display: none;
+}
+@container (max-width: 470px) {
+  .peer-region-label.long-count.left .peer-region-label-position {
+    transform: rotate(-90deg);
+  }
+  .peer-region-label.long-count.right .peer-region-label-position {
+    transform: rotate(90deg);
+  }
+  .peer-region-label.long-count text {
+    transform: none;
+  }
+}
+@container (max-width: 350px) {
+  .peer-region-label.is-corner.left .peer-region-label-position {
+    transform: rotate(-90deg);
+  }
+  .peer-region-label.is-corner.right .peer-region-label-position {
+    transform: rotate(90deg);
+  }
+  .peer-region-label.is-corner text {
+    transform: none;
+  }
+}

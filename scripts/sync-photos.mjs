@@ -8,6 +8,12 @@ const root = fileURLToPath(new URL("../", import.meta.url));
 const commit = "ec190700dab27498b3f75ecac8f932e3a3ee1606";
 const identityUrl = `https://raw.githubusercontent.com/swar/nba_api/${commit}/src/nba_api/stats/library/data.py`;
 const imageBase = "https://cdn.nba.com/headshots/nba/latest/260x190/";
+const referenceImageBase =
+  "https://www.basketball-reference.com/req/202106291/images/headshots/";
+const archiveOverrides = {
+  gatlich01:
+    "https://cskabasket.com/upload/resize_cache/32a/705_705_2/51-gatling-750.jpg",
+};
 // The NBA serves this generic silhouette as a successful PNG response.
 const placeholderHash =
   "b3ebe78bfd1cecb8880e51e6a48c9093c5cfb7065f981826d12fb4c01a1b0965";
@@ -91,6 +97,20 @@ function isHeadshot(bytes) {
   );
 }
 
+async function readPortrait(file, url, isValid) {
+  if (!process.argv.includes("--refresh")) {
+    try {
+      const cached = await readFile(file);
+      if (isValid(cached)) return cached;
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+  }
+  const bytes = await download(url);
+  if (!isValid(bytes)) throw new Error(`Invalid portrait from ${url}`);
+  return bytes;
+}
+
 async function sync() {
   const dataset = JSON.parse(
     await readFile(resolve(root, "public/data/nba.json"), "utf8"),
@@ -106,45 +126,62 @@ async function sync() {
   const selected = new Set([
     ...TRANSITION_CASES.map((entry) => entry.player),
     ...previous.bundled,
+    ...(previous.archived ?? []),
     ...previous.unavailable,
     ...(await readdir(portraitDir))
-      .filter((file) => file.endsWith(".png"))
+      .filter((file) => /\.(?:png|jpg)$/.test(file))
       .map((file) => file.slice(0, -4)),
   ]);
   const bundled = [],
+    archived = [],
     unavailable = [],
     images = [],
     failures = [];
+  const refresh = process.argv.includes("--refresh");
+  const knownArchives = new Set(previous.archived);
+  const knownSilhouettes = new Set(previous.unavailable);
   for (const playerId of selected) {
     const nbaId = matched[playerId];
-    if (!nbaId) continue;
-    const url = `${imageBase}${nbaId}.png`,
-      file = resolve(root, `public/players/${playerId}.png`);
     try {
+      let url = `${imageBase}${nbaId}.png`;
+      let file = `public/players/${playerId}.png`;
       let bytes;
-      // Preserve previously verified local files. Use --refresh to fetch new photos.
-      if (!process.argv.includes("--refresh")) {
+      if (!refresh && knownSilhouettes.has(playerId)) {
+        unavailable.push(playerId);
+      } else if (nbaId && (refresh || !knownArchives.has(playerId))) {
         try {
-          bytes = await readFile(file);
+          bytes = await readPortrait(resolve(root, file), url, isHeadshot);
         } catch {
-          /* first import */
+          // The same player's archive can still supply a photo if the NBA request fails.
+        }
+        if (bytes && sha256(bytes) === placeholderHash) {
+          unavailable.push(playerId);
+          await rm(resolve(root, file), { force: true });
+          bytes = null;
         }
       }
-      if (!bytes || !isHeadshot(bytes)) bytes = await download(url);
-      if (!isHeadshot(bytes))
-        throw new Error("Response is not a 260 × 190 PNG headshot.");
-      if (sha256(bytes) === placeholderHash) {
-        unavailable.push(playerId);
-        await rm(file, { force: true });
-        continue;
+      if (bytes) {
+        bundled.push(playerId);
+      } else {
+        url =
+          archiveOverrides[playerId] ?? `${referenceImageBase}${playerId}.jpg`;
+        file = `public/players/${playerId}.jpg`;
+        bytes = await readPortrait(
+          resolve(root, file),
+          url,
+          (b) =>
+            b.length > 1000 &&
+            b.readUInt16BE(0) === 0xffd8 &&
+            b.readUInt16BE(b.length - 2) === 0xffd9,
+        );
+        archived.push(playerId);
       }
-      await writeFile(file, bytes);
-      bundled.push(playerId);
+      await writeFile(resolve(root, file), bytes);
       images.push({
         playerId,
         nbaId,
         name: dataset.players.find((p) => p.id === playerId).name,
-        file: `public/players/${playerId}.png`,
+        file,
         url,
         bytes: bytes.length,
         sha256: sha256(bytes),
@@ -156,6 +193,8 @@ async function sync() {
   const mapping = {
     players: matched,
     bundled: bundled.sort(),
+    archived: archived.sort(),
+    archiveOverrides,
     unavailable: unavailable.sort(),
   };
   await writeFile(
@@ -173,9 +212,10 @@ async function sync() {
       documentation: `https://github.com/swar/nba_api/blob/${commit}/docs/nba_api/stats/static/players.md`,
     },
     photos: {
-      provider: "NBA",
+      providers: ["NBA", "Basketball-Reference", "CSKA Moscow"],
       urlTemplate: `${imageBase}{nbaId}.png`,
-      note: "Latest available portrait; it does not depict the selected historical season.",
+      referenceUrlTemplate: `${referenceImageBase}{playerId}.jpg`,
+      note: "A player's photograph can come from a different season than the one shown.",
     },
     datasetSourceCommit: dataset.metadata.sourceCommit,
     coverage: {
@@ -183,7 +223,8 @@ async function sync() {
       matched: Object.keys(matched).length,
       ambiguous: unresolved.filter((p) => p.reason === "ambiguous").length,
       unmatched: unresolved.filter((p) => p.reason === "unmatched").length,
-      bundled: bundled.length,
+      bundled: images.length,
+      bundledArchiveJpegs: archived.length,
       knownPlaceholderPhotos: unavailable.length,
       bundledBytes: images.reduce((sum, entry) => sum + entry.bytes, 0),
     },

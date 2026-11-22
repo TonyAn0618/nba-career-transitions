@@ -28,6 +28,10 @@ class SourceShotTests(unittest.TestCase):
         # Actual 2016 Mike Scott 3-pointer; source right-side label has negative x.
         self.assertEqual(shots.canonical_coordinates(2016, -23.2, 16.85), (-23.2, 16.85))
 
+    def test_shotchartdetail_coordinates_use_tenths_of_feet_from_the_basket(self):
+        # Dončić's first 2025–26 field goal, a fadeaway 21 seconds into opening night.
+        self.assertEqual(shots.canonical_coordinates(2026, -60, 125), (6.0, 17.75))
+
     def test_documented_double_transform_is_reversed(self):
         # Actual Curry 2020-03-05 shot: source x=-1,y=8.135, distance=25ft.
         self.assertEqual(shots.canonical_coordinates(2020, -1, 8.135), (10.0, 28.85))

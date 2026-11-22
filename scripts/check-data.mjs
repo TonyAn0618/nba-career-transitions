@@ -8,14 +8,14 @@ const manifest = JSON.parse(
   await readFile("data/source-manifest.json", "utf8"),
 );
 assert.deepEqual(d.metadata, manifest, "manifest matches the loaded dataset");
-assert.equal(d.rows.length, 13987);
-assert.equal(d.players.length, 2756);
+assert.equal(d.rows.length, 14569);
+assert.equal(d.players.length, 2859);
 assert.equal(
   new Set(d.rows.map((r) => r.id)).size,
   d.rows.length,
   "one row per player-season",
 );
-assert.equal(d.league.length, 29);
+assert.equal(d.league.length, 30);
 assert.ok(d.league.every((l) => l.verified && l.ts > 0.4 && l.ts < 0.7));
 assert.equal(d.metadata.quality.unmatchedOrInvalid.length, 174);
 const sourceRows = new Map();
@@ -29,8 +29,27 @@ for (const source of manifest.sources) {
     parse(bytes, { columns: true, skip_empty_lines: true }),
   );
 }
+const sourceDebuts = new Map();
+const sourceMakes = new Map();
+for (const row of sourceRows.get("Player Totals.csv")) {
+  if (row.lg !== "NBA") continue;
+  sourceMakes.set(
+    `${row.player_id}:${row.season}:${row.team}`,
+    row.fg === "" || row.fg === "NA" ? null : Number(row.fg),
+  );
+  if (!(Number(row.g) > 0)) continue;
+  sourceDebuts.set(
+    row.player_id,
+    Math.min(Number(row.season), sourceDebuts.get(row.player_id) ?? Infinity),
+  );
+}
 for (const r of d.rows) {
-  assert.ok(r.season >= 1997 && r.season <= 2025);
+  const teamSeason = `${r.id}:${r.team}`;
+  assert.ok(sourceMakes.has(teamSeason), teamSeason);
+  assert.equal(r.fgm, sourceMakes.get(teamSeason), teamSeason);
+  assert.equal(r.debutSeason, sourceDebuts.get(r.playerId) ?? null, r.id);
+  assert.ok(r.debutSeason == null || r.debutSeason <= r.season, r.id);
+  assert.ok(r.season >= 1997 && r.season <= 2026);
   assert.ok(
     r.shares.every(
       (v) => v === null || (Number.isFinite(v) && v >= 0 && v <= 1),
@@ -67,6 +86,19 @@ for (const league of d.league) {
   assert.equal(league.threePointReconciled, league.season !== 2016);
   assert.equal(league.threeAttemptDifference, league.season === 2016 ? 1 : 0);
 }
+// Shared draft cohort, delayed NBA debut, and debut before shooting-data coverage.
+for (const [id, year] of [
+  ["doncilu01", 2019],
+  ["youngtr01", 2019],
+  ["ginobma01", 2003],
+  ["jordami01", 1985],
+]) {
+  assert.equal(
+    d.rows.find((row) => row.playerId === id)?.debutSeason,
+    year,
+    id,
+  );
+}
 const curry = d.rows.find((r) => r.id === "curryst01:2016");
 assert.equal(curry.threeMade, 402);
 assert.equal(curry.threeAttempts, 886);
@@ -92,9 +124,20 @@ assert.ok(
   d.rows.some((r) => r.shares[4] === null),
   "missing value preserved",
 );
-console.log(
-  "Verified: 13,987 unique player-seasons, 2,756 players, 29 reconciled league baselines, pinned source hashes, source samples, traded-player deduplication, and missing/zero handling.",
-);
 
 assert.deepEqual(traded.teams, ["LAC", "LAL"]);
-assert.equal(d.teams.length, 862);
+assert.equal(d.teams.length, 892);
+
+const latestTeams = sourceRows
+  .get("Team Totals.csv")
+  .filter(
+    (r) => r.lg === "NBA" && r.season === "2026" && r.team !== "League Average",
+  );
+assert.equal(latestTeams.length, 30);
+assert.ok(latestTeams.every((r) => Number(r.g) === 82));
+const james = d.rows.find((r) => r.id === "jamesle01:2026");
+assert.equal(james.age, 41);
+assert.equal(james.fga, 919);
+console.log(
+  "Verified: 14,569 unique player-seasons, 2,859 players, 30 reconciled league baselines, pinned source hashes, source samples, traded-player deduplication, and missing/zero handling.",
+);

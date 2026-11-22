@@ -1,0 +1,39 @@
+.cr-concentric .cr-hit-grid {
+  cursor: crosshair;
+}
+.cr-concentric .cr-cell-lens {
+  pointer-events: none;
+}
+.cr-concentric .cr-cell-lens path {
+  stroke: var(--cr-highlight, #efbd74);
+  stroke-width: 1.4px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+  filter: drop-shadow(0 0 1.4px #132023);
+}
+.cr-concentric .cr-cell-lens text {
+  text-anchor: middle;
+  font-size: 8px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.cr-concentric figcaption {
+  min-height: 1.5em;
+  max-width: 100%;
+  display: grid;
+  align-content: center;
+}
+.cr-concentric .cr-lens-readout {
+  color: var(--cr-text, #f1f0e7);
+  font-weight: 600;
+}
+.cr-concentric .cr-lens-readout:empty {
+  display: none;
+}
+
+.cr-concentric > svg:focus-visible,
+.season-dial > svg:focus-visible {
+  outline: 2px solid var(--cr-highlight, #efbd74);
+  outline-offset: 2px;
+  border-radius: 8px;
+}

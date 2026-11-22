@@ -9,21 +9,31 @@ interface Props {
 
 const nbaIds: Record<string, number> = photoData.players;
 const bundled = new Set<string>(photoData.bundled);
+const archived = new Set<string>(photoData.archived);
 const unavailable = new Set<string>(photoData.unavailable);
 // The current NBA headshot for Hamilton is a generic silhouette.
 const archivedPortraits: Record<string, string> = {
+  ...photoData.archiveOverrides,
   hamiljo02: "https://a.espncdn.com/i/headshots/nba/players/full/6436.png",
 };
 
 function Portrait({ playerId, name, className = "" }: Props) {
   const nbaId = unavailable.has(playerId) ? null : nbaIds[playerId];
-  const local = bundled.has(playerId) ? `./players/${playerId}.png` : null;
+  const local = bundled.has(playerId)
+    ? `./players/${playerId}.png`
+    : archived.has(playerId)
+      ? `./players/${playerId}.jpg`
+      : null;
   const remote = nbaId
     ? `https://cdn.nba.com/headshots/nba/latest/260x190/${nbaId}.png`
     : null;
-  const sources = [local, archivedPortraits[playerId], remote].filter(
-    (source): source is string => Boolean(source),
-  );
+  const reference = `https://www.basketball-reference.com/req/202106291/images/headshots/${encodeURIComponent(playerId)}.jpg`;
+  const sources = [
+    local,
+    archivedPortraits[playerId],
+    reference,
+    remote,
+  ].filter((source): source is string => Boolean(source));
   const [attempt, setAttempt] = useState(0);
   const source = sources[attempt];
   const initials = name

@@ -1,0 +1,306 @@
+.career-rings {
+  --cr-base: #182327;
+  --cr-rule: #344447;
+  --cr-text: #f1f0e7;
+  --cr-muted: #a7b9b6;
+  --cr-highlight: #efbd74;
+  display: grid;
+  --cr-inset: clamp(16px, 2.3vw, 30px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 47%) minmax(0, 1fr);
+  grid-template-areas:
+    "controls plot pie"
+    "bars bars bars";
+  align-items: center;
+  gap: 18px clamp(12px, 1.25vw, 20px);
+  padding: var(--cr-inset);
+  color: var(--cr-text);
+  background: var(--cr-base);
+  border: 1px solid var(--cr-rule);
+  border-radius: 14px;
+  font-variant-numeric: tabular-nums;
+  scroll-margin-top: 12px;
+}
+.career-rings .cr-overview {
+  display: contents;
+}
+.cr-ring-controls {
+  grid-area: controls;
+  display: grid;
+  justify-items: start;
+  gap: 22px;
+  min-width: 0;
+}
+.career-rings .cr-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+.cr-season {
+  color: var(--cr-muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+.career-rings .cr-ring-controls .cr-heading {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+}
+.cr-plots {
+  grid-area: plot;
+  align-self: start;
+  display: grid;
+  align-items: center;
+  min-width: 0;
+}
+.cr-season-mix {
+  grid-area: pie;
+  min-width: 0;
+}
+.cr-age-bars {
+  border-top: 1px solid var(--cr-rule);
+  padding-top: 18px;
+  grid-area: bars;
+  min-width: 0;
+}
+.career-rings .cr-heading h2 {
+  color: var(--cr-text);
+  margin: 0;
+  font-family: inherit;
+  font-size: clamp(22px, 2vw, 30px);
+  font-weight: 650;
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+}
+.career-rings .cr-metric {
+  background: #111a1d;
+  border: 1px solid var(--cr-rule);
+  border-radius: 6px;
+  padding: 2px;
+  display: inline-flex;
+  gap: 1px;
+}
+.career-rings .cr-metric button {
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: var(--cr-muted);
+  padding: 5px 8px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.28;
+}
+.career-rings .cr-metric button[aria-pressed="true"] {
+  background: #344345;
+  color: var(--cr-text);
+}
+.career-rings button:focus-visible,
+.career-rings input:focus-visible {
+  outline-color: var(--cr-highlight);
+}
+.career-rings .cr-figure {
+  margin: 0;
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.career-rings .cr-figure svg {
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  display: block;
+  font-family: inherit;
+  overflow: visible;
+}
+.career-rings .cr-ring {
+  cursor: crosshair;
+}
+.career-rings .cr-selected-ring circle {
+  fill: none;
+  stroke: var(--cr-highlight);
+  stroke-width: 0.95;
+}
+.career-rings .cr-sector-label {
+  fill: #cbd8d2;
+  font-size: 9px;
+  font-weight: 550;
+}
+.career-rings .cr-sector-label line {
+  stroke: #849692;
+  stroke-width: 0.8;
+}
+.career-rings .cr-sector-active {
+  fill: var(--cr-highlight);
+}
+.career-rings .cr-hub-label,
+.career-rings .cr-hub-season {
+  fill: var(--cr-muted);
+  font-size: 7.5px;
+}
+.career-rings .cr-hub-label {
+  font-size: 7px;
+  letter-spacing: 0.1em;
+}
+.career-rings .cr-hub-age {
+  fill: var(--cr-text);
+  font-size: 29px;
+  font-weight: 650;
+  letter-spacing: -0.055em;
+}
+.career-rings figcaption {
+  font-size: 12px;
+  color: var(--cr-muted);
+  line-height: 1.5;
+}
+.career-rings figcaption {
+  text-align: center;
+  margin: 4px 0 8px;
+}
+.career-rings .cr-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 5px;
+  row-gap: 4px;
+  color: #b7c7c3;
+  font-size: 11px;
+}
+.career-rings .cr-legend > i {
+  width: clamp(42px, 5.2vw, 75px);
+  height: 6px;
+  border-radius: 2px;
+}
+.career-rings .cr-unavailable {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+}
+.career-rings .cr-unavailable i {
+  height: 10px;
+  width: 12px;
+  background: repeating-linear-gradient(130deg, #243136 0 2px, #84928e 2px 3px);
+}
+.cr-layout-switch {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  flex-wrap: wrap;
+  gap: 0 2px;
+  border-bottom: 1px solid var(--cr-rule);
+}
+.cr-layout-switch button {
+  min-height: 36px;
+  padding: 5px 7px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: var(--cr-muted);
+  font-size: 14px;
+  font-weight: 550;
+}
+.cr-layout-switch button:hover {
+  color: var(--cr-text);
+}
+.cr-layout-switch button[aria-pressed="true"] {
+  color: var(--cr-highlight);
+  border-color: var(--cr-highlight);
+}
+
+.cr-plot {
+  min-width: 0;
+}
+.cr-plot h3 {
+  margin: 0 0 8px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cr-text);
+}
+.career-rings.cr-dual {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(220px, 0.8fr);
+  grid-template-areas:
+    "controls controls controls"
+    "plot plot pie"
+    "bars bars bars";
+}
+.cr-dual .cr-ring-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+.career-rings.cr-dual .cr-ring-controls .cr-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.cr-dual .cr-plots {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 12px;
+}
+.cr-dual .cr-plot > figure > svg {
+  height: auto;
+  aspect-ratio: 1 / 1;
+}
+@media (max-width: 1110px) {
+  .career-rings,
+  .career-rings.cr-dual {
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    grid-template-areas:
+      "controls controls"
+      "plot pie"
+      "bars bars";
+  }
+  .cr-ring-controls,
+  .career-rings .cr-ring-controls .cr-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .cr-ring-controls {
+    justify-content: space-between;
+    gap: 10px 16px;
+  }
+  .career-rings.cr-dual {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "controls controls"
+      "plot plot"
+      "pie bars";
+    align-items: start;
+  }
+}
+@media (max-width: 680px) {
+  .career-rings,
+  .career-rings.cr-dual {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "controls" "plot" "pie" "bars";
+    row-gap: 16px;
+  }
+  .career-rings .cr-ring-controls {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+  .career-rings .cr-ring-controls .cr-heading {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .career-rings .cr-layout-switch button {
+    min-height: 38px;
+  }
+  .cr-dual .cr-plots {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .cr-dual .cr-plot > figure > svg {
+    aspect-ratio: auto;
+  }
+}

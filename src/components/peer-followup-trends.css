@@ -1,0 +1,206 @@
+.pf-zone-trends {
+  min-width: 0;
+  margin-block: 20px 24px;
+  container-type: inline-size;
+  font-variant-numeric: tabular-nums;
+}
+.pf-zone-tools,
+.pf-zone-scale {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px 14px;
+}
+.pf-zone-tools {
+  justify-content: space-between;
+}
+.ap-section .pf-zone-tools h4 {
+  margin: 0;
+  font-size: 18px;
+}
+.pf-zone-scale {
+  margin: 12px 0 8px;
+  color: var(--ap-muted);
+  font-size: 12px;
+}
+.pf-reference-key {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+.pf-reference-key i {
+  width: 18px;
+  border-top: 1px dashed var(--ap-muted);
+}
+.pf-zone-scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.pf-sample-note {
+  display: block;
+  margin-top: 7px;
+  color: var(--ap-muted);
+  font-size: 12px;
+}
+.pf-zone-scroll:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+.pf-zone-table {
+  --pf-region: 98px;
+  --pf-earlier: 92px;
+  --pf-later: 126px;
+  --pf-season: 77px;
+  width: 100%;
+  min-width: calc(
+    var(--pf-region) + var(--pf-earlier) + var(--pf-later) + var(--pf-years) *
+      var(--pf-season)
+  );
+  border-collapse: collapse;
+  table-layout: fixed;
+  color: var(--ap-ink);
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.pf-zone-col {
+  width: var(--pf-region);
+}
+.pf-before-col {
+  width: var(--pf-earlier);
+}
+.pf-after-col {
+  width: var(--pf-later);
+}
+.pf-zone-table th,
+.pf-zone-table td {
+  padding: 6px 3px;
+  text-align: center;
+  font-weight: 500;
+  vertical-align: middle;
+}
+.pf-zone-table tr {
+  border-bottom: 1px solid var(--ap-line);
+}
+.pf-zone-table thead tr {
+  border-top: 1px solid var(--ap-line);
+}
+.pf-zone-table tr > th:first-child {
+  text-align: left;
+  padding-left: 4px;
+}
+.pf-zone-table tbody th {
+  color: var(--ap-ink);
+}
+.pf-zone-table small {
+  display: block;
+  margin-top: 2px;
+  color: var(--ap-muted);
+  font-size: 11px;
+  font-weight: 400;
+  white-space: normal;
+}
+.pf-before {
+  border-inline-end: 1px solid var(--ap-line);
+}
+.pf-after {
+  border-inline-start: 1px solid var(--ap-line);
+}
+.pf-after b {
+  font-size: 16px;
+  color: var(--ap-peer);
+}
+.pf-zone-table .pf-after small {
+  padding-inline: 1px;
+}
+.pf-year-values {
+  display: grid;
+  grid-template-columns: repeat(var(--pf-years), minmax(0, 1fr));
+}
+.pf-year-head button,
+.pf-year-values button {
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 2px;
+  line-height: inherit;
+  font: inherit;
+  width: 100%;
+  cursor: pointer;
+}
+.pf-year-head button:hover,
+.pf-year-values button:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.pf-year-head.is-selected,
+.pf-year-values button.is-selected {
+  color: var(--ap-peer);
+  font-weight: 700;
+}
+.pf-zone-table .pf-year-series {
+  padding: 0 0 4px;
+}
+.pf-zone-plot {
+  display: block;
+  width: 100%;
+  height: 40px;
+}
+.pf-zone-plot path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.pf-zone-reference {
+  stroke: var(--ap-muted);
+  stroke-dasharray: 3 4;
+  opacity: 0.65;
+}
+.pf-zone-line {
+  stroke: var(--ap-peer);
+  stroke-width: 2;
+}
+.pf-zone-dot {
+  stroke: var(--ap-peer);
+  stroke-linecap: round;
+  stroke-width: 5;
+}
+.pf-zone-dot.is-selected {
+  stroke: var(--ap-ink);
+  stroke-width: 7;
+}
+.pf-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@container (max-width: 620px) {
+  .pf-zone-table {
+    --pf-region: 53px;
+    --pf-earlier: 50px;
+    --pf-later: 77px;
+    --pf-season: 49px;
+    font-size: 12px;
+  }
+  .pf-zone-table small {
+    font-size: 10px;
+  }
+  .pf-zone-table .pf-after b {
+    font-size: 14px;
+  }
+  .pf-zone-table th,
+  .pf-zone-table td {
+    padding-inline: 1px;
+  }
+  .pf-year-values button {
+    min-height: 27px;
+  }
+  .pf-zone-table tr > th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--ap-bg);
+  }
+}

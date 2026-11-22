@@ -130,6 +130,7 @@ export default function CareerPathExplorer({
   useEffect(() => {
     if (!anchor) return;
     const next = new URLSearchParams({
+      view: "paths",
       player: anchor.playerId,
       ref: String(anchor.season),
       step: String(selection.offset),
@@ -143,7 +144,7 @@ export default function CareerPathExplorer({
     window.history.replaceState(
       null,
       "",
-      `${window.location.pathname}?${next}`,
+      `${window.location.pathname}?${next}${window.location.hash}`,
     );
     document.title = `Shot Atlas · ${anchor.name} · ${t("Career paths", "生涯转型")}`;
     document.documentElement.lang = lang === "zh" ? "zh-Hans" : "en";

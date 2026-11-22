@@ -1,0 +1,119 @@
+.career-rings .season-dial {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding-top: 0;
+}
+.career-rings .season-dial > svg {
+  display: block;
+  width: 100%;
+  max-width: 570px;
+  height: auto;
+  overflow: visible;
+  font-family: inherit;
+  user-select: none;
+}
+.career-rings .season-dial .sd-focus-outline,
+.career-rings .season-dial .sd-lens-outline,
+.career-rings .season-dial .sd-focus-guide {
+  fill: none;
+  stroke: var(--cr-highlight, #efbd74);
+  stroke-width: 1;
+}
+.career-rings .season-dial .sd-lens-outline,
+.career-rings .season-dial .sd-focus-guide {
+  stroke-width: 0.65;
+  opacity: 0.85;
+}
+.career-rings .season-dial .sd-age-label line {
+  stroke: #81928e;
+  stroke-width: 0.75;
+}
+.career-rings .season-dial .sd-age-label text {
+  fill: #c0cec9;
+  font-size: 9.3px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.career-rings .season-dial .sd-current text {
+  fill: var(--cr-highlight, #efbd74);
+  font-weight: 700;
+}
+.career-rings .season-dial .sd-direction {
+  fill: none;
+  stroke: #c2cfc8;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.career-rings .season-dial .sd-hub-label,
+.career-rings .season-dial .sd-hub-season {
+  fill: #afc1bb;
+  font-size: 7.5px;
+}
+.career-rings .season-dial .sd-hub-label {
+  font-size: 7px;
+  letter-spacing: 0.09em;
+}
+.career-rings .season-dial .sd-hub-age {
+  fill: #f1f0e7;
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.055em;
+}
+.career-rings .season-dial .sd-age-hit {
+  fill: none;
+  stroke: transparent;
+  pointer-events: stroke;
+  cursor: crosshair;
+}
+.career-rings .season-dial figcaption {
+  width: 100%;
+  max-width: 410px;
+  margin: 1px 0 8px;
+  color: #bbc9c4;
+  line-height: 1.45;
+  text-align: center;
+}
+.career-rings .season-dial .sd-hint {
+  display: block;
+}
+.career-rings .season-dial .sd-readout {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  margin: 7px 0 0;
+}
+.career-rings .season-dial .sd-readout div {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+}
+.career-rings .season-dial .sd-readout i {
+  height: 3px;
+  border-radius: 1px;
+}
+.career-rings .season-dial .sd-readout dt {
+  color: #c5d2cc;
+  font-size: 11px;
+  line-height: 1.2;
+  min-height: 1.2em;
+  margin: 5px 0 3px;
+  overflow-wrap: anywhere;
+}
+.career-rings .season-dial .sd-readout dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.3;
+  color: #f2f2ea;
+}
+.career-rings .season-dial .sd-readout-selected dt,
+.career-rings .season-dial .sd-readout-selected dd {
+  color: var(--cr-highlight, #efbd74);
+}

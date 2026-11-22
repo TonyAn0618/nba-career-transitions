@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { RotateCcw } from "lucide-react";
+import AgeAtlas from "./components/AgeAtlas";
+import CareerTransitions from "./components/CareerTransitions";
 import CareerPathExplorer from "./components/CareerPathExplorer";
 import type { Dataset } from "./lib/types";
 
@@ -29,7 +31,6 @@ export default function App() {
     return (
       <div className="loading-screen">
         <img src="./ball.svg" alt="" />
-        <h1>SHOT ATLAS</h1>
         {error ? (
           <>
             <p>Import data / 请先导入数据</p>
@@ -50,5 +51,13 @@ export default function App() {
         )}
       </div>
     );
-  return <CareerPathExplorer data={data} query={query} />;
+  const view = query.get("view");
+  if (view === "interval" || (!view && query.has("from")))
+    return <CareerTransitions data={data} query={query} />;
+  if (
+    view === "paths" ||
+    (!view && (query.has("step") || window.location.hash.startsWith("#path-")))
+  )
+    return <CareerPathExplorer data={data} query={query} />;
+  return <AgeAtlas data={data} query={query} />;
 }

@@ -26,18 +26,20 @@ function point(turn: number, radius: number) {
   return [60 + radius * Math.cos(angle), 60 + radius * Math.sin(angle)];
 }
 
-function ShotPie({
+export function ShotPie({
   row,
   names,
   zone,
   onZone,
   label,
+  descriptions,
 }: {
   row: SeasonRow;
   names: string[];
   zone: Props["zone"];
   onZone: Props["onZone"];
   label: string;
+  descriptions?: string[];
 }) {
   // Each published share is rounded. Scale the geometry to one full turn.
   const shares = row.shares.map((v) => v!);
@@ -84,7 +86,10 @@ function ShotPie({
             }}
             opacity={zone == null || zone === index ? 1 : 0.3}
           >
-            <title>{label + " · " + names[index] + " " + percent(share)}</title>
+            <title>
+              {descriptions?.[index] ??
+                label + " · " + names[index] + " " + percent(share)}
+            </title>
             {size >= 1 ? (
               <circle cx="60" cy="60" r="56" fill={BAND_COLORS[index]} />
             ) : (

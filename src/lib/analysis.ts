@@ -9,6 +9,10 @@ export const ZONES = [
 ] as const;
 export const seasonLabel = (year: number) =>
   year - 1 + "–" + String(year).slice(-2);
+export const seasonRange = (first: number, last: number) =>
+  first === last
+    ? seasonLabel(first)
+    : seasonLabel(first) + " – " + seasonLabel(last);
 export const percent = (n: number | null, digits = 1) =>
   n == null || !Number.isFinite(n) ? "—" : (n * 100).toFixed(digits) + "%";
 export const pp = (n: number | null) =>
