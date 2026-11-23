@@ -113,3 +113,50 @@
 .ap-radar small {
   font-size: 12px;
 }
+.ap-match-radar {
+  container: match-shooting / inline-size;
+}
+.ap-match-radar .pc-pie-pair {
+  grid-template-areas: "first values second";
+  grid-template-columns: minmax(0, 1fr) minmax(156px, 1.12fr) minmax(0, 1fr);
+  gap: 8px;
+  margin-block: 14px 6px;
+}
+.ap-match-radar .pc-pie-pair figcaption {
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.ap-match-radar figcaption small {
+  color: var(--ap-muted);
+}
+.ap-match-radar .pc-pie {
+  width: min(100%, 168px);
+  max-width: none;
+}
+.ap-match-radar .pc-pie-values th,
+.ap-match-radar .pc-pie-values td {
+  padding-block: 3px;
+  font-size: 12px;
+}
+.ap-match-radar .pc-pie-values button {
+  font-size: 12px;
+  cursor: pointer;
+}
+.ap-match-radar .pc-pie-values td:first-child {
+  color: var(--ap-player);
+}
+.ap-match-radar .pc-pie-values td:last-child {
+  color: var(--ap-peer);
+}
+@container match-shooting (max-width: 469px) {
+  .ap-match-radar .pc-pie-pair {
+    grid-template-areas: "first second" "values values";
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ap-match-radar .pc-pie-values {
+    max-width: 360px;
+    justify-self: center;
+  }
+}

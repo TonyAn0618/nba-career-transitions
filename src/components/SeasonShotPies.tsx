@@ -27,14 +27,14 @@ function point(turn: number, radius: number) {
 }
 
 export function ShotPie({
-  row,
+  shares,
   names,
   zone,
   onZone,
   label,
   descriptions,
 }: {
-  row: SeasonRow;
+  shares: readonly (number | null)[];
   names: string[];
   zone: Props["zone"];
   onZone: Props["onZone"];
@@ -42,8 +42,7 @@ export function ShotPie({
   descriptions?: string[];
 }) {
   // Each published share is rounded. Scale the geometry to one full turn.
-  const shares = row.shares.map((v) => v!);
-  const total = shares.reduce((sum, v) => sum + v, 0);
+  const total = shares.reduce<number>((sum, v) => sum + (v ?? 0), 0);
   let start = 0;
   return (
     <svg
@@ -113,6 +112,93 @@ export function ShotPie({
   );
 }
 
+type PiePlayer = {
+  name: string;
+  caption: string;
+  color: string;
+  period: string;
+  coverage?: string;
+  shares?: readonly (number | null)[];
+  missingLabel: string;
+};
+
+export function ShotPiePair({
+  players,
+  names,
+  zoneHeading,
+  zone,
+  onZone,
+  t,
+}: {
+  players: PiePlayer[];
+  names: string[];
+  zoneHeading: string;
+  zone: Props["zone"];
+  onZone: Props["onZone"];
+  t: Translate;
+}) {
+  return (
+    <div className="pc-pie-pair">
+      {players.map((p, i) => (
+        <figure key={i} className={i === 0 ? "pc-pie-first" : "pc-pie-second"}>
+          <figcaption>
+            <b style={{ color: p.color }}>{p.caption}</b>
+            <span>{p.period}</span>
+            {p.coverage && <small>{p.coverage}</small>}
+          </figcaption>
+          {p.shares ? (
+            <ShotPie
+              shares={p.shares}
+              names={names}
+              zone={zone}
+              onZone={onZone}
+              label={p.name + " · " + p.period}
+            />
+          ) : (
+            <div className="pc-pie-missing">{p.missingLabel}</div>
+          )}
+        </figure>
+      ))}
+      <table
+        className="pc-pie-values"
+        aria-label={t(
+          "Five-zone shares for both players",
+          "两人的五区出手占比",
+        )}
+      >
+        <thead>
+          <tr>
+            <th scope="col">{shortName(players[0].name)}</th>
+            <th scope="col">{zoneHeading}</th>
+            <th scope="col">{shortName(players[1].name)}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {names.map((name, i) => (
+            <tr
+              key={name}
+              className={zone === i ? "pc-selected-band" : undefined}
+            >
+              <td>{percent(players[0].shares?.[i] ?? null)}</td>
+              <th scope="row">
+                <button
+                  type="button"
+                  onClick={() => onZone(zone === i ? null : i)}
+                  aria-pressed={zone === i}
+                >
+                  <i style={{ background: BAND_COLORS[i] }} />
+                  {name}
+                </button>
+              </th>
+              <td>{percent(players[1].shares?.[i] ?? null)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function SeasonShotPies({
   players,
   rows,
@@ -156,73 +242,23 @@ export default function SeasonShotPies({
           </button>
         </div>
       </div>
-      <div className="pc-pie-pair">
-        {players.map((p, i) => {
-          const row = valid[i],
-            year = years[i] == null ? "" : seasonLabel(years[i]);
-          return (
-            <figure
-              key={p.playerId}
-              className={i === 0 ? "pc-pie-first" : "pc-pie-second"}
-            >
-              <figcaption>
-                <b style={{ color: PLAYER_COLORS[i] }}>{shortName(p.name)}</b>
-                <span>{year}</span>
-              </figcaption>
-              {row ? (
-                <ShotPie
-                  row={row}
-                  names={names}
-                  zone={zone}
-                  onZone={onZone}
-                  label={p.name + " · " + year}
-                />
-              ) : (
-                <div className="pc-pie-missing">
-                  {rows[i]
-                    ? t("Incomplete split", "五区占比不完整")
-                    : t("No season data", "无赛季数据")}
-                </div>
-              )}
-            </figure>
-          );
-        })}
-        <table
-          className="pc-pie-values"
-          aria-label={t(
-            "Five-zone shares for both players",
-            "两人的五区出手占比",
-          )}
-        >
-          <thead>
-            <tr>
-              <th scope="col">{shortName(players[0].name)}</th>
-              <th scope="col">{t("Distance", "距离")}</th>
-              <th scope="col">{shortName(players[1].name)}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {names.map((name, i) => (
-              <tr
-                key={name}
-                className={zone === i ? "pc-selected-band" : undefined}
-              >
-                <td>{percent(valid[0]?.shares[i] ?? null)}</td>
-                <th scope="row">
-                  <button
-                    onClick={() => onZone(zone === i ? null : i)}
-                    aria-pressed={zone === i}
-                  >
-                    <i style={{ background: BAND_COLORS[i] }} />
-                    {name}
-                  </button>
-                </th>
-                <td>{percent(valid[1]?.shares[i] ?? null)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ShotPiePair
+        players={players.map((p, i) => ({
+          name: p.name,
+          caption: shortName(p.name),
+          color: PLAYER_COLORS[i],
+          period: years[i] == null ? "" : seasonLabel(years[i]),
+          shares: valid[i]?.shares,
+          missingLabel: rows[i]
+            ? t("Incomplete split", "五区占比不完整")
+            : t("No season data", "无赛季数据"),
+        }))}
+        names={names}
+        zoneHeading={t("Distance", "距离")}
+        zone={zone}
+        onZone={onZone}
+        t={t}
+      />
     </section>
   );
 }

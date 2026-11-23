@@ -63,7 +63,7 @@ export function SeasonShotMix({
       </div>
       {selected.fga !== 0 && completeProfile(selected) ? (
         <ShotPie
-          row={selected}
+          shares={selected.shares}
           names={names}
           zone={zone}
           onZone={onZone}
