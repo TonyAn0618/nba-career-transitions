@@ -1,36 +1,40 @@
-# 从课程设计原则到 Shot Atlas
+# Visual design and evaluation
 
-服务对象是 NBA 球员发展球探。一次分析从一个实际年龄开始，依次回答三个问题。球员把出手移向了哪里？该区域和整体效率怎样变化？较早进入联盟的同位置球员记录提供了哪些可以进一步检验的转型方向？
+English · [简体中文](course-design.zh-CN.md)
 
-下表按 COMP 6411D 的课件编号列出本次设计所用的知识点。页码取自本地课程 PDF。
+Shot Atlas is designed for an NBA player-development scout. Starting with a particular age, the scout can ask where a player moved his attempts, how his accuracy and scoring efficiency changed, and what a historical peer’s later career suggests investigating.
 
-| 讲次 | 课件主题与知识点                                                          | 在项目中的选择                                                             |
-| ---- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| 01   | 课程概览；面向具体决策者的可视化，p.65 用篮球投篮图举例                   | 逐球位置在同尺寸球场上对齐，并标明实际覆盖的出手数。                       |
-| 02   | 可视化导论；探索、比较与叙事，pp.6–20、33–34                              | 在同一球员选择器中提供案例球员和按姓名搜索。                               |
-| 03   | 颜色与视觉感知；邻近标注、位置比较和有序明度，pp.36–47、79–85、109–110    | 年轮用单向明度表示一个有单位的比例，并列条和百分数支持精读。               |
-| 04   | 多变量基础图；零基线、共同尺度和时间序列，pp.25、37–54、60–61             | 五区横条从零起算；效率图的横轴是年龄，零线对应当季联盟。                   |
-| 05   | 多变量表示 I；点、矩阵、颜色编码，pp.12、20                               | 把年龄×投篮区视作矩阵，映射到环与固定扇区；逐球位置保留单次出手。          |
-| 06   | 多变量表示 II；焦点与上下文、共尺度小图，pp.8–13、35–51                   | 年轮保留整段生涯，所选年龄与五区出手占比饼图联动；两季场图保持同一投影。   |
-| 07   | 设计指南；从用户任务评估效用和表达，pp.9–10、19、25–29                    | 入口依次对应个人变化、生涯匹配和联盟打法变化。                             |
-| 08   | 图形诚实、美学与 chartjunk，pp.26–35、51、55–59、67–72、82–85             | 环的半径只表示年龄，出手量有独立数值；弱化网格，取消主流程中的逐字动画。   |
-| 09   | 交互；概览到细节、动态查询和联动，pp.26–27、35–45、50–54                  | 点选年轮联动饼图与效率游标；两龄横条与两季场图共用独立的赛季选择。         |
-| 10   | 数据人文与伦理；个体、上下文和缺失，pp.7–14、22–29、53                    | 给出球员身份、真实赛季、坐标覆盖、低出手样本和无记录状态。                 |
-| 11   | 认知偏差；锚定、确认和筛选效应，pp.10–25、45–51、66–68                    | 以目标球员全部生涯匹配，参照球员只用对齐年份及以前的表现。                 |
-| 12   | 评估；任务、洞察和 ICE-T，pp.7–12、18–28                                  | 浏览器走查实际分析问题，数值回归测试和历史留后回测分别检查实现与预测表现。 |
-| 13   | 图与网络；邻域查找、排序与网络杂乱，pp.15–20、65–69                       | 按相似度排列候选，用五区雷达图检查两人在匹配期的投篮表现。                 |
-| 14   | 树与层级；嵌套、面积和组成，pp.25–38、60–62                               | 饼图将全季出手分为五个距离区，扇形角度对应各区占比。                       |
-| 15   | 文本与文档；向量表示、相似性和下钻，pp.45–57、62–68                       | 综合生涯累计与相同生涯年份的表现，可回到原始五区统计核对。                 |
-| 16   | 空间与时间；同尺度小图、年龄轴、年轮等时间隐喻，pp.49、55、67、73、79、89 | 年龄由内向外单向增加，每一岁等距；年龄断档保留在图中。                     |
-| 17   | Post-WIMP；直接操控、触控遮挡与小屏布局，pp.10、14、47、50–52             | 年轮支持轻触，旁边的原生年龄控件与前后按钮能完成同一任务。                 |
-| 18   | 可访问性与国际化；颜色之外的提示、焦点、文本与本地化，pp.4–15、27–35      | 中文与英文界面共享可复制的状态；关键图表附文字或表格，按钮提供键盘焦点。   |
+## Connections to COMP 6411D
 
-## 演示时可复查的三个问题
+The page numbers refer to the course lecture PDFs used during development.
 
-- 詹姆斯在 19 岁和 41 岁时，10–16 英尺的出手比例和命中率怎样变化？在「年龄对比」中选这两个赛季，切换「出手占比」和「命中率」，比较中距离的两根横条。再用同图中的全季真实命中率比较两个赛季的整体得分效率。
-- 东契奇的完整生涯与哪些更早首秀的控卫最像？在相似球员排行中查看匹配结果，再点生涯走势中的第六季，比较两人的出手选择与热区。
-- 投篮打法在三个年龄段之间如何变化？在「联盟打法变化」查看四种打法的占比和实际样本人数，再点选流向图中的一种打法，查看球员在相邻年龄段的去向。
+| Lecture | Topic and pages                                                        | Application in Shot Atlas                                                                                                     |
+| ------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 01      | Audience and decision-making, p. 65                                    | Paired shot maps use identically sized courts and show how many attempts each map covers.                                     |
+| 02      | Exploration, comparison and narrative, pp. 6–20, 33–34                 | Featured examples and name search share one player selector.                                                                  |
+| 03      | Color, proximity and ordered lightness, pp. 36–47, 79–85, 109–110      | Lightness encodes a rate in the rings. Adjacent bars and percentages allow precise comparisons.                               |
+| 04      | Zero baselines, common scales and time series, pp. 25, 37–54, 60–61    | Zone bars start at zero. The age-based efficiency curve uses zero for the contemporary league average.                        |
+| 05      | Points, matrices and color, pp. 12, 20                                 | Rings and sectors encode an age-by-zone matrix. Each plotted shot has its own location.                                       |
+| 06      | Focus and context, small multiples, pp. 8–13, 35–51                    | The full career remains visible while a linked pie chart shows one age. The two courts share a projection.                    |
+| 07      | Evaluation against user tasks, pp. 9–10, 19, 25–29                     | Navigation follows three tasks: explore a player, find a historical peer, or compare league styles.                           |
+| 08      | Graphical integrity and visual clutter, pp. 26–35, 51–55, 67–72, 82–85 | Ring radius encodes age. Attempt counts are displayed separately. Subtle gridlines keep the data legible.                     |
+| 09      | Dynamic queries and linked views, pp. 26–27, 35–45, 50–54              | Selecting a ring updates the pie chart and efficiency cursor. The two-season bars and courts use the same selections.         |
+| 10      | Individuals, context and missing observations, pp. 7–14, 22–29, 53     | Names, actual seasons, coverage, low attempt counts and missing records remain visible.                                       |
+| 11      | Anchoring, confirmation and selection bias, pp. 10–25, 45–51, 66–68    | Historical matching uses only information through the relevant career year.                                                   |
+| 12      | Evaluation, tasks, insight and ICE-T, pp. 7–12, 18–28                  | Browser walkthroughs exercise scouting tasks. Regression tests and a historical backtest check calculations and estimates.    |
+| 13      | Neighborhoods and ranking, pp. 15–20, 65–69                            | A ranked list finds peers. A five-zone radar chart lets the reader inspect the match.                                         |
+| 14      | Hierarchies, area and composition, pp. 25–38, 60–62                    | Five pie sectors partition the season’s shots. Angles represent attempt shares.                                               |
+| 15      | Vectors, similarity and drill-down, pp. 45–57, 62–68                   | The score combines pooled and year-aligned profiles. The reader can inspect the underlying zone statistics.                   |
+| 16      | Space, time and small multiples, pp. 49, 55, 67, 73, 79, 89            | Rings move outward with age at equal intervals. Gaps in a career retain their space.                                          |
+| 17      | Direct manipulation, touch and small screens, pp. 10–14, 47, 50–52     | Touch can pin a ring. Age controls and previous/next buttons provide another way to select a season.                          |
+| 18      | Accessibility and internationalization, pp. 4–15, 27–35                | English and Chinese views preserve shareable selections. Key charts have text or tables, and controls support keyboard focus. |
 
-## AI 使用记录
+## Three demonstration questions
 
-本轮使用 OpenAI Codex 阅读课件与修订提案、核对 Git 历史、辅助设计和实现前端及数据处理、生成回归测试并操作浏览器验收。投篮、赛季统计与球员头像分别来自仓库所记录的公开数据源。课程概览第 54 页要求在使用 AI 的提交物中注明贡献；组员可依据各自的实际工作，把本段更新为最终署名说明。
+- **LeBron James.** How did his 10–16 ft shots change from age 19 to 41? Choose the two ages, compare shot shares and zone FG%, then use season TS% to check the overall efficiency change.
+- **Luka Dončić.** Which earlier-debuting point guard had the closest shooting profile through eight career years? Open the ranking, inspect the calculation and select year six on the timeline to compare the two courts.
+- **League-wide.** How do shooting styles change across the three age groups? Compare style shares and sample counts, then select a style in the flow diagram to see where those players appear next.
+
+## GenAI use
+
+OpenAI Codex assisted with reviewing course materials and the revised proposal, implementation of the interface and data processing, regression tests, and browser checks. The source manifests identify the published statistical and photographic data. The submitted M5 ZIP includes the original prompt excerpts, English translations and corresponding outputs in `GenAI.md`.

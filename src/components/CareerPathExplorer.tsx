@@ -84,7 +84,7 @@ export default function CareerPathExplorer({
 }) {
   const [selection, setSelection] = useState(() => initialSelection(query));
   const [lang, setLang] = useState<Language>(
-    query.get("lang") === "en" ? "en" : "zh",
+    query.get("lang") === "zh" ? "zh" : "en",
   );
   const [hoverOffset, setHoverOffset] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
@@ -257,7 +257,10 @@ export default function CareerPathExplorer({
         {t("Skip to analysis", "跳至分析")}
       </a>
       <header className="path-topbar">
-        <a className="path-brand" href="?player=curryst01&ref=2022&lang=zh">
+        <a
+          className="path-brand"
+          href={`?player=curryst01&ref=2022&lang=${lang}`}
+        >
           <img src="./ball.svg" alt="" />
           <b>SHOT ATLAS</b>
         </a>

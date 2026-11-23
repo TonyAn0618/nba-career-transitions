@@ -65,7 +65,7 @@ export default function CareerTransitions({
     [data, careers],
   );
   const [language, setLanguage] = useState<Language>(
-    query.get("lang") === "en" ? "en" : "zh",
+    query.get("lang") === "zh" ? "zh" : "en",
   );
   const t: Translate = (en, zh) => (language === "zh" ? zh : en);
   const [requestedSelection, setSelection] = useState<{

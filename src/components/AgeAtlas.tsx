@@ -196,7 +196,7 @@ export default function AgeAtlas({
   });
   const [year, setYear] = useState(Number(query.get("ref") || query.get("to")));
   const [lang, setLang] = useState<Language>(
-    query.get("lang") === "en" ? "en" : "zh",
+    query.get("lang") === "zh" ? "zh" : "en",
   );
   const [tab, setTab] = useState<AtlasTab>(
     () => tabIds.find((id) => id === query.get("view")) ?? "career",
