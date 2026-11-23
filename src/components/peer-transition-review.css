@@ -18,6 +18,38 @@
   border-inline-start: 3px solid var(--ap-player);
   background: var(--raised);
 }
+.pr-summary-row {
+  display: grid;
+  gap: 9px 24px;
+}
+.pr-applied-rule {
+  border-block-start: 1px solid var(--ap-line);
+  padding-block-start: 8px;
+}
+.pr-applied-rule h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--ap-ink);
+}
+.pr-applied-rule p {
+  margin: 3px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ap-muted);
+  text-wrap: pretty;
+}
+@container peer-panel (min-width: 680px) {
+  .pr-summary-row {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+  .pr-applied-rule {
+    border-block-start: 0;
+    padding-block-start: 0;
+    border-inline-start: 1px solid var(--ap-line);
+    padding-inline-start: 16px;
+  }
+}
 .pr-decision {
   margin: 0;
   color: var(--ap-ink);
