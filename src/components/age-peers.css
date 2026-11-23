@@ -131,6 +131,9 @@
 .ap-match-result > header {
   justify-content: space-between;
   flex-wrap: wrap;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--ap-line);
 }
 .ap-match-player {
   min-width: 0;
@@ -171,47 +174,6 @@
 }
 .ap-score-line span {
   font-size: 13px;
-}
-.ap-score-breakdown {
-  margin: 12px 0 14px;
-  padding: 10px 0 6px;
-  border-block: 1px solid var(--ap-line);
-  font-size: 13px;
-  line-height: 1.5;
-}
-.ap-score-breakdown > p {
-  margin: 0;
-  color: var(--muted);
-}
-.ap-score-breakdown dl {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin: 6px 0;
-}
-.ap-score-breakdown dl > div + div {
-  border-inline-start: 1px solid var(--ap-line);
-  padding-inline-start: 10px;
-}
-.ap-score-breakdown dt {
-  color: var(--muted);
-}
-.ap-score-breakdown dd {
-  margin: 0;
-  color: var(--ink);
-  font-size: 19px;
-  font-weight: 650;
-  font-variant-numeric: tabular-nums;
-}
-.ap-score-breakdown details {
-  margin: 2px 0 0;
-}
-.ap-score-breakdown ul {
-  padding-inline-start: 18px;
-  margin: 4px 0 8px;
-}
-.ap-score-breakdown li + li {
-  margin-top: 4px;
 }
 .ap-season-facts {
   display: flex;

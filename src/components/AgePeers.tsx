@@ -3,7 +3,6 @@ import { seasonLabel } from "../lib/analysis";
 import { COHORT_SIZE, cohortOutlook } from "../lib/age-peers";
 import {
   careerShootingTotals,
-  MIN_HISTORY_FGA,
   rankCareerPeers,
   type CareerPeer,
 } from "../lib/career-peers";
@@ -11,7 +10,6 @@ import { alignPeerStages } from "../lib/peer-stages";
 import type { SeasonRow, Translate } from "../lib/types";
 import backtest from "../lib/age-peer-backtest.json";
 import { PeerMatchRadar } from "./PeerShootingComparison";
-import PeerScoreBreakdown from "./PeerScoreBreakdown";
 import { PeerStageCourts } from "./CareerCourts";
 import PeerCareerTimeline from "./PeerCareerTimeline";
 import ShotSelectionAdvice from "./ShotSelectionAdvice";
@@ -194,7 +192,6 @@ export default function AgePeers({
                   </div>
                 </div>
               </header>
-              <PeerScoreBreakdown selected={selected} t={t} />
               <PeerMatchRadar
                 anchor={anchor}
                 target={target}
@@ -257,8 +254,8 @@ export default function AgePeers({
                 </summary>
                 <p>
                   {t(
-                    `Peers must have debuted before ${anchor.name} and played the same primary position (${target.position}) in career year ${target.careerYear}. Each player needs at least ${MIN_HISTORY_FGA} attempts from seasons with complete zone shares through that year. Eligible peers are ranked by shooting similarity.`,
-                    `参照球员须比 ${anchor.name} 更早进入 NBA，且在生涯第 ${target.careerYear} 季同样担任 ${target.position}。截至该季，两人各自在分区占比完整的赛季须累计至少 ${MIN_HISTORY_FGA} 次出手。符合条件者按投篮相似度排名。`,
+                    `The ranking uses ${anchor.name}’s full recorded career through ${seasonLabel(anchor.season)}. Each peer debuted at least one season earlier and played the same primary position (${target.position}) in career year ${target.careerYear}. We compare their records through year ${target.careerYear}, both by season and in total. Shot distribution, accuracy by zone and attempts per 36 minutes carry equal weight.`,
+                    `排名使用 ${anchor.name} 截至 ${seasonLabel(anchor.season)} 的全部生涯记录。参照球员须至少早一个赛季首秀，且在生涯第 ${target.careerYear} 季同样担任 ${target.position}。双方比较截至第 ${target.careerYear} 季的逐季和累计表现，出手分布、分区命中率和每 36 分钟出手量各占三分之一。`,
                   )}
                 </p>
               </details>
