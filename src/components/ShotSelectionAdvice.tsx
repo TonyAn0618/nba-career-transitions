@@ -58,6 +58,7 @@ function takeaway(
     if (best.tier === "trial") {
       const history = precedent(best, twin, t);
       return {
+        rule: "trial",
         action: t(
           `Try replacing a few of ${player}’s ${shots[best.from.index]} with ${shots[best.to.index]}.`,
           `${player} 可以把少量${from}换成${to}出手。`,
@@ -74,6 +75,7 @@ function takeaway(
       };
     }
     return {
+      rule: "review",
       action: t(
         `Review ${player}’s ${shots[best.from.index]} for possessions where ${shots[best.to.index]} were available.`,
         `先复盘 ${player} 的${from}回合，看看当时有没有${to}机会。`,
@@ -105,6 +107,7 @@ function takeaway(
           )
         : "";
     return {
+      rule: "personal",
       action: t(
         `Preserve ${player}’s existing ${shots[model.strength.index]}.`,
         `建议 ${player} 保留目前的${zone}出手机会。`,
@@ -118,6 +121,7 @@ function takeaway(
   if (focus) {
     const zone = names[focus.index];
     return {
+      rule: "personal",
       action: t(
         `Start by reviewing the quality of ${player}’s ${shots[focus.index]}.`,
         `优先复盘 ${player} 的${zone}出手质量。`,
@@ -130,6 +134,7 @@ function takeaway(
   }
   if (lead)
     return {
+      rule: "records",
       action: t(
         `Start with ${player}’s ${shots[lead.index]} when reviewing his shot choices.`,
         `先从 ${player} 的${names[lead.index]}出手看起。`,
@@ -140,6 +145,7 @@ function takeaway(
       ),
     };
   return {
+    rule: "records",
     action: t(
       `Record where ${player} shoots before choosing a change.`,
       `先补齐 ${player} 的出手位置，再判断该怎么调整。`,
@@ -201,8 +207,80 @@ export default function ShotSelectionAdvice({
           <p className="pr-reason">{conclusion.reason}</p>
         </div>
         <details className="pr-evidence">
-          <summary>{t("View evidence", "查看依据")}</summary>
+          <summary>
+            {t("View evidence and decision rules", "查看依据与判断规则")}
+          </summary>
           <div className="pr-evidence-body">
+            <section className="pr-rules" aria-labelledby="pr-rules-title">
+              <h4 id="pr-rules-title">
+                {t("How the recommendation is chosen", "建议是怎么选出的？")}
+              </h4>
+              <p>
+                {t(
+                  "The highest similarity score selects the default twin. We check the selected twin’s later shot mix and the player’s own mix over the preceding three seasons. A potential swap links the largest fall and rise in shot share, provided attempts also move that way at equal minutes.",
+                  "相似度最高的球员是默认参照。系统比较所选 twin 到匹配生涯年为止的出手与此后的出手，也比较球员本季与本人此前最多三季的出手。每次比较都找出占比降幅和升幅最大的两个区域，再核对同等上场时间内出手次数是否也一减一增。",
+                )}
+              </p>
+              <dl>
+                {[
+                  {
+                    id: "trial",
+                    title: t("Try a swap", "小幅换投"),
+                    text: t(
+                      "The comparison mix had higher league-relative true shooting and at least as many points per 36. The new zone also yields more points per shot for this player, with enough evidence and opportunities to try it.",
+                      "采用可借鉴分布时，相对联盟真实命中率更高，每36分钟得分至少持平。对所选球员，新区域每次出手的得分优势也要有样本支持，而且历史出手量要支持这次调整。",
+                    ),
+                  },
+                  {
+                    id: "review",
+                    title: t("Review the swap on film", "先复盘换投机会"),
+                    text: t(
+                      "History supports the change, but the player’s scoring advantage is still uncertain or there are too few attempts to shift. Review those possessions first.",
+                      "历史表现支持这个方向，但球员自己的得分优势还不够明确，或可调整的回合太少。先看录像，核对这些回合有没有更好的选择。",
+                    ),
+                  },
+                  {
+                    id: "personal",
+                    title: t(
+                      "Keep a strength or review a decline",
+                      "保留强项或复盘下滑",
+                    ),
+                    text: t(
+                      "Without a supported swap to try or review, compare this season’s zone accuracy with the player’s previous seasons. Weight the change by current attempts and shot value. Keep the zone with the largest impact if it gained points, or review it if it lost points.",
+                      "没有合适换法时，把各区命中率相对本人过往的变化，按本季场均出手量和每球分值折算成得分。影响最大的是增益，就建议保留该区机会。如果是损失，就建议优先复盘。",
+                    ),
+                  },
+                  {
+                    id: "records",
+                    title: t(
+                      "Start with the available records",
+                      "缺少可比较的变化",
+                    ),
+                    text: t(
+                      "Start with the most frequent recorded shot this season. If no location is recorded, collect that information first.",
+                      "先看本季出手最多的区域。没有可用的出手位置记录时，先补齐数据。",
+                    ),
+                  },
+                ].map((rule) => (
+                  <div
+                    key={rule.id}
+                    className={
+                      conclusion.rule === rule.id
+                        ? "pr-current-rule"
+                        : undefined
+                    }
+                  >
+                    <dt>
+                      {rule.title}
+                      {conclusion.rule === rule.id && (
+                        <small>{t("Applies here", "本次适用")}</small>
+                      )}
+                    </dt>
+                    <dd>{rule.text}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
             {!swap && baseline != null && (
               <p>
                 {t(
@@ -389,14 +467,14 @@ export default function ShotSelectionAdvice({
               </p>
               <p>
                 {t(
-                  `First identify the largest share decrease and increase across all five zones in the same historical comparison. Both minute-adjusted attempt rates must agree, with at least ${MIN_HISTORY_FGA} total attempts per period. Compare the selected twin before and after the matched career year, or the player's current mix with up to three earlier seasons pooled. The comparison mix must have higher league-relative TS and no decline in points per 36. Keep only a positive points-per-shot edge for the player. For a trial, it must also appear in separate current and past samples, or have a positive approximate 95% lower bound for the difference using Wilson limits. Trial volume is capped by the observed shift, at one swap every two to ten games. Prefer the selected twin among supported trials. When no route is supported, compare each zone’s accuracy change at current volume and highlight the largest gain or loss. A historical association does not establish causation.`,
-                  `先用五区占比找出同一段历史中降幅和升幅最大的两个区域，再核对相同上场时间下的出手次数是否同向。每段历史至少 ${MIN_HISTORY_FGA} 次总出手。参照取匹配生涯年前后，也可将本人此前最多三季合计与本季比较。只有对应阶段相对联盟效率更高、每36分钟得分至少持平，且这组换投对球员本人每次出手的估算得分有利，才考虑借鉴。在本季和此前独立样本中均有得分优势，或差值的近似 95% 下限（按 Wilson 区间计算）大于零，才建议试行。幅度不超过实际观察到的变化，每两至十场换投一次。同等证据下优先采用所选参照。缺少可借鉴路线时，按本季出手量比较各区命中率变化对应的得分增减，取影响最大的一项。这些历史变化可能也受到角色和防守等因素的影响。`,
+                  `Each historical period needs all five zone shares and at least ${MIN_HISTORY_FGA} total attempts. For the twin, compare through the matched career year against later seasons recorded by the target season. For the player, compare the current season with the pooled prior three-season window. A trial needs either a positive approximate 95% lower bound on the per-shot scoring difference (using Wilson limits), or an advantage in both the current and separate historical samples. The trial rate is capped by the observed opportunity and available source shots, at one swap every two to ten games. Among routes with equal evidence, prefer the selected twin, then the larger estimated scoring gain at that volume.`,
+                  `每段历史都需有五区占比及至少 ${MIN_HISTORY_FGA} 次总出手。对 twin，以匹配生涯年为界，对比此前（含该年）和截至所选球员本季已记录的后续赛季。对本人，考察是否值得回到此前最多三季合计的出手分布。新区域每次出手的得分优势，须在本季与独立历史样本中都出现，或差值的近似 95% 下限大于零（用 Wilson 区间估算）。用观察到的机会量和原区可用出手量限制试行幅度，每两至十场换一次。同等证据下，优先考虑所选 twin 的路线，再比较可行幅度下的估算得分收益。`,
                 )}
               </p>
               <p>
                 {t(
-                  "True shooting = points ÷ [2 × (FGA + 0.44 × FTA)]. The quality of the extra looks and changes in foul drawing affect the actual outcome.",
-                  "真实命中率 = 得分 ÷ [2 ×（总出手 + 0.44 × 罚球次数）]。新机会的防守强度及造犯规能力会影响实际结果。",
+                  "True shooting = points ÷ [2 × (FGA + 0.44 × FTA)]. League-relative TS is the difference from the season’s league average, in percentage points. Shot difficulty, foul drawing and role changes also affect the observed results.",
+                  "真实命中率 = 得分 ÷ [2 ×（总出手 + 0.44 × 罚球次数）]。相对联盟真实命中率是球员与当季联盟平均真实命中率之差，单位为百分点。投篮难度、造犯规能力和角色变化也可能影响前后表现。",
                 )}
               </p>
             </details>

@@ -162,6 +162,37 @@
   margin: 0 0 7px;
   text-wrap: pretty;
 }
+.pr-rules {
+  margin-bottom: 14px;
+}
+.pr-rules h4 {
+  margin: 0 0 5px;
+  color: var(--ap-ink);
+  font-size: 15px;
+}
+.pr-rules dl {
+  margin: 0;
+}
+.pr-rules dl > div {
+  padding: 5px 10px;
+  border-inline-start: 2px solid var(--ap-line);
+}
+.pr-rules dl > .pr-current-rule {
+  border-color: var(--ap-player);
+}
+.pr-rules dt {
+  font-weight: 650;
+  color: var(--ap-ink);
+}
+.pr-rules dt small {
+  margin-inline-start: 8px;
+  font-size: inherit;
+  font-weight: 500;
+  color: var(--ap-player);
+}
+.pr-rules dd {
+  margin: 0;
+}
 .pr-calculator {
   margin-bottom: 10px;
 }
