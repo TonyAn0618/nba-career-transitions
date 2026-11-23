@@ -7,6 +7,7 @@ import {
 } from "../lib/career-peers";
 import type { Metric } from "../lib/ring-encoding";
 import type { SeasonRow, Translate } from "../lib/types";
+import { ShotPiePair } from "./SeasonShotPies";
 import PeerZoneRadar from "./PeerZoneRadar";
 import "./peer-shooting-comparison.css";
 
@@ -22,6 +23,7 @@ export function PeerMatchRadar({
   t: Translate;
 }) {
   const [metric, setMetric] = useState<Metric>("fg");
+  const [zone, setZone] = useState<number | null>(null);
   const headingId = useId();
   const year = target.careerYear;
   const title = t(`Shooting through year ${year}`, `前 ${year} 季投篮对比`);
@@ -48,13 +50,10 @@ export function PeerMatchRadar({
     label: name,
     color,
     peer: index === 1,
-    values: metric === "fg" ? history.fg : history.shares,
-    lowSample:
-      metric === "fg"
-        ? history.fgAttempts.map(
-            (n, i) => n < MIN_ZONE_FGA && history.fg[i] != null,
-          )
-        : undefined,
+    values: history.fg,
+    lowSample: history.fgAttempts.map(
+      (n, i) => n < MIN_ZONE_FGA && history.fg[i] != null,
+    ),
   }));
 
   return (
@@ -78,36 +77,66 @@ export function PeerMatchRadar({
           ))}
         </div>
       </div>
-      <ul className="ap-radar-legend">
-        {players.map(({ name, history, color }, index) => (
-          <li
-            key={index}
-            title={seasonRange(history.firstSeason, history.lastSeason)}
-          >
-            <i
-              className={index === 1 ? "ap-radar-key peer" : "ap-radar-key"}
-              style={{ color }}
-              aria-hidden="true"
-            />
-            <span>{name}</span>
-            {history.shotSeasons < year && (
-              <small>
-                {t(
-                  `${history.shotSeasons} seasons with zone data`,
-                  `${history.shotSeasons} 季有分区记录`,
+      {metric === "share" ? (
+        <ShotPiePair
+          players={players.map(({ name, history, color }) => ({
+            name,
+            caption: name,
+            color,
+            period: seasonRange(history.firstSeason, history.lastSeason),
+            coverage:
+              history.shotSeasons < year
+                ? t(
+                    `${history.shotSeasons} seasons with zone data`,
+                    `${history.shotSeasons} 季有分区记录`,
+                  )
+                : undefined,
+            shares:
+              history.attempts > 0 && history.shares.every((v) => v != null)
+                ? history.shares
+                : undefined,
+            missingLabel: t("Incomplete split", "五区占比不完整"),
+          }))}
+          names={zones}
+          zoneHeading={t("Zone", "区域")}
+          zone={zone}
+          onZone={setZone}
+          t={t}
+        />
+      ) : (
+        <>
+          <ul className="ap-radar-legend">
+            {players.map(({ name, history, color }, index) => (
+              <li
+                key={index}
+                title={seasonRange(history.firstSeason, history.lastSeason)}
+              >
+                <i
+                  className={index === 1 ? "ap-radar-key peer" : "ap-radar-key"}
+                  style={{ color }}
+                  aria-hidden="true"
+                />
+                <span>{name}</span>
+                {history.shotSeasons < year && (
+                  <small>
+                    {t(
+                      `${history.shotSeasons} seasons with zone data`,
+                      `${history.shotSeasons} 季有分区记录`,
+                    )}
+                  </small>
                 )}
-              </small>
-            )}
-          </li>
-        ))}
-      </ul>
-      <PeerZoneRadar
-        zones={zones}
-        series={series}
-        metric={labels[metric]}
-        title={title}
-        t={t}
-      />
+              </li>
+            ))}
+          </ul>
+          <PeerZoneRadar
+            zones={zones}
+            series={series}
+            metric={labels[metric]}
+            title={title}
+            t={t}
+          />
+        </>
+      )}
     </section>
   );
 }
