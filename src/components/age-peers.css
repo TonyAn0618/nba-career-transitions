@@ -202,6 +202,10 @@
 .ap-score-method-body dd {
   margin: 0 0 6px;
 }
+.ap-score-method-body a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .ap-score-method-body p:last-child {
   margin-bottom: 0;
 }
