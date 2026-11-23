@@ -98,13 +98,15 @@ export function shotSelectionScenarios(
     let recentN = 0,
       recentMakes = 0,
       pastN = 0,
-      pastMakes = 0;
+      pastMakes = 0,
+      pastSeasons = 0;
     for (const { season, stats } of past) {
       const count = stats.zoneAttempts[index],
         rate = stats.fg[index];
       if (count == null || count <= 0 || rate == null) continue;
       pastN += count;
       pastMakes += count * rate;
+      pastSeasons++;
       if (season >= row.season - 2) {
         recentN += count;
         recentMakes += count * rate;
@@ -131,6 +133,7 @@ export function shotSelectionScenarios(
       pooled,
       value,
       pastFG,
+      pastSeasons,
       fg,
       gap,
     };
@@ -236,8 +239,15 @@ export function shotSelectionScenarios(
       .filter((z) => (z.attempts ?? 0) > 0)
       .sort((a, b) => b.attempts! - a.attempts!)[0] ?? null;
   const strength = lift && -lift.gap > (focus?.gap ?? 0) ? lift : null;
+  const personalZone = strength ?? focus;
+  // Reprice only this zone at its prior accuracy, using this season's TS denominator.
+  const tsAtPastAccuracy =
+    personalZone && current.ts != null && denominator
+      ? current.ts + personalZone.gap / denominator
+      : null;
   return {
     baseline: current.ts,
+    tsAtPastAccuracy,
     zones,
     swaps,
     focus,

@@ -153,6 +153,8 @@ test("five zones remain visible with missing, sparse and pooled data; missing TS
   assert.ok(pooled.zones[4].pooled && pooled.zones[4].n > 25);
   const missing = shotSelectionScenarios({ ...luka, fta: null }, lukaCareer);
   assert.equal(missing.baseline, null);
+  assert.ok(missing.strength && missing.strength.gap < 0);
+  assert.equal(missing.tsAtPastAccuracy, null);
   assert.ok(
     missing.swaps.length && missing.swaps.every((s) => s.projected == null),
   );
@@ -179,9 +181,19 @@ test("the player's own evidence distinguishes shooting improvement, lost efficie
   const curry = profile("curryst01");
   assert.equal(curry.focus?.index, 4);
   assert.equal(curry.strength, null);
+  assert.ok(curry.tsAtPastAccuracy! > curry.baseline!);
   const lebron = profile("jamesle01");
   assert.equal(lebron.swaps[0].id, "2-4");
   assert.ok(lebron.swaps[0].own && lebron.personalRoute?.supported);
-  assert.equal(profile("doncilu01").strength?.index, 2);
+  const doncic = profile("doncilu01");
+  assert.equal(doncic.strength?.index, 2);
+  assert.equal(doncic.strength?.pastSeasons, 3);
+  const mid = doncic.strength!;
+  const pointsAtPastRate =
+    luka.points! + (mid.pastFG! - mid.fg!) * mid.attempts! * 2;
+  const tsAtPastRate = pointsAtPastRate / (2 * (luka.fga! + 0.44 * luka.fta!));
+  assert.ok(Math.abs(doncic.tsAtPastAccuracy! - tsAtPastRate) < 1e-12);
+  assert.ok(doncic.tsAtPastAccuracy! < doncic.baseline!);
+  assert.equal(shotSelectionScenarios(luka).tsAtPastAccuracy, null);
   assert.equal(shotSelectionScenarios(luka).swaps[0].tier, "scenario");
 });
