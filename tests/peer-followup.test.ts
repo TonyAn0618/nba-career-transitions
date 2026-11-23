@@ -1,12 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import {
-  peerFollowup,
-  summarizeFollowupPeriod,
-  type FollowupPeriod,
-} from "../src/lib/peer-followup.ts";
-import { peerShotAdvice } from "../src/lib/peer-shot-advice.ts";
+import { peerFollowup } from "../src/lib/peer-followup.ts";
+import { shotSelectionScenarios } from "../src/lib/peer-shot-advice.ts";
 import type { SeasonRow } from "../src/lib/types.ts";
 
 const { rows }: { rows: SeasonRow[] } = JSON.parse(
@@ -78,85 +74,132 @@ test("a missing career year stays empty and an unavailable split does not erase 
   assert.deepEqual(noLater.years, []);
 });
 
-test("the Luka–Russell recommendation distinguishes a higher three-point share from adding attempts", () => {
-  const luka = rows.find(
-    (r) => r.playerId === "doncilu01" && r.season === 2026,
-  )!;
-  const target = summarizeFollowupPeriod([luka], 2019);
-  const { pre, post, years } = peerFollowup(russell, 2016, 8);
-  assert.ok(target && pre && post);
-  const forZone = (zone: number, name: string) =>
-    peerShotAdvice(
-      target,
+const luka = rows.find((r) => r.id === "doncilu01:2026")!;
+const lukaCareer = rows.filter((r) => r.playerId === luka.playerId);
+test("the dominant shift and scoring outcomes are necessary even when another zone has an attractive per-shot average", () => {
+  const derozan = rows.find((r) => r.id === "derozde01:2026")!;
+  const career = rows.filter((r) => r.playerId === derozan.playerId);
+  const dirk = rows.filter((r) => r.playerId === "nowitdi01");
+  const { pre, post } = peerFollowup(
+    dirk,
+    dirk[0].debutSeason!,
+    derozan.season - derozan.debutSeason! + 1,
+  );
+  const model = shotSelectionScenarios(derozan, career, pre, post);
+  assert.equal(model.twinRoute?.id, "0-4");
+  assert.ok(model.twinRoute!.efficiency! < 0 && model.twinRoute!.scoring! < 0);
+  assert.ok(model.swaps.every((s) => s.tier === "scenario"));
+  assert.ok(model.swaps.some((s) => s.id === "3-0" && s.gain! > 0));
+  assert.equal(model.strength?.index, 1);
+  assert.equal(model.strength?.fg, 0.573);
+  assert.deepEqual(
+    shotSelectionScenarios(
+      derozan,
+      [...career, { ...derozan, season: 2027 }],
       pre,
       post,
-      years.at(-1)!.stats,
-      zone,
-      name,
-      luka.name,
-      russell[0].name,
-      (_, zh) => zh,
-    );
-  const threes = forZone(4, "三分");
-  assert.equal((threes.scenario! - threes.observed!).toFixed(2), "1.03");
-  assert.match(threes.action, /Dončić.*三分.*暂缓每场多投约 1 次/);
-  assert.match(
-    threes.reason,
-    /Russell.*占比上升.*场均三分出手却减少.*每36分钟得分下降/,
-  );
-  const longTwos = forZone(3, "长两分");
-  assert.match(longTwos.action, /长两分/);
-  assert.match(longTwos.reason, /每两场还不到一投/);
-});
-
-test("a small trial requires compatible volume, scoring, efficiency, and follow-up evidence", () => {
-  const { pre, post } = peerFollowup(russell, 2016, 8);
-  assert.ok(pre && post);
-  const aligned = {
-    ...post,
-    zonePerGame: post.zonePerGame.map((n, i) =>
-      i === 4 ? pre.zonePerGame[i]! + 1 : n,
     ),
-    rts: pre.rts! + 2,
-    points36: pre.points36! + 1,
-  };
-  const advice = (period: FollowupPeriod, last: FollowupPeriod | null) =>
-    peerShotAdvice(
-      pre,
-      pre,
-      period,
-      last,
-      4,
-      "Three-pointers",
-      "Test Player",
-      "Test Peer",
-      (en) => en,
+    model,
+  );
+});
+test("only the same historical pair can support a trial, and its gain is a controlled TS scenario", () => {
+  const duren = rows.find((r) => r.id === "durenja01:2026")!;
+  const durenCareer = rows.filter((r) => r.playerId === duren.playerId);
+  const howard = rows.filter((r) => r.playerId === "howardw01");
+  const { pre, post } = peerFollowup(
+    howard,
+    howard[0].debutSeason!,
+    duren.season - duren.debutSeason! + 1,
+  );
+  assert.ok(pre && post);
+  const model = shotSelectionScenarios(duren, durenCareer, pre, post);
+  const best = model.swaps[0];
+  assert.equal(best.id, "2-1");
+  assert.equal(best.tier, "trial");
+  assert.ok(best.twin);
+  assert.ok(
+    model.swaps.every((s) => s.id === best.id || s.tier === "scenario"),
+  );
+  assert.ok(best.twinRoom >= 1 / best.every);
+  const expected =
+    (duren.points! + (duren.games! * best.edge) / best.every) /
+    (2 * (duren.fga! + 0.44 * duren.fta!));
+  assert.ok(Math.abs(best.projected! - expected) < 1e-12);
+  for (const changed of [
+    { ...post, rts: pre.rts },
+    { ...post, points36: pre.points36! - 1 },
+    { ...post, rts: null },
+  ]) {
+    assert.ok(
+      shotSelectionScenarios(duren, durenCareer, pre, changed).swaps.every(
+        (s) => s.tier === "scenario",
+      ),
     );
-  assert.match(advice(aligned, aligned).action, /Try a small/);
-  assert.match(
-    advice(aligned, { ...aligned, rts: pre.rts! - 1 }).reason,
-    /final season/,
-  );
-  assert.match(
-    advice({ ...aligned, points36: pre.points36! - 1 }, aligned).reason,
-    /smaller scoring role/,
-  );
-  assert.match(
-    advice({ ...aligned, seasons: 1 }, aligned).reason,
-    /at least two/,
-  );
-  assert.match(
-    advice({ ...aligned, zoneAttempts: [0, 0, 0, 0, 24] }, aligned).action,
-    /Keep/,
-  );
-  assert.match(
-    advice({ ...aligned, rts: null }, aligned).reason,
-    /recorded zone volume/,
-  );
-  const fewer = {
-    ...aligned,
-    zonePerGame: [0, 0, 0, 0, 2],
-    shares: [0, 0, 0, 0, 0.18],
+  }
+});
+test("five zones remain visible with missing, sparse and pooled data; missing TS does not erase shot evidence", () => {
+  const thin = {
+    ...luka,
+    fga: 20,
+    threeAttempts: 8,
+    threeMade: 3,
+    fg: [null, null, null, null, 0.375] as SeasonRow["fg"],
   };
-  assert.match(advice(fewer, fewer).action, /fewer/);
+  const alone = shotSelectionScenarios(thin);
+  assert.equal(alone.zones.length, 5);
+  assert.equal(alone.swaps.length, 0);
+  assert.equal(alone.zones[4].n, 8);
+  const pooled = shotSelectionScenarios(thin, lukaCareer);
+  assert.ok(pooled.zones[4].pooled && pooled.zones[4].n > 25);
+  assert.equal(pooled.lowYield, null);
+  assert.equal(pooled.highYield, null);
+  const missing = shotSelectionScenarios({ ...luka, fta: null }, lukaCareer);
+  assert.equal(missing.baseline, null);
+  assert.ok(missing.strength && missing.strength.gap < 0);
+  assert.equal(missing.tsAtPastAccuracy, null);
+  assert.ok(
+    missing.swaps.length && missing.swaps.every((s) => s.projected == null),
+  );
+  const noDistance = shotSelectionScenarios({
+    ...luka,
+    shares: [null, null, null, null, null],
+  });
+  assert.equal(noDistance.zones[0].attempts, null);
+  assert.equal(noDistance.zones[4].attempts, 694);
+  const close = shotSelectionScenarios(
+    { ...luka, fg: [0.5, 0.5, 0.5, 0.5, 1 / 3], threeMade: 231 },
+    lukaCareer,
+  );
+  assert.ok(close.swaps.every((s) => s.tier !== "trial"));
+  assert.equal(close.lowYield, null);
+  assert.equal(close.highYield, null);
+});
+test("the player's own evidence distinguishes shooting improvement, lost efficiency, and a volume change", () => {
+  const profile = (id: string) => {
+    const career = rows.filter((r) => r.playerId === id);
+    return shotSelectionScenarios(
+      career.find((r) => r.season === 2026)!,
+      career,
+    );
+  };
+  const curry = profile("curryst01");
+  assert.equal(curry.focus?.index, 4);
+  assert.equal(curry.strength, null);
+  assert.ok(curry.tsAtPastAccuracy! > curry.baseline!);
+  const lebron = profile("jamesle01");
+  assert.equal(lebron.swaps[0].id, "2-4");
+  assert.ok(lebron.swaps[0].own && lebron.personalRoute?.supported);
+  const doncic = profile("doncilu01");
+  assert.equal(doncic.highYield?.index, 0);
+  assert.equal(doncic.lowYield?.index, 3);
+  assert.equal(doncic.strength?.index, 2);
+  assert.equal(doncic.strength?.pastSeasons, 3);
+  const mid = doncic.strength!;
+  const pointsAtPastRate =
+    luka.points! + (mid.pastFG! - mid.fg!) * mid.attempts! * 2;
+  const tsAtPastRate = pointsAtPastRate / (2 * (luka.fga! + 0.44 * luka.fta!));
+  assert.ok(Math.abs(doncic.tsAtPastAccuracy! - tsAtPastRate) < 1e-12);
+  assert.ok(doncic.tsAtPastAccuracy! < doncic.baseline!);
+  assert.equal(shotSelectionScenarios(luka).tsAtPastAccuracy, null);
+  assert.equal(shotSelectionScenarios(luka).swaps[0].tier, "scenario");
 });

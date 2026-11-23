@@ -10,8 +10,10 @@ import { alignPeerStages } from "../lib/peer-stages";
 import type { SeasonRow, Translate } from "../lib/types";
 import backtest from "../lib/age-peer-backtest.json";
 import { PeerMatchRadar } from "./PeerShootingComparison";
+import PeerScoreMethod from "./PeerScoreMethod";
 import { PeerStageCourts } from "./CareerCourts";
 import PeerCareerTimeline from "./PeerCareerTimeline";
+import ShotSelectionAdvice from "./ShotSelectionAdvice";
 import PeerTransitionReview from "./PeerTransitionReview";
 import PlayerPortrait from "./PlayerPortrait";
 import "./age-peers.css";
@@ -190,6 +192,7 @@ export default function AgePeers({
                     <span>{t("Career similarity", "生涯投篮相似度")}</span>
                   </div>
                 </div>
+                <PeerScoreMethod match={selected} t={t} />
               </header>
               <PeerMatchRadar
                 anchor={anchor}
@@ -327,6 +330,7 @@ export default function AgePeers({
             anchor={anchor}
             peer={peer}
             career={comparison.careers[1]}
+            playerCareer={comparison.careers[0]}
             debut={selected.history.debutSeason}
             matchYear={target.careerYear}
             selectedYear={stage?.year ?? null}
@@ -335,17 +339,31 @@ export default function AgePeers({
           />
         </>
       ) : (
-        <p className="ap-empty">
-          {target
-            ? t(
-                `No earlier entrant with sufficient shooting records played ${target.position} in career year ${target.careerYear}, ${anchor.name}’s last recorded year.`,
-                `${anchor.name} 的最近记录是生涯第 ${target.careerYear} 季，主位置为 ${target.position}。库中没有首秀更早、在第 ${target.careerYear} 季同位置且投篮记录足够的参照球员。`,
-              )
-            : t(
-                "The career records lack a verified debut, a primary position, or enough shooting data.",
-                "现有生涯记录缺少首秀赛季、主位置或足够的投篮数据。",
-              )}
-        </p>
+        <>
+          <section
+            className="pr-review"
+            id="peer-transition"
+            aria-labelledby="peer-transition-title"
+          >
+            <ShotSelectionAdvice
+              key={anchor.id}
+              anchor={anchor}
+              career={careers.get(anchor.playerId) ?? []}
+              t={t}
+            />
+          </section>
+          <p className="ap-empty">
+            {target
+              ? t(
+                  `No earlier entrant with sufficient shooting records played ${target.position} in career year ${target.careerYear}, ${anchor.name}’s last recorded year.`,
+                  `${anchor.name} 的最近记录是生涯第 ${target.careerYear} 季，主位置为 ${target.position}。库中没有首秀更早、在第 ${target.careerYear} 季同位置且投篮记录足够的参照球员。`,
+                )
+              : t(
+                  "The career records lack a verified debut, a primary position, or enough shooting data.",
+                  "现有生涯记录缺少首秀赛季、主位置或足够的投篮数据。",
+                )}
+          </p>
+        </>
       )}
       {target && matches.length > 0 && (
         <GroupOutlook

@@ -9,26 +9,30 @@
   letter-spacing: -0.025em;
   margin: 0;
 }
-.pr-advice {
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  align-items: start;
-  gap: clamp(20px, 3vw, 42px);
-  margin-bottom: 24px;
+.pr-head {
+  margin-bottom: 10px;
 }
-.pr-reading p,
-.pr-takeaway,
-.pr-annual p,
-.pr-scenario p {
-  font-size: 14px;
-  line-height: 1.65;
-  margin: 10px 0 0;
+.pr-summary {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border-inline-start: 3px solid var(--ap-player);
+  background: var(--raised);
+}
+.pr-decision {
+  margin: 0;
+  color: var(--ap-ink);
+  font-size: clamp(17px, 1.65vw, 21px);
+  line-height: 1.45;
+  font-weight: 650;
   text-wrap: pretty;
 }
-.pr-reading p:first-child {
-  margin-top: 0;
-  font-size: 16px;
+.pr-reason,
+.pr-takeaway,
+.pr-annual p {
+  font-size: 14px;
   line-height: 1.65;
+  margin: 5px 0 0;
+  text-wrap: pretty;
 }
 .pr-reference {
   display: flex;
@@ -37,6 +41,41 @@
   gap: 6px 20px;
   padding-top: 18px;
   border-top: 1px solid var(--ap-line);
+}
+.pr-other-choices {
+  margin-top: 12px;
+  padding-top: 9px;
+  border-top: 1px solid var(--ap-line);
+}
+.pr-other-choices h4 {
+  font-size: 14px;
+  margin: 0 0 6px;
+}
+.pr-other-choices dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px 22px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.pr-other-choices dl > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.pr-other-choices dt {
+  flex: none;
+  font-weight: 600;
+}
+.pr-other-choices dd {
+  margin: 0;
+  color: var(--ap-muted);
+}
+@container (max-width:740px) {
+  .pr-other-choices dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .pr-reference > strong {
   font-size: 16px;
@@ -136,25 +175,37 @@
 .pr-outcomes h4 {
   font-size: 18px;
 }
-.pr-scenario {
-  background: var(--raised);
-  padding: 12px 16px 14px;
-  border-inline-start: 3px solid var(--ap-player);
+.pr-evidence {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ap-muted);
 }
-.pr-head {
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
+.pr-evidence summary {
+  width: fit-content;
+  cursor: pointer;
+}
+.pr-evidence > summary {
+  color: var(--ap-ink);
+}
+.pr-evidence-body {
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ap-line);
+}
+.pr-evidence-body p {
+  margin: 0 0 7px;
+  text-wrap: pretty;
+}
+.pr-calculator {
+  margin-bottom: 10px;
 }
 .pr-zone {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
   gap: 8px;
-  color: var(--ap-muted);
-  font-size: 13px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
 }
 .pr-zone select {
   min-height: 32px;
@@ -162,63 +213,38 @@
   color: var(--ap-ink);
   font: inherit;
 }
-.pr-counts {
-  display: flex;
-  align-items: end;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  margin-top: 7px;
-}
-.pr-counts small {
-  display: block;
-  font-size: 12px;
-  color: var(--ap-muted);
-}
-.pr-counts b {
-  display: block;
-  font-size: 23px;
+.pr-estimate {
+  color: var(--ap-ink);
   font-weight: 600;
-  line-height: 1.25;
 }
-.pr-arrow,
-.pr-difference {
-  padding-bottom: 4px;
-  color: var(--ap-muted);
+.pr-evidence table {
+  width: 100%;
+  margin: 12px 0 8px;
+  border-collapse: collapse;
 }
-.pr-difference {
-  color: var(--ap-player);
-  font-size: 13px;
-  white-space: nowrap;
+.pr-evidence caption {
+  text-align: start;
+  font-weight: 600;
+  color: var(--ap-ink);
 }
-.pr-scenario p {
-  color: var(--ap-muted);
-  font-size: 13px;
+.pr-evidence th,
+.pr-evidence td {
+  padding: 4px;
+  text-align: start;
+  border-bottom: 1px solid var(--ap-line);
+}
+.pr-evidence th:first-child,
+.pr-evidence td:first-child {
+  padding-inline-start: 0;
+}
+.pr-method[open] > summary {
+  margin-bottom: 6px;
 }
 @container (max-width:740px) {
-  .pr-outcomes,
-  .pr-advice {
+  .pr-outcomes {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .pr-advice {
-    gap: 14px;
   }
   .pr-efficiency-table table {
     font-size: 13px;
   }
-}
-.pr-reading .pr-decision {
-  font-weight: 650;
-  color: var(--ap-ink);
-}
-.pr-evidence {
-  margin-top: 10px;
-  color: var(--ap-muted);
-  font-size: 13px;
-}
-.pr-evidence summary {
-  width: fit-content;
-  cursor: pointer;
-}
-.pr-evidence p {
-  font-size: inherit;
 }

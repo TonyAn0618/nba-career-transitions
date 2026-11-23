@@ -131,6 +131,7 @@
 .ap-match-result > header {
   justify-content: space-between;
   flex-wrap: wrap;
+  row-gap: 3px;
   padding-bottom: 12px;
   margin-bottom: 14px;
   border-bottom: 1px solid var(--ap-line);
@@ -174,6 +175,39 @@
 }
 .ap-score-line span {
   font-size: 13px;
+}
+.ap-score-method {
+  flex: 1 0 100%;
+  min-width: 0;
+  margin: 0;
+}
+.ap-score-method > summary {
+  margin-inline-start: auto;
+}
+.ap-score-method-body {
+  padding: 8px 0 0;
+  line-height: 1.55;
+}
+.ap-score-method-body :is(strong, dt, b) {
+  color: var(--ink);
+  font-weight: 600;
+}
+.ap-score-example {
+  color: var(--ap-peer);
+  font-variant-numeric: tabular-nums;
+}
+.ap-score-method-body dl {
+  margin: 8px 0;
+}
+.ap-score-method-body dd {
+  margin: 0 0 6px;
+}
+.ap-score-method-body a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ap-score-method-body p:last-child {
+  margin-bottom: 0;
 }
 .ap-season-facts {
   display: flex;
