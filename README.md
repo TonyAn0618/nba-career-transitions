@@ -1,50 +1,54 @@
-# Shot Atlas · NBA 生涯转型
+# NBA Player Career Transitions
 
-从一个年龄出发，探索 NBA 球员如何改变五个距离区间的出手分布、命中率和得分效率，再用更早进入联盟的同位置球员的实际后续表现建立转型参照。默认案例是勒布朗·詹姆斯，旧的区间比较仍可从「数据与方法」进入。
+English · [简体中文](README.zh-CN.md)
 
-## 在线查看
+How does a player change his shot selection as he ages, and what can a scout learn from a player who faced a similar transition? Shot Atlas follows 2,859 players across 30 NBA regular seasons, from 1996–97 through 2025–26. It compares five shooting distances, scoring efficiency and the later careers of historical peers.
 
-本地年龄视图以 PR #4 合并前的主线提交 `1d1a92c` 为基础。下方地址是项目组共享的 GitHub Pages 站点，线上内容取决于已部署的分支。
+[Open the live demo](https://tonyan0618.github.io/nba-career-transitions/) · [Explore Dončić and Russell in English](https://tonyan0618.github.io/nba-career-transitions/?player=doncilu01&ref=2026&lang=en&peer=russeda01&view=peers#age-peers)
 
-[打开已发布的生涯转型网站](https://tonyan0618.github.io/nba-career-transitions/)。
+## Try the visualization
 
-有写权限的组员可以向 `main` 提交 PR。PR 结束草稿状态、构建和测试通过且没有合并冲突后，GitHub 会自动合并，无需另行审批。其他贡献者的 PR 由组员审核。每次更新 `main` 都会触发部署；发布成功后刷新同一网址即可看到新版。[查看构建与发布进度](https://github.com/TonyAn0618/nba-career-transitions/actions/workflows/pages.yml)
+1. **Explore one career.** Select LeBron James and pin age 28 on the career rings. The linked pie chart shows that 37.3% of his shots came at the rim and 18.8% from three. Compare two ages to see how shot share, accuracy and true shooting changed. The efficiency chart uses the league average for the same season as its reference.
+2. **Find a historical match.** In the Dončić example, D’Angelo Russell ranks first at 89.4/100 through career year eight. Expand the score to inspect its three components. Select a career year on the trend line to compare the two shot maps, then follow Russell for three more seasons. The scouting advice explains why Dončić should keep his mid-range looks and review his long twos. Its what-if estimates hold shot volume and free throws fixed.
+3. **Compare the league.** Explore shooting styles at ages 20–23, 25–28 and 31+. Filter by position or select a style on the flow diagram to follow players between adjacent age groups. Wider bands represent more players.
 
-## 本地运行
+The site opens in English. Use the language switch to read it in Chinese. Shared links retain the chosen language and view. Earlier [career-path](https://tonyan0618.github.io/nba-career-transitions/?view=paths&lang=en) and [interval](https://tonyan0618.github.io/nba-career-transitions/?view=interval&lang=en) views are also available.
 
-首次安装需要 Node.js 22.12+、npm、Python 3.10+、curl 和网络。在仓库根目录执行以下命令。
+## Install and run
+
+Use Node.js 22.12 or newer, npm, Python 3.10 or newer, and curl. From the directory containing this README and `package.json`, run:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-浏览器打开 <http://127.0.0.1:5181/>。Mac 也可以双击 `start.command`。首次启动会从固定版本的数据源导入赛季统计和投篮坐标，已有数据时会跳过。生成的网页数据占用约 493 MB，本地缓存和生成文件均由 Git 忽略。构建静态网站使用 `npm run build`，发布目录为 `dist/`。网页支持部署到域名根目录或仓库子路径。
+Open [the local site on port 5181](http://127.0.0.1:5181/). On macOS you can also double-click `start.command`. The first run needs internet access to download the pinned season and shot datasets. Allow time for that step. Generated browser data takes about 493 MB, with additional space for the source cache. Subsequent runs reuse the downloaded data.
 
-## 年龄与转型
+To build the static site and serve that build locally, stop the development server first, then run:
 
-- **生涯与出手**。同心年轮由内向外读年龄，圆周版沿外缘顺时针读年龄。悬停可局部放大，点击或轻触锁定年龄，再点解锁；也可在图中用方向键选季、回车锁定。「双图对照」同步两种视图。饼图显示所选赛季五个距离区的出手占比。「年龄对比」可选任意两个有记录的赛季，每季用同一起点的一根横条对照全季 FG% 与 TS%，下方按五个距离区比较投篮命中率，也可切换到出手占比。下方半场图展示同一对赛季的投篮点、出手热区或命中率。效率曲线显示球员与当季联盟平均真实命中率的差。
-- **生涯转型参考**。排名使用目标球员截至最后一个记录赛季的全部生涯。若最后一季是生涯第 N 季，参照球员须更早进入 NBA，且在第 N 季担任相同主位置。出手分布、分区命中率和每 36 分钟出手量各占三分之一，同时比较截至第 N 季的累计和逐季表现。浏览年轮和点选走势中的赛季只改变图表。相似度总分下方的雷达图按五个距离区对比双方前 N 季的累计表现。生涯走势默认比较三分出手占比，每次显示一项指标。点击赛季切换两人的半场热区，再点同一赛季返回各自的生涯累计。转型参考展示参照球员第 N 季之后的出手与效率，并按目标球员最后一个记录赛季的场均出手量试算。历史回测按各次查询当年可见的数据计算。
-- **联盟打法变化**。比较 20–23 岁、25–28 岁和 31 岁及以上三个阶段的篮下型、近筐型、中距离型与三分型占比。分母包含当期所有有合格记录的球员。下方流向图按实际人数连接相邻阶段的四种打法，两张图共用位置筛选。
-- **历史风格路径**。此前分享的含 `step` 的路径链接仍可打开原来的生涯阶段对照。也可以从[历史风格路径](https://tonyan0618.github.io/nba-career-transitions/?view=paths)进入，按参考季比较两人后续三年的表现。
-- **原版区间比较**。已有含 `from`、`to` 的链接仍进入连续赛季转型检测。原算法结合变化方向及幅度（60%）、起始分布（25%）与每 36 分钟出手量（15%）。
+```sh
+npm run build
+npm run preview
+```
 
-[课程设计依据、演示问题与 AI 使用说明](docs/course-design.md)
+Open the same local address. The static files are in `dist/`. For the hosted project, GitHub builds and publishes the site after a change reaches `main`. Pull requests from collaborators with write access merge automatically after the configured checks pass. [Build and deployment history](https://github.com/TonyAn0618/nba-career-transitions/actions/workflows/pages.yml)
 
-## 数据与组员协作
+## Data and methods
 
-赛季统计覆盖 1996–97 至 2025–26（30 季、14,569 个球员赛季），来自 Basketball-Reference 的固定版本汇编。投篮坐标覆盖 2003–04 至 2025–26，通过索引按球员和赛季加载。缺失记录和真实的零值分别处理。[赛季来源清单](data/source-manifest.json) · [逐球数据与坐标说明](docs/shot-data.md)
+The season dataset contains 14,569 player-seasons. The shot maps cover 4,669,949 recorded attempts from 2003–04 through 2025–26. A player can have season statistics even when shot coordinates are unavailable. Each map reports how many attempts it covers. [Season data manifest](data/source-manifest.json) · [Shot data, coordinates and coverage](docs/shot-data.md) · [Portrait sources](docs/photo-sources.md)
 
-| 要修改的内容         | 从哪里入手                                                                                                                                                           |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 赛季或球员统计       | 使用 `playerId` 和赛季结束年份关联记录，在 `scripts/sync-data.mjs` 更新来源和导入逻辑。新增年份时一并更新来源校验与覆盖范围，运行 `npm run data`。                   |
-| 球员头像             | 将核实的 NBA 260 × 190 PNG 按球员 ID 命名放入 `public/players/`，运行 `npm run photos` 更新映射并核对清单。缺图时页面显示姓名缩写。[头像来源](docs/photo-sources.md) |
-| 转型识别和 twin 排名 | `src/lib/career-peers.ts` 计算生涯匹配，`src/lib/age-peers.ts` 估计参照组后续；`src/lib/career-shifts.ts` 和 `src/lib/transition-matches.ts` 用于原版区间比较。      |
-| 球探建议             | `src/components/AgePeers.tsx` 展示历史后续、情景区间与持平基准。`scripts/backtest-age-peers.mjs` 复算按年份截断的回测。                                              |
+Historical peers must have debuted earlier and played the same primary position in the matched career year. The score gives equal weight to shot distribution, accuracy by zone and attempts per 36 minutes. Each component combines pooled career data with comparisons at the same career years. Only seasons through the matching point contribute to the score. Later observations are used to study what happened next.
 
-更新球员身份映射、赛季出手总数或坐标来源后，运行 `npm run data:shots` 重建坐标索引。已有完整缓存时可以运行 `python3 scripts/sync-shots.py --offline` 离线重建。组员提交源码、头像、锁文件和数据清单即可，新克隆的项目会自行生成数据。
+| Work on                          | Start here                                                                                                                                             |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Season data and player identity  | [Season importer](scripts/sync-data.mjs) and [shot importer](scripts/sync-shots.py). Join records by player ID and season-ending year.                 |
+| Historical matches and follow-up | [Career similarity](src/lib/career-peers.ts), [follow-up periods](src/lib/peer-followup.ts) and [historical backtest](scripts/backtest-age-peers.mjs). |
+| Scouting suggestions             | [Shot-selection scenarios](src/lib/peer-shot-advice.ts) and [recommendation display](src/components/ShotSelectionAdvice.tsx).                          |
+| Player photographs               | [Photo source notes](docs/photo-sources.md) and [photo importer](scripts/sync-photos.mjs).                                                             |
+| Course design and demonstrations | [Design notes and AI use](docs/course-design.md). The M5 submission includes `GenAI.md` with prompts and output excerpts.                              |
 
-## 验证
+## Verify the project
 
 ```sh
 npm run prepare:data
@@ -54,3 +58,5 @@ npm run check:shots
 node --experimental-strip-types scripts/backtest-age-peers.mjs --check
 npm run build
 ```
+
+To include the 2015–16 source reconciliation in the tests on macOS or Linux, run `NBA_SHOT_RECONCILE_2016=1 npm test` after preparing the data.
