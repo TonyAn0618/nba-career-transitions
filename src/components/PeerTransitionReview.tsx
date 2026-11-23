@@ -7,6 +7,7 @@ import {
   type FollowupYear,
 } from "../lib/peer-followup";
 import type { SeasonRow, Translate } from "../lib/types";
+import { peerShotAdvice } from "../lib/peer-shot-advice";
 import PeerFollowupTrends from "./PeerFollowupTrends";
 import "./peer-transition-review.css";
 
@@ -265,57 +266,6 @@ function LaterEfficiency({
   );
 }
 
-function guidance(
-  pre: FollowupPeriod,
-  post: FollowupPeriod,
-  last: FollowupPeriod | null,
-  referenceName: string,
-  t: Translate,
-) {
-  if (post.seasons === 1)
-    return t(
-      `Only one later season is recorded for ${referenceName}. More seasons are needed to assess whether the efficiency held up.`,
-      `${referenceName} 目前只有一季后续记录，长期效率仍需更多赛季来判断。`,
-    );
-  if (
-    pre.rts == null ||
-    post.rts == null ||
-    pre.points36 == null ||
-    post.points36 == null
-  )
-    return t(
-      `The available records for ${referenceName} do not cover both league-relative efficiency and scoring per 36 minutes.`,
-      `${referenceName} 的相对联盟效率或每36分钟得分记录不完整，暂时难以判断这套打法能否维持得分。`,
-    );
-  const efficiency = Number((post.rts - pre.rts).toFixed(1)),
-    production = Number((post.points36 - pre.points36).toFixed(1));
-  if (efficiency > 0 && production >= 0) {
-    if (last?.rts != null && last.rts < pre.rts)
-      return t(
-        `${referenceName} sustained scoring per 36 minutes as league-relative efficiency rose. In the final recorded season, relative efficiency slipped below its earlier level.`,
-        `${referenceName} 后期的相对联盟效率提高，每36分钟得分也得以维持。最后一个有记录的赛季，相对效率又降到了前期水平以下。`,
-      );
-    return t(
-      `${referenceName} sustained scoring per 36 minutes as league-relative efficiency rose. This shot mix is worth a limited trial.`,
-      `${referenceName} 后期的相对联盟效率提高，每36分钟得分也得以维持。这种出手调整值得小幅试行。`,
-    );
-  }
-  if (efficiency <= 0 && production < 0)
-    return t(
-      `${referenceName}’s later scoring per 36 minutes fell and league-relative TS did not improve. The case offers little support for adopting that mix to sustain scoring efficiency.`,
-      `${referenceName} 后期每36分钟得分下降，相对联盟的真实命中率也没有提高。仅凭这段经历，还难以判断采用相同的出手比例能否维持得分效率。`,
-    );
-  if (efficiency > 0)
-    return t(
-      `${referenceName} gained league-relative efficiency as scoring per 36 minutes fell. This mix may suit a smaller scoring role.`,
-      `${referenceName} 后期的相对联盟效率提高，每36分钟得分下降。如果能接受较低的得分产量，这种取舍才值得考虑。`,
-    );
-  return t(
-    `${referenceName} sustained scoring per 36 minutes while league-relative TS did not improve. The useful precedent is how the player maintained scoring volume.`,
-    `${referenceName} 维持了每36分钟得分，相对联盟效率的提升则不明显。这个案例可用来观察如何保持得分产量。`,
-  );
-}
-
 export default function PeerTransitionReview({
   anchor,
   peer,
@@ -338,13 +288,24 @@ export default function PeerTransitionReview({
   const { pre, post, years } = analysis;
   const zones = zoneNames(t);
   const shifts = pre && post ? zoneShifts(pre, post) : [];
-  const cut = shifts.length === zones.length ? shifts.at(-1) : undefined;
-  const targetShare = cut ? target?.shares[cut.zone] : null;
-  const peerShare = cut ? post?.shares[cut.zone] : null;
+  const advice =
+    pre && post
+      ? peerShotAdvice(
+          target,
+          pre,
+          post,
+          years.at(-1)?.stats ?? null,
+          zone,
+          zones[zone],
+          anchor.name,
+          peer.name,
+          t,
+        )
+      : null;
   const share = post?.shares[zone],
-    observed = target?.zonePerGame[zone],
     volume = target?.fgaPerGame;
-  const scenario = share != null && volume != null ? share * volume : null;
+  const observed = advice?.observed,
+    scenario = advice?.scenario;
   return (
     <section
       className="pr-review"
@@ -355,51 +316,77 @@ export default function PeerTransitionReview({
         <h3 id="peer-transition-title">
           {t("Transition recommendations", "转型建议")}
         </h3>
+        {advice && (
+          <label className="pr-zone">
+            {t("Shot zone", "关注区域")}
+            <select
+              value={zone}
+              onChange={(e) => setZone(Number(e.target.value))}
+              aria-controls="pr-decision-text"
+            >
+              {zones.map((name, i) => (
+                <option key={i} value={i}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </header>
-      {!pre || !post ? (
+      {!pre || !post || !advice ? (
         <p className="ap-empty">
           {t(
-            `No later regular-season record is available for ${peer.name} after career year ${matchYear}.`,
-            `本库没有 ${peer.name} 第${matchYear}季之后的常规赛记录。`,
+            `Keep ${anchor.name}’s current shot mix and select a reference with records both before and after career year ${matchYear}.`,
+            `建议 ${anchor.name} 先沿用目前的出手安排，换一位第${matchYear}季前后都有记录的球员作参照。`,
           )}
         </p>
       ) : (
         <>
           <div className="pr-advice">
             <div className="pr-reading">
-              {cut &&
-                cut.change < -0.05 &&
-                targetShare != null &&
-                peerShare != null && (
+              <div id="pr-decision-text" aria-live="polite">
+                <p className="pr-decision">{advice.action}</p>
+                <p>{advice.reason}</p>
+              </div>
+              <details className="pr-evidence">
+                <summary>
+                  {t("Evidence and when to reassess", "查看依据与复核条件")}
+                </summary>
+                <p>
+                  {t(
+                    `${peer.name} · ${zones[zone]}: ${percent(pre.shares[zone])} → ${percent(post.shares[zone])} of attempts, ${pre.zonePerGame[zone]?.toFixed(2) ?? "—"} → ${post.zonePerGame[zone]?.toFixed(2) ?? "—"} attempts per game.`,
+                    `${peer.name} 的${zones[zone]}占比从 ${percent(pre.shares[zone])} 变为 ${percent(post.shares[zone])}，场均出手从 ${pre.zonePerGame[zone]?.toFixed(2) ?? "—"} 变为 ${post.zonePerGame[zone]?.toFixed(2) ?? "—"} 次。`,
+                  )}
+                </p>
+                {pre.rts != null &&
+                  post.rts != null &&
+                  pre.points36 != null &&
+                  post.points36 != null && (
+                    <p>
+                      {t(
+                        `Over the same periods, league-relative TS went from ${signed(pre.rts)} to ${signed(post.rts)} pp and points per 36 from ${pre.points36.toFixed(1)} to ${post.points36.toFixed(1)}.`,
+                        `同期相对联盟真实命中率从 ${signed(pre.rts)} 变为 ${signed(post.rts)} 个百分点，每36分钟得分从 ${pre.points36.toFixed(1)} 变为 ${post.points36.toFixed(1)} 分。`,
+                      )}
+                    </p>
+                  )}
+                {target?.rts != null && target.points36 != null && (
                   <p>
                     {t(
-                      `In year ${matchYear}, ${anchor.name} took ${percent(targetShare)} of shots in this zone (${zones[cut.zone].toLowerCase()}). ${peer.name} cut this area the most, reaching ${percent(peerShare)} of attempts in the later period.`,
-                      `第${matchYear}季，${anchor.name} 的${zones[cut.zone]}出手占比为 ${percent(targetShare)}。${peer.name} 缩减最多的是这个区域，后期占比为 ${percent(peerShare)}。`,
+                      `If testing a change, compare with ${anchor.name}’s ${seasonLabel(anchor.season)} baseline at similar total shot volume. Expand only if league-relative TS improves from ${signed(target.rts)} pp and points per 36 stay at or above ${target.points36.toFixed(1)}.`,
+                      `若试调，在总出手量相近时与 ${anchor.name} 的 ${seasonLabel(anchor.season)} 赛季比较。等相对联盟真实命中率高于原来的 ${signed(target.rts)} 个百分点，且每36分钟得分维持在 ${target.points36.toFixed(1)} 分或以上，再扩大调整。`,
                     )}
                   </p>
                 )}
-              <p>
-                {guidance(pre, post, years.at(-1)?.stats ?? null, peer.name, t)}
-              </p>
+                <p>
+                  {t(
+                    "The benchmark comes from one player. Changes in role or minutes can also affect the observed results.",
+                    "参照来自一名球员，角色和上场时间的变化也会影响前后表现。",
+                  )}
+                </p>
+              </details>
             </div>
             <div className="pr-scenario">
-              <div className="pr-scenario-head">
-                <strong>{t("Attempts per game", "场均出手换算")}</strong>
-                <select
-                  aria-label={t(
-                    "Zone for shot-volume calculation",
-                    "换算出手区域",
-                  )}
-                  value={zone}
-                  onChange={(e) => setZone(Number(e.target.value))}
-                >
-                  {zones.map((name, i) => (
-                    <option key={i} value={i}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <strong>{t("Attempts per game", "场均出手换算")}</strong>
               {scenario != null &&
               observed != null &&
               share != null &&
@@ -436,11 +423,6 @@ export default function PeerTransitionReview({
                       `This applies ${peer.name}’s later share (${percent(share)}) to ${anchor.name}’s ${volume.toFixed(2)} attempts per game in ${seasonLabel(anchor.season)}.`,
                       `按 ${anchor.name} 在 ${seasonLabel(anchor.season)} 的场均 ${volume.toFixed(2)} 次总出手，代入 ${peer.name} 后期 ${percent(share)} 的${zones[zone]}占比。`,
                     )}
-                    {anchor.ts != null &&
-                      t(
-                        ` Track ${anchor.name}’s TS against that season’s ${percent(anchor.ts)}.`,
-                        `试行时可对照该季 ${percent(anchor.ts)} 的真实命中率。`,
-                      )}
                   </p>
                 </>
               ) : (
