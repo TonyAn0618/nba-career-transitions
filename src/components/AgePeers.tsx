@@ -10,6 +10,7 @@ import { alignPeerStages } from "../lib/peer-stages";
 import type { SeasonRow, Translate } from "../lib/types";
 import backtest from "../lib/age-peer-backtest.json";
 import { PeerMatchRadar } from "./PeerShootingComparison";
+import PeerScoreMethod from "./PeerScoreMethod";
 import { PeerStageCourts } from "./CareerCourts";
 import PeerCareerTimeline from "./PeerCareerTimeline";
 import ShotSelectionAdvice from "./ShotSelectionAdvice";
@@ -191,6 +192,7 @@ export default function AgePeers({
                     <span>{t("Career similarity", "生涯投篮相似度")}</span>
                   </div>
                 </div>
+                <PeerScoreMethod match={selected} t={t} />
               </header>
               <PeerMatchRadar
                 anchor={anchor}
