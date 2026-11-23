@@ -17,34 +17,20 @@ interface Props {
 type SelectionModel = ReturnType<typeof shotSelectionScenarios>;
 type Swap = SelectionModel["swaps"][number];
 
-function precedent(
-  swap: Swap,
-  season: number,
-  twin: string | null,
-  t: Translate,
-) {
-  const names = zoneNames(t);
-  const from = names[swap.from.index],
-    to = names[swap.to.index];
-  if (swap.twin && twin) {
+function precedent(swap: Swap, twin: string | null, t: Translate) {
+  const names = zoneNames(t),
+    to = names[swap.to.index],
+    from = names[swap.from.index];
+  if (swap.twin && twin)
     return t(
-      `${twin} later took fewer ${shots[swap.from.index]} and more ${shots[swap.to.index]} at comparable minutes`,
-      `${twin} 后期在相同上场时间里减少了${from}、增加了${to}`,
+      `${twin}’s main shift was toward ${shots[swap.to.index]}, alongside better league-relative true shooting and at least as many points per 36`,
+      `${twin} 后期主要从${from}转向${to}，同期相对联盟效率提高，每36分钟得分也守住了原有水平`,
     );
-  }
-  if (swap.own && swap.ownSeason != null) {
-    const when =
-      swap.ownSeason === season - 1
-        ? t("last season", "上赛季")
-        : t(
-            `in ${seasonLabel(swap.ownSeason)}`,
-            `在 ${seasonLabel(swap.ownSeason)} 赛季`,
-          );
+  if (swap.own)
     return t(
-      `he took fewer ${shots[swap.from.index]} and more ${shots[swap.to.index]} at comparable minutes ${when}`,
-      `他${when}在相同上场时间里的${from}更少、${to}更多`,
+      `his earlier mix featured more ${shots[swap.to.index]}, higher league-relative true shooting and at least as many points per 36`,
+      `他过去的出手分布中${from}更少、${to}更多，当时相对联盟效率更高，每36分钟得分也至少与本季持平`,
     );
-  }
   return null;
 }
 
@@ -70,7 +56,7 @@ function takeaway(
     const from = names[best.from.index],
       to = names[best.to.index];
     if (best.tier === "trial") {
-      const history = precedent(best, anchor.season, twin, t);
+      const history = precedent(best, twin, t);
       return {
         action: t(
           `Try replacing a few of ${player}’s ${shots[best.from.index]} with ${shots[best.to.index]}.`,
@@ -101,6 +87,32 @@ function takeaway(
             "Past shot mixes make the change plausible, but the shooting sample is too close to establish an efficiency gain.",
             "以往的出手分布说明这样调整有可能，但两区的得分差距还不足以判断换投会提高效率。",
           ),
+    };
+  }
+  if (model.strength) {
+    const zone = names[model.strength.index],
+      route = model.twinRoute;
+    const counterpart =
+      twin &&
+      route &&
+      route.efficiency != null &&
+      route.efficiency < 0 &&
+      route.scoring != null &&
+      route.scoring < 0
+        ? t(
+            `, while ${twin}’s shift toward ${shots[route.to]} coincided with lower efficiency and scoring per 36`,
+            `，而 ${twin} 后期转向${names[route.to]}时，相对联盟效率和每36分钟得分都下降了`,
+          )
+        : "";
+    return {
+      action: t(
+        `Preserve ${player}’s existing ${shots[model.strength.index]}.`,
+        `建议 ${player} 保留目前的${zone}出手机会。`,
+      ),
+      reason: t(
+        `At his current volume, his accuracy gain in this zone adds more points than in any other sampled zone${counterpart}.`,
+        `按本季出手量折算，${zone}命中率的进步为他带来的得分增量最大${counterpart}。`,
+      ),
     };
   }
   if (focus) {
@@ -151,7 +163,8 @@ export default function ShotSelectionAdvice({
     () => shotSelectionScenarios(anchor, career, pre, post),
     [anchor, career, pre, post],
   );
-  const { swaps, zones, baseline, focus } = model;
+  const { swaps, zones, baseline } = model;
+  const personalZone = model.strength ?? model.focus;
   const twin = peer ? shortName(peer.name) : null;
   const names = zoneNames(t);
   const conclusion = takeaway(model, anchor, twin, t);
@@ -161,7 +174,7 @@ export default function ShotSelectionAdvice({
   const [comparison, setComparison] = useState<string | null>(null);
   const swap =
     comparison === null ? suggested : swaps.find((s) => s.id === comparison);
-  const history = swap ? precedent(swap, anchor.season, twin, t) : null;
+  const history = swap ? precedent(swap, twin, t) : null;
   const missingTotals = [
     anchor.games == null || anchor.games <= 0
       ? t("games played", "出场数")
@@ -198,11 +211,11 @@ export default function ShotSelectionAdvice({
                 )}
               </p>
             )}
-            {!suggested && focus && (
+            {!suggested && personalZone && (
               <p>
                 {t(
-                  `This season, ${shots[focus.index]} accounted for ${focus.perGame!.toFixed(1)} attempts per game at ${percent(focus.fg)}. His attempt-weighted accuracy in the preceding three-season window was ${percent(focus.pastFG)}.`,
-                  `本季场均${names[focus.index]}出手 ${focus.perGame!.toFixed(1)} 次，命中率 ${percent(focus.fg)}，此前最多三季按出手次数合计为 ${percent(focus.pastFG)}。`,
+                  `This season, ${shots[personalZone.index]} accounted for ${personalZone.perGame!.toFixed(1)} attempts per game at ${percent(personalZone.fg)}, against ${percent(personalZone.pastFG)} over the available prior three seasons. At today's volume the difference is ${(-personalZone.gap).toFixed(2)} points per game.`,
+                  `本季场均${names[personalZone.index]}出手 ${personalZone.perGame!.toFixed(1)} 次，命中率从此前最多三季合计的 ${percent(personalZone.pastFG)} 变为 ${percent(personalZone.fg)}。用本季出手量折算，场均投篮得分${personalZone.gap > 0 ? "减少" : "增加"}约 ${Math.abs(personalZone.gap).toFixed(2)} 分。`,
                 )}
               </p>
             )}
@@ -222,6 +235,16 @@ export default function ShotSelectionAdvice({
                 )}
               </p>
             )}
+            {model.personalRoute &&
+              model.personalRoute.efficiency != null &&
+              model.personalRoute.scoring != null && (
+                <p>
+                  {t(
+                    `Compared with this season, the player’s previous three-season mix had fewer ${shots[model.personalRoute.from]} and more ${shots[model.personalRoute.to]}. Earlier minus current: ${model.personalRoute.efficiency.toFixed(1)} pp in league-relative TS and ${model.personalRoute.scoring.toFixed(1)} points per 36.`,
+                    `与本季相比，他此前最多三季合计的出手分布里，${names[model.personalRoute.from]}占比的降幅和${names[model.personalRoute.to]}占比的升幅最大。用过往减本季，相对联盟真实命中率相差 ${model.personalRoute.efficiency.toFixed(1)} 个百分点，每36分钟得分相差 ${model.personalRoute.scoring.toFixed(1)} 分。`,
+                  )}
+                </p>
+              )}
             {swaps.length > 0 && (
               <div className="pr-calculator">
                 <label className="pr-zone">
@@ -273,14 +296,14 @@ export default function ShotSelectionAdvice({
                                 `按试算幅度，${history}。`,
                               )
                             : t(
-                                "This is a hypothetical volume change. The available career records show no comparable shift at this scale.",
-                                "这是一次假设换投，现有生涯记录中未找到能支持这个幅度的同向变化。",
+                                "This is a what-if estimate. The full historical criteria for a trial are not met.",
+                                "这组换投只用于试算，现有记录尚未同时满足主要出手变化、历史表现和可调整幅度的试行条件。",
                               )}
                           {swap.tier === "review" &&
                             !swap.clear &&
                             t(
-                              " The zones’ scoring ranges overlap.",
-                              " 两区得分的估计范围重叠。",
+                              " The scoring advantage is uncertain.",
+                              " 分区得分优势尚不确定。",
                             )}
                         </p>
                       )}
@@ -366,8 +389,8 @@ export default function ShotSelectionAdvice({
               </p>
               <p>
                 {t(
-                  `A trial needs non-overlapping approximate 95% Wilson intervals for points per attempt and a comparable mix in the last three seasons or the twin’s before/after periods. Both shares and minute-adjusted counts must support the change, with at least ${MIN_HISTORY_FGA} attempts per period. The trial is limited to the observed volume and one shift every two to ten games. Within each evidence level twin-supported paths come first, followed by estimated scoring gain.`,
-                  `建议小幅试行，要求两区每次出手得分的近似 95% Wilson 区间分开，且球员此前三季或参照球员的前后记录支持相应幅度。每段历史至少有 ${MIN_HISTORY_FGA} 次总出手，两区占比和按相同上场时间折算的次数均需同向变化。试算幅度上限为已观察到的机会量，试行范围为每两至十场换一次。同等证据下优先选参照球员有先例的路线，再按估算收益排序。`,
+                  `First identify the largest share decrease and increase across all five zones in the same historical comparison. Both minute-adjusted attempt rates must agree, with at least ${MIN_HISTORY_FGA} total attempts per period. Compare the selected twin before and after the matched career year, or the player's current mix with up to three earlier seasons pooled. The comparison mix must have higher league-relative TS and no decline in points per 36. Keep only a positive points-per-shot edge for the player. For a trial, it must also appear in separate current and past samples, or have a positive approximate 95% lower bound for the difference using Wilson limits. Trial volume is capped by the observed shift, at one swap every two to ten games. Prefer the selected twin among supported trials. When no route is supported, compare each zone’s accuracy change at current volume and highlight the largest gain or loss. A historical association does not establish causation.`,
+                  `先用五区占比找出同一段历史中降幅和升幅最大的两个区域，再核对相同上场时间下的出手次数是否同向。每段历史至少 ${MIN_HISTORY_FGA} 次总出手。参照取匹配生涯年前后，也可将本人此前最多三季合计与本季比较。只有对应阶段相对联盟效率更高、每36分钟得分至少持平，且这组换投对球员本人每次出手的估算得分有利，才考虑借鉴。在本季和此前独立样本中均有得分优势，或差值的近似 95% 下限（按 Wilson 区间计算）大于零，才建议试行。幅度不超过实际观察到的变化，每两至十场换投一次。同等证据下优先采用所选参照。缺少可借鉴路线时，按本季出手量比较各区命中率变化对应的得分增减，取影响最大的一项。这些历史变化可能也受到角色和防守等因素的影响。`,
                 )}
               </p>
               <p>

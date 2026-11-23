@@ -18,49 +18,58 @@ function zoneValue(index: number, fg: number, attempts: number) {
   };
 }
 
-// For a change in shot mix, both shares must move and the fewer/more attempts
-// must coexist in the same comparison. Express observed rates at the target's minutes.
-function volumeRoom(
-  a: FollowupPeriod | null,
-  b: FollowupPeriod | null,
-  from: number,
-  to: number,
-  mpg: number,
+// Identify the historical comparison's main shift before inspecting zone accuracy.
+function historicalRoute(
+  before: FollowupPeriod | null,
+  after: FollowupPeriod | null,
+  targetMinutes: number,
 ) {
   if (
-    !a?.mpg ||
-    !b?.mpg ||
-    !a.games ||
-    !b.games ||
-    (a.fgaPerGame ?? 0) * a.games < MIN_HISTORY_FGA ||
-    (b.fgaPerGame ?? 0) * b.games < MIN_HISTORY_FGA
+    !before?.mpg ||
+    !after?.mpg ||
+    !before.games ||
+    !after.games ||
+    (before.fgaPerGame ?? 0) * before.games < MIN_HISTORY_FGA ||
+    (after.fgaPerGame ?? 0) * after.games < MIN_HISTORY_FGA
   )
-    return 0;
-  const af = a.zonePerGame[from],
-    bf = b.zonePerGame[from],
-    at = a.zonePerGame[to],
-    bt = b.zonePerGame[to];
-  const afs = a.shares[from],
-    bfs = b.shares[from],
-    ats = a.shares[to],
-    bts = b.shares[to];
-  if (
-    af == null ||
-    bf == null ||
-    at == null ||
-    bt == null ||
-    afs == null ||
-    bfs == null ||
-    ats == null ||
-    bts == null ||
-    bfs >= afs ||
-    bts <= ats
-  )
-    return 0;
-  return Math.max(
-    0,
-    Math.min(af / a.mpg - bf / b.mpg, bt / b.mpg - at / a.mpg) * mpg,
-  );
+    return null;
+  const changes = before.shares.map((a, i) => {
+    const b = after.shares[i],
+      beforeCount = before.zonePerGame[i],
+      afterCount = after.zonePerGame[i];
+    if (a == null || b == null || beforeCount == null || afterCount == null)
+      return null;
+    return {
+      index: i,
+      share: b - a,
+      rate: afterCount / after.mpg! - beforeCount / before.mpg!,
+    };
+  });
+  if (changes.some((c) => c == null)) return null;
+  const ordered = changes
+    .flatMap((c) => (c ? [c] : []))
+    .sort((a, b) => a.share - b.share);
+  const from = ordered[0],
+    to = ordered[ordered.length - 1];
+  if (from.share >= 0 || to.share <= 0 || from.rate >= 0 || to.rate <= 0)
+    return null;
+  const room = Math.min(-from.rate, to.rate) * targetMinutes;
+  const efficiency =
+    before.rts != null && after.rts != null ? after.rts - before.rts : null;
+  const scoring =
+    before.points36 != null && after.points36 != null
+      ? after.points36 - before.points36
+      : null;
+  return {
+    id: from.index + "-" + to.index,
+    from: from.index,
+    to: to.index,
+    room,
+    efficiency,
+    scoring,
+    supported:
+      efficiency != null && efficiency > 0 && scoring != null && scoring >= 0,
+  };
 }
 
 export function shotSelectionScenarios(
@@ -70,17 +79,19 @@ export function shotSelectionScenarios(
   post: FollowupPeriod | null = null,
 ) {
   const current = summarizeFollowupPeriod([row], row.season)!;
-  const past = career
-    .filter(
-      (r) =>
-        r.playerId === row.playerId &&
-        r.season < row.season &&
-        r.season >= row.season - 3,
-    )
-    .map((r) => ({
-      season: r.season,
-      stats: summarizeFollowupPeriod([r], r.season)!,
-    }));
+  const pastRows = career.filter(
+    (r) =>
+      r.playerId === row.playerId &&
+      r.season < row.season &&
+      r.season >= row.season - 3,
+  );
+  const past = pastRows.map((r) => ({
+    season: r.season,
+    stats: summarizeFollowupPeriod([r], r.season)!,
+  }));
+  const prior = summarizeFollowupPeriod(pastRows, row.season - 3);
+  const personalRoute = historicalRoute(current, prior, current.mpg ?? 0);
+  const twinRoute = historicalRoute(pre, post, current.mpg ?? 0);
   const zones = current.fg.map((fg, index) => {
     const attempts = current.zoneAttempts[index],
       perGame = current.zonePerGame[index];
@@ -145,32 +156,27 @@ export function shotSelectionScenarios(
         return [];
       const edge = to.value.points - from.value.points;
       if (edge <= 0) return [];
-      let ownRoom = 0,
-        ownSeason: number | null = null;
-      for (const { season, stats } of past) {
-        const room = volumeRoom(
-          current,
-          stats,
-          from.index,
-          to.index,
-          current.mpg ?? 0,
-        );
-        if (room > ownRoom) {
-          ownRoom = room;
-          ownSeason = season;
-        }
-      }
-      const twinRoom = volumeRoom(
-        pre,
-        post,
-        from.index,
-        to.index,
-        current.mpg ?? 0,
-      );
-      const own = ownRoom >= 0.1,
-        twin = twinRoom >= 0.1;
+      const id = from.index + "-" + to.index;
+      const ownRoom = personalRoute?.id === id ? personalRoute.room : 0;
+      const twinRoom = twinRoute?.id === id ? twinRoute.room : 0;
+      const own = ownRoom >= 0.1 && !!personalRoute?.supported;
+      const twin = twinRoom >= 0.1 && !!twinRoute?.supported;
       const feasible = own || twin;
-      const clear = to.value.low > from.value.high;
+      // A Wilson-based lower bound for the difference in points/attempt. Comparing
+      // two separate intervals for non-overlap double-counts their uncertainty.
+      const clear =
+        edge >
+        Math.hypot(
+          to.value.points - to.value.low,
+          from.value.high - from.value.points,
+        );
+      const repeated =
+        !from.pooled &&
+        !to.pooled &&
+        from.pastFG != null &&
+        to.pastFG != null &&
+        (to.index === 4 ? 3 : 2) * to.pastFG >
+          (from.index === 4 ? 3 : 2) * from.pastFG;
       // Present an attainable whole-game cadence, always rounded down in volume.
       const room = Math.min(
         0.5,
@@ -180,20 +186,20 @@ export function shotSelectionScenarios(
       const every = Math.ceil(1 / room);
       const gain = denominator ? edge / every / denominator : null;
       const tier =
-        feasible && clear && every <= 10
+        feasible && (clear || repeated) && every <= 10
           ? "trial"
           : feasible
             ? "review"
             : "scenario";
       return [
         {
-          id: from.index + "-" + to.index,
+          id,
           from,
           to,
           edge,
           clear,
+          repeated,
           own: own && ownRoom >= 1 / every,
-          ownSeason,
           twin: twin && twinRoom >= 1 / every,
           ownRoom,
           twinRoom,
@@ -217,6 +223,11 @@ export function shotSelectionScenarios(
       b.edge / b.every - a.edge / a.every ||
       a.id.localeCompare(b.id),
   );
+  // Revalue the change in shooting percentage at today's shot volume, holding
+  // the mix fixed. A positive gap denotes a decline; a negative gap a gain.
+  const lift =
+    [...zones].filter((z) => z.gap < 0).sort((a, b) => a.gap - b.gap)[0] ??
+    null;
   const focus =
     [...zones].filter((z) => z.gap > 0).sort((a, b) => b.gap - a.gap)[0] ??
     null;
@@ -224,7 +235,17 @@ export function shotSelectionScenarios(
     [...zones]
       .filter((z) => (z.attempts ?? 0) > 0)
       .sort((a, b) => b.attempts! - a.attempts!)[0] ?? null;
-  return { baseline: current.ts, zones, swaps, focus, lead };
+  const strength = lift && -lift.gap > (focus?.gap ?? 0) ? lift : null;
+  return {
+    baseline: current.ts,
+    zones,
+    swaps,
+    focus,
+    strength,
+    lead,
+    personalRoute,
+    twinRoute,
+  };
 }
 
 export function zoneNames(t: Translate) {

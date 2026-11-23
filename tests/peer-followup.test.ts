@@ -76,34 +76,66 @@ test("a missing career year stays empty and an unavailable split does not erase 
 
 const luka = rows.find((r) => r.id === "doncilu01:2026")!;
 const lukaCareer = rows.filter((r) => r.playerId === luka.playerId);
-test("the selected twin and the player's own paired workloads constrain the preferred route and its cadence", () => {
-  const { pre, post } = peerFollowup(russell, 2016, 8);
-  const model = shotSelectionScenarios(luka, lukaCareer, pre, post);
-  const best = model.swaps[0];
-  assert.equal(best.id, "3-1");
-  assert.equal(best.tier, "trial");
-  assert.ok(best.twin && best.clear);
-  assert.ok(best.twinRoom >= 1 / best.every && best.ownRoom < 1 / best.every);
-  assert.equal(best.every, 2);
-  const expected =
-    (luka.points! + 32 * (2 * 0.595 - 2 * 0.402)) /
-    (2 * (luka.fga! + 0.44 * luka.fta!));
-  assert.ok(Math.abs(best.projected! - expected) < 1e-12);
-  assert.equal(model.baseline, luka.ts);
-  assert.ok(
-    model.swaps.every((s) => s.every >= 2 && 1 / s.every <= s.from.perGame!),
+test("the dominant shift and scoring outcomes are necessary even when another zone has an attractive per-shot average", () => {
+  const derozan = rows.find((r) => r.id === "derozde01:2026")!;
+  const career = rows.filter((r) => r.playerId === derozan.playerId);
+  const dirk = rows.filter((r) => r.playerId === "nowitdi01");
+  const { pre, post } = peerFollowup(
+    dirk,
+    dirk[0].debutSeason!,
+    derozan.season - derozan.debutSeason! + 1,
   );
-  const personal = shotSelectionScenarios(luka, lukaCareer);
-  assert.ok(personal.swaps[0].own && !personal.swaps[0].twin);
-  assert.equal(shotSelectionScenarios(luka).swaps[0].tier, "scenario");
-  assert.equal(
-    shotSelectionScenarios(luka, [], pre, pre).swaps[0].tier,
-    "scenario",
-  );
+  const model = shotSelectionScenarios(derozan, career, pre, post);
+  assert.equal(model.twinRoute?.id, "0-4");
+  assert.ok(model.twinRoute!.efficiency! < 0 && model.twinRoute!.scoring! < 0);
+  assert.ok(model.swaps.every((s) => s.tier === "scenario"));
+  assert.ok(model.swaps.some((s) => s.id === "3-0" && s.gain! > 0));
+  assert.equal(model.strength?.index, 1);
+  assert.equal(model.strength?.fg, 0.573);
   assert.deepEqual(
-    shotSelectionScenarios(luka, [{ ...luka, season: 2027 }]),
-    shotSelectionScenarios(luka),
+    shotSelectionScenarios(
+      derozan,
+      [...career, { ...derozan, season: 2027 }],
+      pre,
+      post,
+    ),
+    model,
   );
+});
+test("only the same historical pair can support a trial, and its gain is a controlled TS scenario", () => {
+  const duren = rows.find((r) => r.id === "durenja01:2026")!;
+  const durenCareer = rows.filter((r) => r.playerId === duren.playerId);
+  const howard = rows.filter((r) => r.playerId === "howardw01");
+  const { pre, post } = peerFollowup(
+    howard,
+    howard[0].debutSeason!,
+    duren.season - duren.debutSeason! + 1,
+  );
+  assert.ok(pre && post);
+  const model = shotSelectionScenarios(duren, durenCareer, pre, post);
+  const best = model.swaps[0];
+  assert.equal(best.id, "2-1");
+  assert.equal(best.tier, "trial");
+  assert.ok(best.twin);
+  assert.ok(
+    model.swaps.every((s) => s.id === best.id || s.tier === "scenario"),
+  );
+  assert.ok(best.twinRoom >= 1 / best.every);
+  const expected =
+    (duren.points! + (duren.games! * best.edge) / best.every) /
+    (2 * (duren.fga! + 0.44 * duren.fta!));
+  assert.ok(Math.abs(best.projected! - expected) < 1e-12);
+  for (const changed of [
+    { ...post, rts: pre.rts },
+    { ...post, points36: pre.points36! - 1 },
+    { ...post, rts: null },
+  ]) {
+    assert.ok(
+      shotSelectionScenarios(duren, durenCareer, pre, changed).swaps.every(
+        (s) => s.tier === "scenario",
+      ),
+    );
+  }
 });
 test("five zones remain visible with missing, sparse and pooled data; missing TS does not erase shot evidence", () => {
   const thin = {
@@ -136,29 +168,20 @@ test("five zones remain visible with missing, sparse and pooled data; missing TS
   );
   assert.ok(close.swaps.every((s) => s.tier !== "trial"));
 });
-test("players with different opportunities receive different kinds of advice", () => {
-  const curry = rows.find((r) => r.id === "curryst01:2026")!;
-  const curryCareer = rows.filter((r) => r.playerId === curry.playerId);
-  const williams = peerFollowup(
-    rows.filter((r) => r.playerId === "willilo02"),
-    2006,
-    17,
-  );
-  const c = shotSelectionScenarios(
-    curry,
-    curryCareer,
-    williams.pre,
-    williams.post,
-  );
-  assert.equal(c.focus?.index, 4);
-  const harden = rows.find((r) => r.id === "hardeja01:2026")!;
-  const h = shotSelectionScenarios(
-    harden,
-    rows.filter((r) => r.playerId === harden.playerId),
-    williams.pre,
-    williams.post,
-  );
-  assert.equal(h.swaps[0].id, "3-4");
-  assert.equal(h.swaps[0].tier, "trial");
-  assert.equal(h.swaps[0].every, 8);
+test("the player's own evidence distinguishes shooting improvement, lost efficiency, and a volume change", () => {
+  const profile = (id: string) => {
+    const career = rows.filter((r) => r.playerId === id);
+    return shotSelectionScenarios(
+      career.find((r) => r.season === 2026)!,
+      career,
+    );
+  };
+  const curry = profile("curryst01");
+  assert.equal(curry.focus?.index, 4);
+  assert.equal(curry.strength, null);
+  const lebron = profile("jamesle01");
+  assert.equal(lebron.swaps[0].id, "2-4");
+  assert.ok(lebron.swaps[0].own && lebron.personalRoute?.supported);
+  assert.equal(profile("doncilu01").strength?.index, 2);
+  assert.equal(shotSelectionScenarios(luka).swaps[0].tier, "scenario");
 });
