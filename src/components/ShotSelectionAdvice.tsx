@@ -42,49 +42,12 @@ const shots = [
   "threes",
 ];
 
-function decisionRules(t: Translate) {
-  return {
-    trial: {
-      title: t("Try a swap", "小幅换投"),
-      text: t(
-        "The historical mix had higher league-relative true shooting and at least as many points per 36. Try the shift if the player also scores more per attempt in the new zone and the observed volume supports it.",
-        "历史上采用这种分布时，相对联盟真实命中率更高，每36分钟得分至少持平。球员本人在新区域的每次出手得分也要有可靠优势，历史出手量要支持这次调整。",
-      ),
-    },
-    review: {
-      title: t("Review the swap on film", "先复盘换投机会"),
-      text: t(
-        "The historical results support a swap, but the player’s scoring advantage is uncertain or very few attempts could shift. Review the possessions first.",
-        "历史表现支持换投，但球员自己的得分优势还不明确，或可调整的回合太少。先看录像，确认那些回合有没有更好的选择。",
-      ),
-    },
-    personal: {
-      title: t("Keep a strength or review a decline", "保留强项或复盘下滑"),
-      text: t(
-        "When no swap qualifies, weight each zone’s change in accuracy by current shot volume and shot value. If the largest effect is a gain, keep those looks. If it is a loss, review them.",
-        "没有合适的换法时，按本季出手量和每球分值，把各区命中率的变化折算成得分。影响最大的是增益，就保留该区机会。如果是损失，就优先复盘。",
-      ),
-    },
-    records: {
-      title: t("Start with the available records", "缺少可比较的变化"),
-      text: t(
-        "Start with the most frequent recorded shot this season. If no location is recorded, collect that information first.",
-        "先看本季出手最多的区域。没有可用的出手位置记录时，先补齐数据。",
-      ),
-    },
-  };
-}
-
 function takeaway(
   model: SelectionModel,
   anchor: SeasonRow,
   twin: string | null,
   t: Translate,
-): {
-  rule: keyof ReturnType<typeof decisionRules>;
-  action: string;
-  reason: string;
-} {
+) {
   const player = shortName(anchor.name),
     names = zoneNames(t);
   const { focus, lead } = model;
@@ -211,8 +174,6 @@ export default function ShotSelectionAdvice({
   const twin = peer ? shortName(peer.name) : null;
   const names = zoneNames(t);
   const conclusion = takeaway(model, anchor, twin, t);
-  const rules = decisionRules(t);
-  const appliedRule = rules[conclusion.rule];
   const best = swaps[0];
   const suggested = best && best.tier !== "scenario" ? best : undefined;
   // Exploring a what-if changes only the evidence, never the scouting conclusion.
@@ -241,20 +202,9 @@ export default function ShotSelectionAdvice({
         </h3>
       </header>
       <div className="pr-summary">
-        <div className="pr-summary-row" aria-live="polite">
-          <div id="pr-decision-text">
-            <p className="pr-decision">{conclusion.action}</p>
-            <p className="pr-reason">{conclusion.reason}</p>
-          </div>
-          <aside
-            className="pr-applied-rule"
-            aria-labelledby="pr-applied-rule-title"
-          >
-            <h4 id="pr-applied-rule-title">
-              {t("Rule applied", "本次判断规则")} · {appliedRule.title}
-            </h4>
-            <p>{appliedRule.text}</p>
-          </aside>
+        <div id="pr-decision-text" aria-live="polite">
+          <p className="pr-decision">{conclusion.action}</p>
+          <p className="pr-reason">{conclusion.reason}</p>
         </div>
         <details className="pr-evidence">
           <summary>
@@ -272,16 +222,57 @@ export default function ShotSelectionAdvice({
                 )}
               </p>
               <dl>
-                {Object.entries(rules).map(([id, rule]) => (
+                {[
+                  {
+                    id: "trial",
+                    title: t("Try a swap", "小幅换投"),
+                    text: t(
+                      "The comparison mix had higher league-relative true shooting and at least as many points per 36. The new zone also yields more points per shot for this player, with enough evidence and opportunities to try it.",
+                      "采用可借鉴分布时，相对联盟真实命中率更高，每36分钟得分至少持平。对所选球员，新区域每次出手的得分优势也要有样本支持，而且历史出手量要支持这次调整。",
+                    ),
+                  },
+                  {
+                    id: "review",
+                    title: t("Review the swap on film", "先复盘换投机会"),
+                    text: t(
+                      "History supports the change, but the player’s scoring advantage is still uncertain or there are too few attempts to shift. Review those possessions first.",
+                      "历史表现支持这个方向，但球员自己的得分优势还不够明确，或可调整的回合太少。先看录像，核对这些回合有没有更好的选择。",
+                    ),
+                  },
+                  {
+                    id: "personal",
+                    title: t(
+                      "Keep a strength or review a decline",
+                      "保留强项或复盘下滑",
+                    ),
+                    text: t(
+                      "Without a supported swap to try or review, compare this season’s zone accuracy with the player’s previous seasons. Weight the change by current attempts and shot value. Keep the zone with the largest impact if it gained points, or review it if it lost points.",
+                      "没有合适换法时，把各区命中率相对本人过往的变化，按本季场均出手量和每球分值折算成得分。影响最大的是增益，就建议保留该区机会。如果是损失，就建议优先复盘。",
+                    ),
+                  },
+                  {
+                    id: "records",
+                    title: t(
+                      "Start with the available records",
+                      "缺少可比较的变化",
+                    ),
+                    text: t(
+                      "Start with the most frequent recorded shot this season. If no location is recorded, collect that information first.",
+                      "先看本季出手最多的区域。没有可用的出手位置记录时，先补齐数据。",
+                    ),
+                  },
+                ].map((rule) => (
                   <div
-                    key={id}
+                    key={rule.id}
                     className={
-                      conclusion.rule === id ? "pr-current-rule" : undefined
+                      conclusion.rule === rule.id
+                        ? "pr-current-rule"
+                        : undefined
                     }
                   >
                     <dt>
                       {rule.title}
-                      {conclusion.rule === id && (
+                      {conclusion.rule === rule.id && (
                         <small>{t("Applies here", "本次适用")}</small>
                       )}
                     </dt>
