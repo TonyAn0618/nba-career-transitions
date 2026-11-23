@@ -4,6 +4,7 @@ import { MIN_HISTORY_FGA, MIN_ZONE_FGA } from "../lib/career-peers";
 import { shotSelectionScenarios, zoneNames } from "../lib/peer-shot-advice";
 import type { FollowupPeriod } from "../lib/peer-followup";
 import type { SeasonRow, Translate } from "../lib/types";
+import OtherShotChoices from "./OtherShotChoices";
 
 interface Props {
   anchor: SeasonRow;
@@ -131,16 +132,24 @@ function takeaway(
         `本季实际真实命中率为 ${actual}，若只将${zone}命中率换回此前水平，则估为 ${estimate}。`,
       );
     }
+    let action = strength
+      ? t(
+          `Preserve ${player}’s existing ${shots[personal.index]}.`,
+          `建议 ${player} 保留目前的${zone}出手机会。`,
+        )
+      : t(
+          `Start by reviewing the quality of ${player}’s ${shots[personal.index]}.`,
+          `优先复盘 ${player} 的${zone}出手质量。`,
+        );
+    if (strength && model.lowYield && model.lowYield.index !== personal.index) {
+      const low = model.lowYield.index;
+      action = t(
+        `Preserve ${player}’s ${shots[personal.index]} and review his ${shots[low]} on film.`,
+        `建议 ${player} 保留${zone}机会，优先复盘${names[low]}回合。`,
+      );
+    }
     return {
-      action: strength
-        ? t(
-            `Preserve ${player}’s existing ${shots[personal.index]}.`,
-            `建议 ${player} 保留目前的${zone}出手机会。`,
-          )
-        : t(
-            `Start by reviewing the quality of ${player}’s ${shots[personal.index]}.`,
-            `优先复盘 ${player} 的${zone}出手质量。`,
-          ),
+      action,
       reason: [impact, efficiency].filter(Boolean).join(t(" ", "")),
     };
   }
@@ -216,6 +225,20 @@ export default function ShotSelectionAdvice({
           <p className="pr-decision">{conclusion.action}</p>
           <p className="pr-reason">{conclusion.reason}</p>
         </div>
+        {model.lead && (
+          <OtherShotChoices
+            model={model}
+            primaryZones={
+              suggested
+                ? [suggested.from.index, suggested.to.index]
+                : [(personalZone ?? model.lead).index]
+            }
+            twin={twin}
+            pre={pre}
+            post={post}
+            t={t}
+          />
+        )}
         <details className="pr-evidence">
           <summary>{t("View evidence", "查看依据")}</summary>
           <div className="pr-evidence-body">

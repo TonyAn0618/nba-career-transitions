@@ -25,6 +25,15 @@ export interface FollowupYear {
   stats: FollowupPeriod | null;
 }
 
+export function zoneShifts(pre: FollowupPeriod, post: FollowupPeriod) {
+  return pre.shares
+    .flatMap((v, i) => {
+      const w = post.shares[i];
+      return v == null || w == null ? [] : [{ zone: i, change: (w - v) * 100 }];
+    })
+    .sort((a, b) => b.change - a.change);
+}
+
 function total(
   rows: readonly SeasonRow[],
   get: (r: SeasonRow) => number | null,

@@ -42,6 +42,41 @@
   padding-top: 18px;
   border-top: 1px solid var(--ap-line);
 }
+.pr-other-choices {
+  margin-top: 12px;
+  padding-top: 9px;
+  border-top: 1px solid var(--ap-line);
+}
+.pr-other-choices h4 {
+  font-size: 14px;
+  margin: 0 0 6px;
+}
+.pr-other-choices dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px 22px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.pr-other-choices dl > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.pr-other-choices dt {
+  flex: none;
+  font-weight: 600;
+}
+.pr-other-choices dd {
+  margin: 0;
+  color: var(--ap-muted);
+}
+@container (max-width:740px) {
+  .pr-other-choices dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .pr-reference > strong {
   font-size: 16px;
   font-weight: 600;

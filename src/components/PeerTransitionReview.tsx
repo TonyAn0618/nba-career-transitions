@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { percent, seasonLabel, seasonRange } from "../lib/analysis";
 import {
   peerFollowup,
+  zoneShifts,
   type FollowupPeriod,
   type FollowupYear,
 } from "../lib/peer-followup";
@@ -35,15 +36,6 @@ function signed(value: number, digits = 1) {
     (rounded < 0 ? "−" : rounded > 0 ? "+" : "") +
     Math.abs(rounded).toFixed(digits)
   );
-}
-
-function zoneShifts(pre: FollowupPeriod, post: FollowupPeriod) {
-  return pre.shares
-    .flatMap((v, i) => {
-      const w = post.shares[i];
-      return v == null || w == null ? [] : [{ zone: i, change: (w - v) * 100 }];
-    })
-    .sort((a, b) => b.change - a.change);
 }
 
 function mixChange(

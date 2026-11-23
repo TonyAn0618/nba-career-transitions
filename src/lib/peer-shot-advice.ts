@@ -239,6 +239,17 @@ export function shotSelectionScenarios(
       .filter((z) => (z.attempts ?? 0) > 0)
       .sort((a, b) => b.attempts! - a.attempts!)[0] ?? null;
   const strength = lift && -lift.gap > (focus?.gap ?? 0) ? lift : null;
+  // Compare current-season shot values only when all zones have their own
+  // samples and the highest and lowest Wilson intervals do not overlap.
+  const byValue = zones
+    .filter((zone) => zone.value && !zone.pooled && zone.perGame != null)
+    .sort((a, b) => a.value!.points - b.value!.points);
+  const low = byValue[0],
+    high = byValue.at(-1);
+  const distinct =
+    byValue.length === zones.length &&
+    high &&
+    low.value!.high < high.value!.low;
   const personalZone = strength ?? focus;
   // Reprice only this zone at its prior accuracy, using this season's TS denominator.
   const tsAtPastAccuracy =
@@ -252,6 +263,8 @@ export function shotSelectionScenarios(
     swaps,
     focus,
     strength,
+    lowYield: distinct ? low : null,
+    highYield: distinct ? high : null,
     lead,
     personalRoute,
     twinRoute,

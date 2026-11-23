@@ -151,6 +151,8 @@ test("five zones remain visible with missing, sparse and pooled data; missing TS
   assert.equal(alone.zones[4].n, 8);
   const pooled = shotSelectionScenarios(thin, lukaCareer);
   assert.ok(pooled.zones[4].pooled && pooled.zones[4].n > 25);
+  assert.equal(pooled.lowYield, null);
+  assert.equal(pooled.highYield, null);
   const missing = shotSelectionScenarios({ ...luka, fta: null }, lukaCareer);
   assert.equal(missing.baseline, null);
   assert.ok(missing.strength && missing.strength.gap < 0);
@@ -169,6 +171,8 @@ test("five zones remain visible with missing, sparse and pooled data; missing TS
     lukaCareer,
   );
   assert.ok(close.swaps.every((s) => s.tier !== "trial"));
+  assert.equal(close.lowYield, null);
+  assert.equal(close.highYield, null);
 });
 test("the player's own evidence distinguishes shooting improvement, lost efficiency, and a volume change", () => {
   const profile = (id: string) => {
@@ -186,6 +190,8 @@ test("the player's own evidence distinguishes shooting improvement, lost efficie
   assert.equal(lebron.swaps[0].id, "2-4");
   assert.ok(lebron.swaps[0].own && lebron.personalRoute?.supported);
   const doncic = profile("doncilu01");
+  assert.equal(doncic.highYield?.index, 0);
+  assert.equal(doncic.lowYield?.index, 3);
   assert.equal(doncic.strength?.index, 2);
   assert.equal(doncic.strength?.pastSeasons, 3);
   const mid = doncic.strength!;
