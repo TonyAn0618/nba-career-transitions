@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { peerFollowup } from "../src/lib/peer-followup.ts";
+import {
+  peerFollowup,
+  summarizeFollowupPeriod,
+  type FollowupPeriod,
+} from "../src/lib/peer-followup.ts";
+import { peerShotAdvice } from "../src/lib/peer-shot-advice.ts";
 import type { SeasonRow } from "../src/lib/types.ts";
 
 const { rows }: { rows: SeasonRow[] } = JSON.parse(
@@ -71,4 +76,87 @@ test("a missing career year stays empty and an unavailable split does not erase 
   const noLater = peerFollowup([known], 2016, 1);
   assert.equal(noLater.post, null);
   assert.deepEqual(noLater.years, []);
+});
+
+test("the Luka–Russell recommendation distinguishes a higher three-point share from adding attempts", () => {
+  const luka = rows.find(
+    (r) => r.playerId === "doncilu01" && r.season === 2026,
+  )!;
+  const target = summarizeFollowupPeriod([luka], 2019);
+  const { pre, post, years } = peerFollowup(russell, 2016, 8);
+  assert.ok(target && pre && post);
+  const forZone = (zone: number, name: string) =>
+    peerShotAdvice(
+      target,
+      pre,
+      post,
+      years.at(-1)!.stats,
+      zone,
+      name,
+      luka.name,
+      russell[0].name,
+      (_, zh) => zh,
+    );
+  const threes = forZone(4, "三分");
+  assert.equal((threes.scenario! - threes.observed!).toFixed(2), "1.03");
+  assert.match(threes.action, /Dončić.*三分.*暂缓每场多投约 1 次/);
+  assert.match(
+    threes.reason,
+    /Russell.*占比上升.*场均三分出手却减少.*每36分钟得分下降/,
+  );
+  const longTwos = forZone(3, "长两分");
+  assert.match(longTwos.action, /长两分/);
+  assert.match(longTwos.reason, /每两场还不到一投/);
+});
+
+test("a small trial requires compatible volume, scoring, efficiency, and follow-up evidence", () => {
+  const { pre, post } = peerFollowup(russell, 2016, 8);
+  assert.ok(pre && post);
+  const aligned = {
+    ...post,
+    zonePerGame: post.zonePerGame.map((n, i) =>
+      i === 4 ? pre.zonePerGame[i]! + 1 : n,
+    ),
+    rts: pre.rts! + 2,
+    points36: pre.points36! + 1,
+  };
+  const advice = (period: FollowupPeriod, last: FollowupPeriod | null) =>
+    peerShotAdvice(
+      pre,
+      pre,
+      period,
+      last,
+      4,
+      "Three-pointers",
+      "Test Player",
+      "Test Peer",
+      (en) => en,
+    );
+  assert.match(advice(aligned, aligned).action, /Try a small/);
+  assert.match(
+    advice(aligned, { ...aligned, rts: pre.rts! - 1 }).reason,
+    /final season/,
+  );
+  assert.match(
+    advice({ ...aligned, points36: pre.points36! - 1 }, aligned).reason,
+    /smaller scoring role/,
+  );
+  assert.match(
+    advice({ ...aligned, seasons: 1 }, aligned).reason,
+    /at least two/,
+  );
+  assert.match(
+    advice({ ...aligned, zoneAttempts: [0, 0, 0, 0, 24] }, aligned).action,
+    /Keep/,
+  );
+  assert.match(
+    advice({ ...aligned, rts: null }, aligned).reason,
+    /recorded zone volume/,
+  );
+  const fewer = {
+    ...aligned,
+    zonePerGame: [0, 0, 0, 0, 2],
+    shares: [0, 0, 0, 0, 0.18],
+  };
+  assert.match(advice(fewer, fewer).action, /fewer/);
 });
