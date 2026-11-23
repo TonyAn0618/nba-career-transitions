@@ -1,13 +1,13 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { percent, seasonLabel, seasonRange } from "../lib/analysis";
 import {
   peerFollowup,
-  summarizeFollowupPeriod,
   type FollowupPeriod,
   type FollowupYear,
 } from "../lib/peer-followup";
 import type { SeasonRow, Translate } from "../lib/types";
-import { peerShotAdvice } from "../lib/peer-shot-advice";
+import { zoneNames } from "../lib/peer-shot-advice";
+import ShotSelectionAdvice from "./ShotSelectionAdvice";
 import PeerFollowupTrends from "./PeerFollowupTrends";
 import "./peer-transition-review.css";
 
@@ -15,6 +15,7 @@ interface Props {
   anchor: SeasonRow;
   peer: SeasonRow;
   career: readonly SeasonRow[];
+  playerCareer: readonly SeasonRow[];
   debut: number;
   matchYear: number;
   selectedYear: number | null;
@@ -34,16 +35,6 @@ function signed(value: number, digits = 1) {
     (rounded < 0 ? "−" : rounded > 0 ? "+" : "") +
     Math.abs(rounded).toFixed(digits)
   );
-}
-
-function zoneNames(t: Translate) {
-  return [
-    t("At rim", "篮下"),
-    t("Short two", "近两分"),
-    t("Mid-range", "中距离"),
-    t("Long two", "长两分"),
-    t("Three-pointers", "三分"),
-  ];
 }
 
 function zoneShifts(pre: FollowupPeriod, post: FollowupPeriod) {
@@ -270,6 +261,7 @@ export default function PeerTransitionReview({
   anchor,
   peer,
   career,
+  playerCareer,
   debut,
   matchYear,
   selectedYear,
@@ -280,207 +272,83 @@ export default function PeerTransitionReview({
     () => peerFollowup(career, debut, matchYear),
     [career, debut, matchYear],
   );
-  const target = useMemo(
-    () => summarizeFollowupPeriod([anchor], anchor.season - matchYear + 1),
-    [anchor, matchYear],
-  );
-  const [zone, setZone] = useState(4);
   const { pre, post, years } = analysis;
-  const zones = zoneNames(t);
+  const known = useMemo(
+    () =>
+      peerFollowup(
+        career.filter((r) => r.season <= anchor.season),
+        debut,
+        matchYear,
+      ),
+    [career, debut, matchYear, anchor.season],
+  );
   const shifts = pre && post ? zoneShifts(pre, post) : [];
-  const advice =
-    pre && post
-      ? peerShotAdvice(
-          target,
-          pre,
-          post,
-          years.at(-1)?.stats ?? null,
-          zone,
-          zones[zone],
-          anchor.name,
-          peer.name,
-          t,
-        )
-      : null;
-  const share = post?.shares[zone],
-    volume = target?.fgaPerGame;
-  const observed = advice?.observed,
-    scenario = advice?.scenario;
   return (
     <section
       className="pr-review"
       id="peer-transition"
       aria-labelledby="peer-transition-title"
     >
-      <header className="pr-head">
-        <h3 id="peer-transition-title">
-          {t("Transition recommendations", "转型建议")}
-        </h3>
-        {advice && (
-          <label className="pr-zone">
-            {t("Shot zone", "关注区域")}
-            <select
-              value={zone}
-              onChange={(e) => setZone(Number(e.target.value))}
-              aria-controls="pr-decision-text"
-            >
-              {zones.map((name, i) => (
-                <option key={i} value={i}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </label>
-        )}
-      </header>
-      {!pre || !post || !advice ? (
+      <ShotSelectionAdvice
+        anchor={anchor}
+        peer={peer}
+        career={playerCareer}
+        pre={known.pre}
+        post={known.post}
+        t={t}
+      />
+      {!pre || !post ? (
         <p className="ap-empty">
           {t(
-            `Keep ${anchor.name}’s current shot mix and select a reference with records both before and after career year ${matchYear}.`,
-            `建议 ${anchor.name} 先沿用目前的出手安排，换一位第${matchYear}季前后都有记录的球员作参照。`,
+            `No before-and-after reference data for ${peer.name} at career year ${matchYear}.`,
+            `${peer.name} 在生涯第${matchYear}季前后的记录不足，暂无历史对照。`,
           )}
         </p>
       ) : (
-        <>
-          <div className="pr-advice">
-            <div className="pr-reading">
-              <div id="pr-decision-text" aria-live="polite">
-                <p className="pr-decision">{advice.action}</p>
-                <p>{advice.reason}</p>
-              </div>
-              <details className="pr-evidence">
-                <summary>
-                  {t("Evidence and when to reassess", "查看依据与复核条件")}
-                </summary>
-                <p>
-                  {t(
-                    `${peer.name} · ${zones[zone]}: ${percent(pre.shares[zone])} → ${percent(post.shares[zone])} of attempts, ${pre.zonePerGame[zone]?.toFixed(2) ?? "—"} → ${post.zonePerGame[zone]?.toFixed(2) ?? "—"} attempts per game.`,
-                    `${peer.name} 的${zones[zone]}占比从 ${percent(pre.shares[zone])} 变为 ${percent(post.shares[zone])}，场均出手从 ${pre.zonePerGame[zone]?.toFixed(2) ?? "—"} 变为 ${post.zonePerGame[zone]?.toFixed(2) ?? "—"} 次。`,
-                  )}
-                </p>
-                {pre.rts != null &&
-                  post.rts != null &&
-                  pre.points36 != null &&
-                  post.points36 != null && (
-                    <p>
-                      {t(
-                        `Over the same periods, league-relative TS went from ${signed(pre.rts)} to ${signed(post.rts)} pp and points per 36 from ${pre.points36.toFixed(1)} to ${post.points36.toFixed(1)}.`,
-                        `同期相对联盟真实命中率从 ${signed(pre.rts)} 变为 ${signed(post.rts)} 个百分点，每36分钟得分从 ${pre.points36.toFixed(1)} 变为 ${post.points36.toFixed(1)} 分。`,
-                      )}
-                    </p>
-                  )}
-                {target?.rts != null && target.points36 != null && (
-                  <p>
-                    {t(
-                      `If testing a change, compare with ${anchor.name}’s ${seasonLabel(anchor.season)} baseline at similar total shot volume. Expand only if league-relative TS improves from ${signed(target.rts)} pp and points per 36 stay at or above ${target.points36.toFixed(1)}.`,
-                      `若试调，在总出手量相近时与 ${anchor.name} 的 ${seasonLabel(anchor.season)} 赛季比较。等相对联盟真实命中率高于原来的 ${signed(target.rts)} 个百分点，且每36分钟得分维持在 ${target.points36.toFixed(1)} 分或以上，再扩大调整。`,
-                    )}
-                  </p>
-                )}
-                <p>
-                  {t(
-                    "The benchmark comes from one player. Changes in role or minutes can also affect the observed results.",
-                    "参照来自一名球员，角色和上场时间的变化也会影响前后表现。",
-                  )}
-                </p>
-              </details>
-            </div>
-            <div className="pr-scenario">
-              <strong>{t("Attempts per game", "场均出手换算")}</strong>
-              {scenario != null &&
-              observed != null &&
-              share != null &&
-              volume != null ? (
-                <>
-                  <div className="pr-counts">
-                    <span>
-                      <small>
-                        {t(
-                          `Actual · year ${matchYear}`,
-                          `第${matchYear}季实际`,
-                        )}
-                      </small>
-                      <b>{observed.toFixed(2)}</b>
-                    </span>
-                    <span className="pr-arrow" aria-hidden="true">
-                      →
-                    </span>
-                    <span>
-                      <small>
-                        {t("At the reference share", "按参照占比换算")}
-                      </small>
-                      <b>{scenario.toFixed(2)}</b>
-                    </span>
-                    <span className="pr-difference">
-                      {t(
-                        `${signed(scenario - observed, 2)} / game`,
-                        `${signed(scenario - observed, 2)} 次/场`,
-                      )}
-                    </span>
-                  </div>
-                  <p>
-                    {t(
-                      `This applies ${peer.name}’s later share (${percent(share)}) to ${anchor.name}’s ${volume.toFixed(2)} attempts per game in ${seasonLabel(anchor.season)}.`,
-                      `按 ${anchor.name} 在 ${seasonLabel(anchor.season)} 的场均 ${volume.toFixed(2)} 次总出手，代入 ${peer.name} 后期 ${percent(share)} 的${zones[zone]}占比。`,
-                    )}
-                  </p>
-                </>
-              ) : (
-                <p>
-                  {t(
-                    "This zone lacks the data needed to estimate attempts per game.",
-                    "所选区域缺少计算场均出手所需的数据。",
-                  )}
-                </p>
+        <div role="group" aria-labelledby="pr-reference-name">
+          <header className="pr-reference">
+            <strong id="pr-reference-name">
+              {t(
+                `Historical reference · ${peer.name}`,
+                `历史参照 · ${peer.name}`,
               )}
-            </div>
-          </div>
-          <div role="group" aria-labelledby="pr-reference-name">
-            <header className="pr-reference">
-              <strong id="pr-reference-name">
-                {t(
-                  `Historical reference · ${peer.name}`,
-                  `历史参照 · ${peer.name}`,
-                )}
-              </strong>
-              <p>
-                {[pre, post].map((period, i) => (
-                  <span key={i}>
-                    <strong>{yearRange(period, t)}</strong> ·{" "}
-                    {seasonRange(
-                      debut + period.firstYear - 1,
-                      debut + period.lastYear - 1,
+            </strong>
+            <p>
+              {[pre, post].map((period, i) => (
+                <span key={i}>
+                  <strong>{yearRange(period, t)}</strong> ·{" "}
+                  {seasonRange(
+                    debut + period.firstYear - 1,
+                    debut + period.lastYear - 1,
+                  )}
+                  {period.games != null &&
+                    t(` · ${period.games} games`, ` · ${period.games}场`)}
+                  {period.lastYear - period.firstYear + 1 !== period.seasons &&
+                    t(
+                      ` · ${period.seasons} recorded seasons`,
+                      ` · ${period.seasons}季有记录`,
                     )}
-                    {period.games != null &&
-                      t(` · ${period.games} games`, ` · ${period.games}场`)}
-                    {period.lastYear - period.firstYear + 1 !==
-                      period.seasons &&
-                      t(
-                        ` · ${period.seasons} recorded seasons`,
-                        ` · ${period.seasons}季有记录`,
-                      )}
-                  </span>
-                ))}
-              </p>
-            </header>
-            <PeerFollowupTrends
-              analysis={analysis}
+                </span>
+              ))}
+            </p>
+          </header>
+          <PeerFollowupTrends
+            analysis={analysis}
+            selectedYear={selectedYear}
+            onYear={onYear}
+            t={t}
+          />
+          <p className="pr-takeaway">{mixChange(pre, post, shifts, t)}</p>
+          <div className="pr-outcomes">
+            <EfficiencyComparison pre={pre} post={post} t={t} />
+            <LaterEfficiency
+              years={years}
               selectedYear={selectedYear}
               onYear={onYear}
               t={t}
             />
-            <p className="pr-takeaway">{mixChange(pre, post, shifts, t)}</p>
-            <div className="pr-outcomes">
-              <EfficiencyComparison pre={pre} post={post} t={t} />
-              <LaterEfficiency
-                years={years}
-                selectedYear={selectedYear}
-                onYear={onYear}
-                t={t}
-              />
-            </div>
           </div>
-        </>
+        </div>
       )}
     </section>
   );

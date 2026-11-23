@@ -1,12 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import {
-  peerFollowup,
-  summarizeFollowupPeriod,
-  type FollowupPeriod,
-} from "../src/lib/peer-followup.ts";
-import { peerShotAdvice } from "../src/lib/peer-shot-advice.ts";
+import { peerFollowup } from "../src/lib/peer-followup.ts";
+import { shotSelectionScenarios } from "../src/lib/peer-shot-advice.ts";
 import type { SeasonRow } from "../src/lib/types.ts";
 
 const { rows }: { rows: SeasonRow[] } = JSON.parse(
@@ -78,85 +74,91 @@ test("a missing career year stays empty and an unavailable split does not erase 
   assert.deepEqual(noLater.years, []);
 });
 
-test("the Luka–Russell recommendation distinguishes a higher three-point share from adding attempts", () => {
-  const luka = rows.find(
-    (r) => r.playerId === "doncilu01" && r.season === 2026,
-  )!;
-  const target = summarizeFollowupPeriod([luka], 2019);
-  const { pre, post, years } = peerFollowup(russell, 2016, 8);
-  assert.ok(target && pre && post);
-  const forZone = (zone: number, name: string) =>
-    peerShotAdvice(
-      target,
-      pre,
-      post,
-      years.at(-1)!.stats,
-      zone,
-      name,
-      luka.name,
-      russell[0].name,
-      (_, zh) => zh,
-    );
-  const threes = forZone(4, "三分");
-  assert.equal((threes.scenario! - threes.observed!).toFixed(2), "1.03");
-  assert.match(threes.action, /Dončić.*三分.*暂缓每场多投约 1 次/);
-  assert.match(
-    threes.reason,
-    /Russell.*占比上升.*场均三分出手却减少.*每36分钟得分下降/,
-  );
-  const longTwos = forZone(3, "长两分");
-  assert.match(longTwos.action, /长两分/);
-  assert.match(longTwos.reason, /每两场还不到一投/);
-});
-
-test("a small trial requires compatible volume, scoring, efficiency, and follow-up evidence", () => {
+const luka = rows.find((r) => r.id === "doncilu01:2026")!;
+const lukaCareer = rows.filter((r) => r.playerId === luka.playerId);
+test("the selected twin and the player's own paired workloads constrain the preferred route and its cadence", () => {
   const { pre, post } = peerFollowup(russell, 2016, 8);
-  assert.ok(pre && post);
-  const aligned = {
-    ...post,
-    zonePerGame: post.zonePerGame.map((n, i) =>
-      i === 4 ? pre.zonePerGame[i]! + 1 : n,
-    ),
-    rts: pre.rts! + 2,
-    points36: pre.points36! + 1,
+  const model = shotSelectionScenarios(luka, lukaCareer, pre, post);
+  const best = model.swaps[0];
+  assert.equal(best.id, "3-1");
+  assert.equal(best.tier, "trial");
+  assert.ok(best.twin && best.clear);
+  assert.ok(best.twinRoom >= 1 / best.every && best.ownRoom < 1 / best.every);
+  assert.equal(best.every, 2);
+  const expected =
+    (luka.points! + 32 * (2 * 0.595 - 2 * 0.402)) /
+    (2 * (luka.fga! + 0.44 * luka.fta!));
+  assert.ok(Math.abs(best.projected! - expected) < 1e-12);
+  assert.equal(model.baseline, luka.ts);
+  assert.ok(
+    model.swaps.every((s) => s.every >= 2 && 1 / s.every <= s.from.perGame!),
+  );
+  const personal = shotSelectionScenarios(luka, lukaCareer);
+  assert.ok(personal.swaps[0].own && !personal.swaps[0].twin);
+  assert.equal(shotSelectionScenarios(luka).swaps[0].tier, "scenario");
+  assert.equal(
+    shotSelectionScenarios(luka, [], pre, pre).swaps[0].tier,
+    "scenario",
+  );
+  assert.deepEqual(
+    shotSelectionScenarios(luka, [{ ...luka, season: 2027 }]),
+    shotSelectionScenarios(luka),
+  );
+});
+test("five zones remain visible with missing, sparse and pooled data; missing TS does not erase shot evidence", () => {
+  const thin = {
+    ...luka,
+    fga: 20,
+    threeAttempts: 8,
+    threeMade: 3,
+    fg: [null, null, null, null, 0.375] as SeasonRow["fg"],
   };
-  const advice = (period: FollowupPeriod, last: FollowupPeriod | null) =>
-    peerShotAdvice(
-      pre,
-      pre,
-      period,
-      last,
-      4,
-      "Three-pointers",
-      "Test Player",
-      "Test Peer",
-      (en) => en,
-    );
-  assert.match(advice(aligned, aligned).action, /Try a small/);
-  assert.match(
-    advice(aligned, { ...aligned, rts: pre.rts! - 1 }).reason,
-    /final season/,
+  const alone = shotSelectionScenarios(thin);
+  assert.equal(alone.zones.length, 5);
+  assert.equal(alone.swaps.length, 0);
+  assert.equal(alone.zones[4].n, 8);
+  const pooled = shotSelectionScenarios(thin, lukaCareer);
+  assert.ok(pooled.zones[4].pooled && pooled.zones[4].n > 25);
+  const missing = shotSelectionScenarios({ ...luka, fta: null }, lukaCareer);
+  assert.equal(missing.baseline, null);
+  assert.ok(
+    missing.swaps.length && missing.swaps.every((s) => s.projected == null),
   );
-  assert.match(
-    advice({ ...aligned, points36: pre.points36! - 1 }, aligned).reason,
-    /smaller scoring role/,
+  const noDistance = shotSelectionScenarios({
+    ...luka,
+    shares: [null, null, null, null, null],
+  });
+  assert.equal(noDistance.zones[0].attempts, null);
+  assert.equal(noDistance.zones[4].attempts, 694);
+  const close = shotSelectionScenarios(
+    { ...luka, fg: [0.5, 0.5, 0.5, 0.5, 1 / 3], threeMade: 231 },
+    lukaCareer,
   );
-  assert.match(
-    advice({ ...aligned, seasons: 1 }, aligned).reason,
-    /at least two/,
+  assert.ok(close.swaps.every((s) => s.tier !== "trial"));
+});
+test("players with different opportunities receive different kinds of advice", () => {
+  const curry = rows.find((r) => r.id === "curryst01:2026")!;
+  const curryCareer = rows.filter((r) => r.playerId === curry.playerId);
+  const williams = peerFollowup(
+    rows.filter((r) => r.playerId === "willilo02"),
+    2006,
+    17,
   );
-  assert.match(
-    advice({ ...aligned, zoneAttempts: [0, 0, 0, 0, 24] }, aligned).action,
-    /Keep/,
+  const c = shotSelectionScenarios(
+    curry,
+    curryCareer,
+    williams.pre,
+    williams.post,
   );
-  assert.match(
-    advice({ ...aligned, rts: null }, aligned).reason,
-    /recorded zone volume/,
+  assert.equal(c.focus?.index, 4);
+  const harden = rows.find((r) => r.id === "hardeja01:2026")!;
+  const h = shotSelectionScenarios(
+    harden,
+    rows.filter((r) => r.playerId === harden.playerId),
+    williams.pre,
+    williams.post,
   );
-  const fewer = {
-    ...aligned,
-    zonePerGame: [0, 0, 0, 0, 2],
-    shares: [0, 0, 0, 0, 0.18],
-  };
-  assert.match(advice(fewer, fewer).action, /fewer/);
+  assert.equal(h.swaps[0].id, "3-4");
+  assert.equal(h.swaps[0].tier, "trial");
+  assert.equal(h.swaps[0].every, 8);
 });

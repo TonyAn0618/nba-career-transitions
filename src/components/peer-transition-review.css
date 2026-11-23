@@ -180,15 +180,9 @@
   font-weight: 600;
   line-height: 1.25;
 }
-.pr-arrow,
-.pr-difference {
+.pr-arrow {
   padding-bottom: 4px;
   color: var(--ap-muted);
-}
-.pr-difference {
-  color: var(--ap-player);
-  font-size: 13px;
-  white-space: nowrap;
 }
 .pr-scenario p {
   color: var(--ap-muted);
@@ -221,4 +215,31 @@
 }
 .pr-evidence p {
   font-size: inherit;
+}
+.pr-zone {
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+.pr-mode {
+  color: var(--ap-peer);
+  font-size: 13px;
+}
+.pr-reading .pr-decision {
+  font-size: 16px;
+  margin-top: 4px;
+}
+.pr-zone-audit {
+  margin: -8px 0 20px;
+}
+.pr-zone-audit table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.pr-zone-audit th,
+.pr-zone-audit td {
+  padding: 5px 4px;
+  text-align: left;
+  border-bottom: 1px solid var(--ap-line);
 }
